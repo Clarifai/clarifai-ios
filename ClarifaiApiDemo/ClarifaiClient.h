@@ -54,15 +54,15 @@ typedef void (^ClarifaiRecognitionCompletion)(NSArray *results, NSError *error);
  * Runs recognition on one or more JPEGs.
  *
  * @param imageData    Array of NSData containing JPEG images to send to the server
- * @param completion   Invoked with the request completes.
+ * @param completion   Invoked when the request completes.
  */
 - (void)recognizeJpegs:(NSArray *)jpegs completion:(ClarifaiRecognitionCompletion)completion;
 
 /**
  * Runs recognition on one or more publicly accessible URLs.
  *
- * @param imageData    Array of NSStrings containing publicly accessible URLs to recognize.
- * @param completion   Invoked with the request completes.
+ * @param urls         Array of NSStrings containing publicly accessible URLs to recognize.
+ * @param completion   Invoked when the request completes.
  */
 - (void)recognizeURLs:(NSArray *)urls completion:(ClarifaiRecognitionCompletion)completion;
 
