@@ -1,6 +1,7 @@
 # clarifai-ios-starter
 This is a simple project to get you started using the Clarifai API from iOS.
 
+<img src="http://i.imgur.com/nJPz9gc.jpg" width="200">
 
 ## Building and Running
 This project uses [CocoaPods](http://cocoapods.org/). To build and run:
