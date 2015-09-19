@@ -17,25 +17,46 @@ static NSString * const kAppSecret = @"rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
 /**
  * This view controller performs recognition using the Clarifai API.
  */
-@interface RecognitionViewController ()
+@interface RecognitionViewController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UITextView *textView;
+@property (weak, nonatomic) IBOutlet UIButton *button;
 @property (strong, nonatomic) ClarifaiClient *client;
 @end
 
 
 @implementation RecognitionViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.imageView.image = self.image;
-    self.textView.text = @"Recognizing...";
+- (IBAction)buttonPressed:(id)sender {
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    picker.delegate = self;
+    picker.allowsEditing = YES;
+    [self presentViewController:picker animated:YES completion:NULL];
+}
 
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker
+didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    [self dismissViewControllerAnimated:YES completion:nil];
+    UIImage *image = info[UIImagePickerControllerEditedImage];
+    if (image) {
+        self.imageView.image = image;
+        self.textView.text = @"Recognizing...";
+        self.button.enabled = NO;
+        [self recognizeImage:image];
+    }
+}
+
+- (void)recognizeImage:(UIImage *)image {
     // Resize the image. This step is optional, but we don't need to send full resolution image
     // for recognition, and it would slow things down to send a large image over the network.
-    CGSize size = CGSizeMake(320, 320 * self.image.size.height / self.image.size.width);
+    CGSize size = CGSizeMake(320, 320 * image.size.height / image.size.width);
     UIGraphicsBeginImageContext(size);
-    [self.image drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
     UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
 
@@ -54,6 +75,7 @@ static NSString * const kAppSecret = @"rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
             self.textView.text = [NSString stringWithFormat:@"Tags:\n%@",
                                   [result.tags componentsJoinedByString:@", "]];
         }
+        self.button.enabled = YES;
     }];
 }
 
