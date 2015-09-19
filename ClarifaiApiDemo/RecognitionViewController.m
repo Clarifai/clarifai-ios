@@ -27,6 +27,13 @@ static NSString * const kAppSecret = @"rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
 
 @implementation RecognitionViewController
 
+- (ClarifaiClient *)client {
+    if (!_client) {
+        _client = [[ClarifaiClient alloc] initWithAppID:kAppID appSecret:kAppSecret];
+    }
+    return _client;
+}
+
 - (IBAction)buttonPressed:(id)sender {
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
@@ -64,7 +71,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     NSData *jpeg = UIImageJPEGRepresentation(scaledImage, 0.9);
 
     // Send to Clarifai!
-    self.client = [[ClarifaiClient alloc] initWithAppID:kAppID appSecret:kAppSecret];
     [self.client recognizeJpegs:@[jpeg] completion:^(NSArray *results, NSError *error) {
         // Handle the response from Clarifai. This happens asynchronously.
         if (error) {
