@@ -18,7 +18,10 @@
 /** Unique identifier for the image or video, generated based on content. */
 @property (strong, nonatomic, readonly) NSString *documentId;
 
-/** Array of NSNumbers, representing the content of the image or video in a vector space. */
+/**
+ * Array of NSNumbers, representing the content of the image or video in a vector space. Note that
+ * this is only populated if the enableEmbed property is set to YES on ClarifaiClient.
+ */
 @property (strong, nonatomic, readonly) NSArray *embed;
 
 /** Array of NSStrings, one for each tag. */
@@ -41,6 +44,12 @@ typedef void (^ClarifaiRecognitionCompletion)(NSArray *results, NSError *error);
 
 /** Client for the CLarifai API. */
 @interface ClarifaiClient : NSObject
+/**
+ * Controls whether to populate the "embed" property on ClarifaiResults. The default is NO.
+ * Currently, this feature needs to be enabled on an app-by-app basis. Please contact us if you
+ * would like to enable this feature for your application.
+ */
+@property (assign, nonatomic) BOOL enableEmbed;
 
 /**
  * Initializes a new ClarifaiClient.

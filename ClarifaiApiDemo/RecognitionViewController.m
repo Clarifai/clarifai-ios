@@ -30,6 +30,9 @@ static NSString * const kAppSecret = @"rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
 - (ClarifaiClient *)client {
     if (!_client) {
         _client = [[ClarifaiClient alloc] initWithAppID:kAppID appSecret:kAppSecret];
+        // Uncomment this line to enable embeddings. Please contact us to enable this feature
+        // for your app.
+        // _client.enableEmbed = YES;
     }
     return _client;
 }
