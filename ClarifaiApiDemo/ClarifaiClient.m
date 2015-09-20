@@ -150,7 +150,7 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
             return;
         }
         NSString *url = [kApiBaseUrl stringByAppendingString:@"/multiop"];
-        NSDictionary *params = @{@"model": @"general-v1.2", @"op": @"tag,embed"};
+        NSDictionary *params = @{@"op": @"tag"};
         [self.manager POST:url parameters:params constructingBodyWithBlock:bodyBlock success:
          ^(AFHTTPRequestOperation *op, NSDictionary *res) {
              // Batch requests return a separate response for each component. Ignore the top-level
@@ -225,7 +225,7 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
     self.accessTokenExpiration = nil;
 }
 
-#pragma mark - 
+#pragma mark -
 
 - (NSString *)urlForEndpoint:(NSString *)endpoint {
     return [kApiBaseUrl stringByAppendingString:endpoint];
