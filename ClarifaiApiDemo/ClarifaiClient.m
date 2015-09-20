@@ -10,6 +10,7 @@
 #define SafeRunBlock(block, ...) block ? block(__VA_ARGS__) : nil
 
 static NSString * const kApiBaseUrl = @"https://api.clarifai.com/v1";
+static NSString * const kErrorDomain = @"com.clarifai.ClarifaiClient";
 static NSString * const kKeyAccessToken = @"com.clarifai.ClarifaiClient.AccessToken";
 static NSString * const kKeyAccessTokenExpiration = @"com.clarifai.ClarifaiClient.AccessTokenExpiration";
 static NSTimeInterval const kMinTokenLifetime = 60.0;
@@ -159,12 +160,15 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
              NSArray *results = [[ClarifaiMultiopResponse alloc] initWithDictionary:res].results;
              SafeRunBlock(completion, results, nil);
          } failure:^(AFHTTPRequestOperation *op, NSError *error) {
+             if (op.response.statusCode >= 400) {
+                 // Generate a more informative error.
+                 error = [self errorFromHttpResponse:op];
+             }
              if (op.response.statusCode == 401) {
                  NSLog(@"Received 401 response. Access token was revoked.");
                  [self invalidateAccessToken];
                  SafeRunBlock(completion, nil, error);
              } else {
-                 [self logHTTPError:error message:@"Batch failed" operation:op];
                  SafeRunBlock(completion, nil, error);
              }
          }];
@@ -192,7 +196,9 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
                        self.authenticating = NO;
                        handler(nil);
                    } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                       [self logHTTPError:error message:@"Token request failed" operation:op];
+                       if (op.response.statusCode >= 400) {
+                           error = [self errorFromHttpResponse:op];
+                       }
                        self.authenticating = NO;
                        handler(error);
                    }];
@@ -228,19 +234,17 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
 
 #pragma mark -
 
-- (NSString *)urlForEndpoint:(NSString *)endpoint {
-    return [kApiBaseUrl stringByAppendingString:endpoint];
-}
-
-- (void)logHTTPError:(NSError *)error
-             message:(NSString *)message
-           operation:(AFHTTPRequestOperation *)operation {
-    NSString *url = [operation.request.URL absoluteString];
-    NSString *body = [[NSString alloc] initWithData:operation.request.HTTPBody
-                                           encoding:NSUTF8StringEncoding];
-    NSLog(@"%@: Error = %@, Code = %ld", message, error.localizedDescription, (long)error.code);
-    NSLog(@"Url = %@, Headers = %@, Body = %@", url,
-          self.manager.requestSerializer.HTTPRequestHeaders, body);
+- (NSError *)errorFromHttpResponse:(AFHTTPRequestOperation *)op {
+    NSString *desc;
+    if (op.responseString) {
+        desc = op.responseString;
+    } else {
+        desc = [NSString stringWithFormat:@"HTTP Status %d", (int)op.response.statusCode];
+    }
+    NSString *url = [op.request.URL absoluteString];
+    return [[NSError alloc] initWithDomain:kErrorDomain
+                                      code:op.response.statusCode
+                                  userInfo:@{@"description": desc, @"url": url}];
 }
 
 @end
