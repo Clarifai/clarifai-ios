@@ -18,17 +18,17 @@
 /** Unique identifier for the image or video, generated based on content. */
 @property (strong, nonatomic, readonly) NSString *documentId;
 
+/** Array of NSStrings, one for each tag. */
+@property (strong, nonatomic, readonly) NSArray<NSString *> *tags;
+
+/** Parallel array of NSNumbers, representing weights for each of the tags. */
+@property (strong, nonatomic, readonly) NSArray<NSNumber *> *probabilities;
+
 /**
  * Array of NSNumbers, representing the content of the image or video in a vector space. Note that
  * this is only populated if the enableEmbed property is set to YES on ClarifaiClient.
  */
-@property (strong, nonatomic, readonly) NSArray *embed;
-
-/** Array of NSStrings, one for each tag. */
-@property (strong, nonatomic, readonly) NSArray *tags;
-
-/** Parallel array of NSNumbers, representing weights for each of the tags. */
-@property (strong, nonatomic, readonly) NSArray *probabilities;
+@property (strong, nonatomic, readonly) NSArray<NSNumber *> *embed;
 
 @end
 
@@ -39,7 +39,7 @@
  * @param results array of ClarifaiResults, one for each requested image.
  * @param error error, if any, or nil on success.
  */
-typedef void (^ClarifaiRecognitionCompletion)(NSArray *results, NSError *error);
+typedef void (^ClarifaiRecognitionCompletion)(NSArray<ClarifaiResult *> *results, NSError *error);
 
 
 /** Client for the CLarifai API. */
@@ -65,7 +65,8 @@ typedef void (^ClarifaiRecognitionCompletion)(NSArray *results, NSError *error);
  * @param imageData    Array of NSData containing JPEG images to send to the server
  * @param completion   Invoked when the request completes.
  */
-- (void)recognizeJpegs:(NSArray *)jpegs completion:(ClarifaiRecognitionCompletion)completion;
+- (void)recognizeJpegs:(NSArray<NSData *> *)jpegs
+            completion:(ClarifaiRecognitionCompletion)completion;
 
 /**
  * Runs recognition on one or more publicly accessible URLs.
@@ -73,6 +74,7 @@ typedef void (^ClarifaiRecognitionCompletion)(NSArray *results, NSError *error);
  * @param urls         Array of NSStrings containing publicly accessible URLs to recognize.
  * @param completion   Invoked when the request completes.
  */
-- (void)recognizeURLs:(NSArray *)urls completion:(ClarifaiRecognitionCompletion)completion;
+- (void)recognizeURLs:(NSArray<NSString *> *)urls
+           completion:(ClarifaiRecognitionCompletion)completion;
 
 @end

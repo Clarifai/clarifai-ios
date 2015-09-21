@@ -122,7 +122,8 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
 
 #pragma mark - Public interface
 
-- (void)recognizeJpegs:(NSArray *)jpegs completion:(ClarifaiRecognitionCompletion)completion {
+- (void)recognizeJpegs:(NSArray<NSData *> *)jpegs
+            completion:(ClarifaiRecognitionCompletion)completion {
     [self recognizeWithBodyBlock:^(id<AFMultipartFormData> formData) {
         // Construct a multipart request, with one part for each image.
         for (NSData *data in jpegs) {
@@ -134,7 +135,8 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
     } completion:completion];
 }
 
-- (void)recognizeURLs:(NSArray *)urls completion:(ClarifaiRecognitionCompletion)completion {
+- (void)recognizeURLs:(NSArray<NSString *> *)urls
+           completion:(ClarifaiRecognitionCompletion)completion {
     [self recognizeWithBodyBlock:^(id<AFMultipartFormData> formData) {
         for (NSString *url in urls) {
             [formData appendPartWithFormData:[url dataUsingEncoding:NSUTF8StringEncoding]

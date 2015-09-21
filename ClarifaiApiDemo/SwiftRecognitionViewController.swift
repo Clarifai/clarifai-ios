@@ -68,18 +68,12 @@ class SwiftRecognitionViewController : UIViewController, UIImagePickerController
         let jpeg = UIImageJPEGRepresentation(scaledImage, 0.9)!
 
         // Send the JPEG to Clarifai for recognition.
-        client.recognizeJpegs([jpeg], completion: { (results: [AnyObject]?, error: NSError?) in
+        client.recognizeJpegs([jpeg], completion: { (results: [ClarifaiResult]?, error: NSError?) in
             if (error != nil) {
-                print("Error: \(error)", terminator: "\n")
+                print("Error: \(error)\n")
                 self.textView.text = "Sorry, there was an error recognizing the image."
             } else {
-                // Handle the result, which contains a single ClarifaiResult for the image we sent.
-                let result = results![0] as? ClarifaiResult
-                if let tags = result?.tags as? [String] {
-                    self.textView.text = "Tags:\n" + tags.joinWithSeparator(", ")
-                } else {
-                    self.textView.text = "Sorry, there was an unexpected response from the server."
-                }
+                self.textView.text = "Tags:\n" + results![0].tags.joinWithSeparator(", ")
             }
             self.button.enabled = true
         })
