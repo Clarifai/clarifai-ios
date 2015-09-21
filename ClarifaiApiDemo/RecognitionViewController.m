@@ -30,18 +30,18 @@ static NSString * const kAppSecret = @"rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
 - (ClarifaiClient *)client {
     if (!_client) {
         _client = [[ClarifaiClient alloc] initWithAppID:kAppID appSecret:kAppSecret];
-        // Uncomment this line to enable embeddings. Please contact us to enable this feature
-        // for your app.
+        // Uncomment this to request embeddings. Contact us to enable embeddings for your app:
         // _client.enableEmbed = YES;
     }
     return _client;
 }
 
 - (IBAction)buttonPressed:(id)sender {
+    // Show a UIImagePickerController to let the user pick an image from their library.
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    picker.allowsEditing = NO;
     picker.delegate = self;
-    picker.allowsEditing = YES;
     [self presentViewController:picker animated:YES completion:NULL];
 }
 
@@ -52,8 +52,9 @@ static NSString * const kAppSecret = @"rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
 - (void)imagePickerController:(UIImagePickerController *)picker
 didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [self dismissViewControllerAnimated:YES completion:nil];
-    UIImage *image = info[UIImagePickerControllerEditedImage];
+    UIImage *image = info[UIImagePickerControllerOriginalImage];
     if (image) {
+        // The user picked an image. Send it to Clarifai for recognition.
         self.imageView.image = image;
         self.textView.text = @"Recognizing...";
         self.button.enabled = NO;
@@ -62,8 +63,8 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 }
 
 - (void)recognizeImage:(UIImage *)image {
-    // Resize the image. This step is optional, but we don't need to send full resolution image
-    // for recognition, and it would slow things down to send a large image over the network.
+    // Scale down the image. This step is optional. However, sending large images is slower and
+    // does not significantly affect recognition performance.
     CGSize size = CGSizeMake(320, 320 * image.size.height / image.size.width);
     UIGraphicsBeginImageContext(size);
     [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
@@ -73,7 +74,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     // Encode as a JPEG.
     NSData *jpeg = UIImageJPEGRepresentation(scaledImage, 0.9);
 
-    // Send to Clarifai!
+    // Send the JPEG to Clarifai for recognition.
     [self.client recognizeJpegs:@[jpeg] completion:^(NSArray *results, NSError *error) {
         // Handle the response from Clarifai. This happens asynchronously.
         if (error) {

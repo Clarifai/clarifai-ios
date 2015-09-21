@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		404EFC761BACA33F009D4381 /* ClarifaiClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 404EFC751BACA33F009D4381 /* ClarifaiClient.m */; };
 		407195211BADD02B0076B650 /* RecognitionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 407195201BADD02B0076B650 /* RecognitionViewController.m */; };
+		4088A4381BAEF1B500B1C682 /* SwiftRecognitionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4088A4371BAEF1B500B1C682 /* SwiftRecognitionViewController.swift */; };
 		408D395B1BACA1FA00C5608B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 408D395A1BACA1FA00C5608B /* main.m */; };
 		408D395E1BACA1FA00C5608B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 408D395D1BACA1FA00C5608B /* AppDelegate.m */; };
 		408D39641BACA1FA00C5608B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 408D39621BACA1FA00C5608B /* Main.storyboard */; };
@@ -35,6 +36,8 @@
 		404EFC751BACA33F009D4381 /* ClarifaiClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClarifaiClient.m; sourceTree = "<group>"; };
 		4071951F1BADD02B0076B650 /* RecognitionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecognitionViewController.h; sourceTree = "<group>"; };
 		407195201BADD02B0076B650 /* RecognitionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecognitionViewController.m; sourceTree = "<group>"; };
+		4088A4361BAEF1B400B1C682 /* ClarifaiApiDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ClarifaiApiDemo-Bridging-Header.h"; sourceTree = "<group>"; };
+		4088A4371BAEF1B500B1C682 /* SwiftRecognitionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftRecognitionViewController.swift; sourceTree = "<group>"; };
 		408D39551BACA1FA00C5608B /* ClarifaiApiDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClarifaiApiDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		408D39591BACA1FA00C5608B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		408D395A1BACA1FA00C5608B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -97,6 +100,8 @@
 				404EFC751BACA33F009D4381 /* ClarifaiClient.m */,
 				4071951F1BADD02B0076B650 /* RecognitionViewController.h */,
 				407195201BADD02B0076B650 /* RecognitionViewController.m */,
+				4088A4371BAEF1B500B1C682 /* SwiftRecognitionViewController.swift */,
+				4088A4361BAEF1B400B1C682 /* ClarifaiApiDemo-Bridging-Header.h */,
 				408D39621BACA1FA00C5608B /* Main.storyboard */,
 				408D39651BACA1FA00C5608B /* Images.xcassets */,
 				408D39671BACA1FA00C5608B /* LaunchScreen.xib */,
@@ -194,7 +199,9 @@
 		408D394D1BACA1FA00C5608B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0640;
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Clarifai, Inc.";
 				TargetAttributes = {
 					408D39541BACA1FA00C5608B = {
@@ -284,6 +291,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				404EFC761BACA33F009D4381 /* ClarifaiClient.m in Sources */,
+				4088A4381BAEF1B500B1C682 /* SwiftRecognitionViewController.swift in Sources */,
 				408D395E1BACA1FA00C5608B /* AppDelegate.m in Sources */,
 				408D395B1BACA1FA00C5608B /* main.m in Sources */,
 				407195211BADD02B0076B650 /* RecognitionViewController.m in Sources */,
@@ -349,6 +357,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -413,10 +422,14 @@
 			baseConfigurationReference = 210D6046DE03F46F0C90049F /* Pods-ClarifaiApiDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = ClarifaiApiDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.clarifai.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ClarifaiApiDemo/ClarifaiApiDemo-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -425,10 +438,13 @@
 			baseConfigurationReference = 2C96310E8AE89EB32A1BF45E /* Pods-ClarifaiApiDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = ClarifaiApiDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.clarifai.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ClarifaiApiDemo/ClarifaiApiDemo-Bridging-Header.h";
 			};
 			name = Release;
 		};
@@ -446,6 +462,7 @@
 				);
 				INFOPLIST_FILE = ClarifaiApiDemoTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.clarifai.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClarifaiApiDemo.app/ClarifaiApiDemo";
 			};
@@ -461,6 +478,7 @@
 				);
 				INFOPLIST_FILE = ClarifaiApiDemoTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.clarifai.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClarifaiApiDemo.app/ClarifaiApiDemo";
 			};
