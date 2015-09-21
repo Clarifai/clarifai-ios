@@ -42,7 +42,7 @@ static NSString * const kAppSecret = @"rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     picker.allowsEditing = NO;
     picker.delegate = self;
-    [self presentViewController:picker animated:YES completion:NULL];
+    [self presentViewController:picker animated:YES completion:nil];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
