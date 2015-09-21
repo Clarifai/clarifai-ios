@@ -42,5 +42,4 @@ need to:
 
 ## Next steps
 Feel free to use this project as a base for building your app. Alternately, you can copy
-`ClarifaiClient.h` and `ClarifaiClient.m` into a new project.  Example usage of ClarifaiClient
-can be found in `RecognitionViewController.m`. Have fun!
+`ClarifaiClient.h` and `ClarifaiClient.m` into a new project. Have fun!
