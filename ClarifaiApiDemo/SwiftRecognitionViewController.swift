@@ -15,8 +15,8 @@ class SwiftRecognitionViewController : UIViewController, UIImagePickerController
 
     // IMPORTANT NOTE: you should replace these keys with your own App ID and secret.
     // These can be obtained at https://developer.clarifai.com/applications
-    private let AppID = "vM05qo55uhZard2dL4BixmMm4WsHIl6CsGCTgS_7";
-    private let AppSecret = "rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM";
+    private let AppID = "vM05qo55uhZard2dL4BixmMm4WsHIl6CsGCTgS_7"
+    private let AppSecret = "rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
