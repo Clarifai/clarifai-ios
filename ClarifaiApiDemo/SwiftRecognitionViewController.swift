@@ -6,10 +6,7 @@
 import UIKit
 
 /**
- * This is a Swift version of RecognitionViewController.
- *
- * This code is NOT executed by default! To use this class, go into Main.storyboard and change the
- * type of the view controller from RecognitionViewController to SwiftRecognitionViewController.
+ * This view controller performs recognition using the Clarifai API.
  */
 class SwiftRecognitionViewController : UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
@@ -56,8 +53,8 @@ class SwiftRecognitionViewController : UIViewController, UIImagePickerController
     }
 
     private func recognizeImage(image: UIImage!) {
-        // Scale down the image. This step is optional. However, sending large images is slower and
-        // does not significantly affect recognition performance.
+        // Scale down the image. This step is optional. However, sending large images over the
+        // network is slow and does not significantly improve recognition performance.
         let size = CGSizeMake(320, 320 * image.size.height / image.size.width)
         UIGraphicsBeginImageContext(size)
         image.drawInRect(CGRectMake(0, 0, size.width, size.height))

@@ -15,7 +15,8 @@ static NSString * const kAppSecret = @"rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
 
 
 /**
- * This view controller performs recognition using the Clarifai API.
+ * This view controller performs recognition using the Clarifai API. This code is not run by
+ * default (the Swift version is). See the README for instructions on using Objective-C.
  */
 @interface RecognitionViewController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
@@ -63,8 +64,8 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 }
 
 - (void)recognizeImage:(UIImage *)image {
-    // Scale down the image. This step is optional. However, sending large images is slower and
-    // does not significantly affect recognition performance.
+    // Scale down the image. This step is optional. However, sending large images over the
+    // network is slow and does not significantly improve recognition performance.
     CGSize size = CGSizeMake(320, 320 * image.size.height / image.size.width);
     UIGraphicsBeginImageContext(size);
     [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
