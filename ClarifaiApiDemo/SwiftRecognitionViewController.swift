@@ -10,10 +10,19 @@ import UIKit
  */
 class SwiftRecognitionViewController : UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-    // IMPORTANT NOTE: you should replace these keys with your own App ID and secret.
-    // These can be obtained at https://developer.clarifai.com/applications
-    private let AppID = "vM05qo55uhZard2dL4BixmMm4WsHIl6CsGCTgS_7"
-    private let AppSecret = "rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
+    private struct Constants {
+        // IMPORTANT NOTE: you should replace these keys with your own App ID and secret.
+        // These can be obtained at https://developer.clarifai.com/applications
+        static let AppID = "vM05qo55uhZard2dL4BixmMm4WsHIl6CsGCTgS_7"
+        static let AppSecret = "rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
+
+        // Custom Training (Alpha): to predict against a custom concept (instead of the standard
+        // tag model), set this to be the name of the concept you wish to predict against. You must
+        // have previously trained this concept using the same app ID and secret as above. For more
+        // info on custom training, see https://github.com/Clarifai/hackathon
+        static let ConceptName: String? = nil
+        static let ConceptNamespace = "default"
+    }
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
@@ -21,7 +30,7 @@ class SwiftRecognitionViewController : UIViewController, UIImagePickerController
 
     private var client : ClarifaiClient {
         get {
-            let c = ClarifaiClient(appID: AppID, appSecret: AppSecret)
+            let c = ClarifaiClient(appID: Constants.AppID, appSecret: Constants.AppSecret)
             // Uncomment this to request embeddings. Contact us to enable embeddings for your app:
             // c.enableEmbed = true
             return c
@@ -64,15 +73,28 @@ class SwiftRecognitionViewController : UIViewController, UIImagePickerController
         // Encode as a JPEG.
         let jpeg = UIImageJPEGRepresentation(scaledImage, 0.9)!
 
-        // Send the JPEG to Clarifai for recognition.
-        client.recognizeJpegs([jpeg], completion: { (results: [ClarifaiResult]?, error: NSError?) in
-            if (error != nil) {
-                print("Error: \(error)\n")
-                self.textView.text = "Sorry, there was an error recognizing the image."
-            } else {
-                self.textView.text = "Tags:\n" + results![0].tags.joinWithSeparator(", ")
-            }
-            self.button.enabled = true
-        })
+        if (Constants.ConceptName == nil) {
+            // Standard Recognition: Send the JPEG to Clarifai for standard image tagging.
+            client.recognizeJpegs([jpeg], completion: { (results: [ClarifaiResult]?, error: NSError?) in
+                if (error != nil) {
+                    print("Error: \(error)\n")
+                    self.textView.text = "Sorry, there was an error recognizing your image."
+                } else {
+                    self.textView.text = "Tags:\n" + results![0].tags.joinWithSeparator(", ")
+                }
+                self.button.enabled = true
+            })
+        } else {
+            // Custom Training: Send the JPEG to Clarifai for prediction against a custom model.
+            client.predictJpegs([jpeg], conceptNamespace: Constants.ConceptNamespace, conceptName: Constants.ConceptName, completion: { (results: [ClarifaiPredictionResult]?, error: NSError?) in
+                if (error != nil) {
+                    print("Error: \(error)\n")
+                    self.textView.text = "Sorry, there was an error running prediction on your image."
+                } else {
+                    self.textView.text = "Prediction score for \(Constants.ConceptName!):\n\(results![0].score)"
+                }
+                self.button.enabled = true
+            })
+        }
     }
 }
