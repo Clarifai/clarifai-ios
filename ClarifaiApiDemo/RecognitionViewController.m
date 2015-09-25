@@ -9,9 +9,16 @@
 
 // IMPORTANT NOTE: you should replace these keys with your own App ID and secret.
 // These can be obtained at https://developer.clarifai.com/applications
-
 static NSString * const kAppID = @"vM05qo55uhZard2dL4BixmMm4WsHIl6CsGCTgS_7";
 static NSString * const kAppSecret = @"rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM";
+
+
+// Custom Training (Alpha): to predict against a custom concept (instead of the standard tag model),
+// set this to be the name of the concept you wish to predict against. You must have previously
+// trained this concept using the same app ID and secret as above. For more info on custom
+// training, see https://github.com/Clarifai/hackathon
+static NSString * const kConceptName = nil;
+static NSString * const kConceptNamespace = @"default";
 
 
 /**
@@ -75,19 +82,38 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     // Encode as a JPEG.
     NSData *jpeg = UIImageJPEGRepresentation(scaledImage, 0.9);
 
-    // Send the JPEG to Clarifai for recognition.
-    [self.client recognizeJpegs:@[jpeg] completion:^(NSArray *results, NSError *error) {
-        // Handle the response from Clarifai. This happens asynchronously.
-        if (error) {
-            NSLog(@"Error: %@", error);
-            self.textView.text = @"Sorry, there was an error recognizing the image.";
-        } else {
-            ClarifaiResult *result = results.firstObject;
-            self.textView.text = [NSString stringWithFormat:@"Tags:\n%@",
-                                  [result.tags componentsJoinedByString:@", "]];
-        }
-        self.button.enabled = YES;
-    }];
+    if (!kConceptName) {
+        // Standard Recognition: Send the JPEG to Clarifai for standard image tagging.
+        [self.client recognizeJpegs:@[jpeg] completion:^(NSArray *results, NSError *error) {
+            // Handle the response from Clarifai. This happens asynchronously.
+            if (error) {
+                NSLog(@"Error: %@", error);
+                self.textView.text = @"Sorry, there was an error recognizing the image.";
+            } else {
+                ClarifaiResult *result = results.firstObject;
+                self.textView.text = [NSString stringWithFormat:@"Tags:\n%@",
+                                      [result.tags componentsJoinedByString:@", "]];
+            }
+            self.button.enabled = YES;
+        }];
+    } else {
+        // Custom Training: Send the JPEG to Clarifai for prediction against a custom model.
+        [self.client predictJpegs:@[jpeg]
+                 conceptNamespace:kConceptNamespace
+                      conceptName:kConceptName
+                       completion:
+         ^(NSArray<ClarifaiPredictionResult *> *results, NSError *error) {
+             if (error) {
+                 NSLog(@"Error: %@", error);
+                 self.textView.text = @"Sorry, there was an error running prediction on the image.";
+             } else {
+                 ClarifaiPredictionResult *result = results.firstObject;
+                 self.textView.text = [NSString stringWithFormat:@"Prediction score for %@:\n%f",
+                                       kConceptName, result.score];
+             }
+             self.button.enabled = YES;
+         }];
+    }
 }
 
 @end
