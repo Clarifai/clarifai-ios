@@ -39,6 +39,12 @@ need to:
 3. In the Identity Inspector, change the custom class to `RecognitionViewController`
 
 
+## Custom Training
+This project supports prediction against custom-trained concepts. Once you train a concept (instructions [here](https://github.com/Clarifai/hackathon)), you can call the `predictJpegs` and `predictURLs` methods on [ClarifaiClient](https://github.com/Clarifai/clarifai-ios-starter/blob/master/ClarifaiApiDemo/ClarifaiClient.m) to get back scores indicating how well images match the concept. A simple example can be enabled by setting the `ConceptName` constant in [SwiftRecognitionViewController](https://github.com/Clarifai/clarifai-ios-starter/blob/master/ClarifaiApiDemo/SwiftRecognitionViewController.swift) or `kConceptName` in [RecognitionViewController](https://github.com/Clarifai/clarifai-ios-starter/blob/master/ClarifaiApiDemo/RecognitionViewController.m).
+
+Custom concepts are private to a given application. As a result, you must ensure that the same app ID and app secret are used for both training and prediction.
+
+
 ## Next steps
 Feel free to use this project as a base for building your app. Alternately, you can copy
 `ClarifaiClient.h` and `ClarifaiClient.m` into a your own project and use them to make calls
