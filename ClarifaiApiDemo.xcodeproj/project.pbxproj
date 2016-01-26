@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4032B3FE1C57AEBA0093FA9E /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4032B3FD1C57AEBA0093FA9E /* Credentials.swift */; };
 		404EFC761BACA33F009D4381 /* ClarifaiClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 404EFC751BACA33F009D4381 /* ClarifaiClient.m */; };
 		407195211BADD02B0076B650 /* RecognitionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 407195201BADD02B0076B650 /* RecognitionViewController.m */; };
 		4088A4381BAEF1B500B1C682 /* SwiftRecognitionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4088A4371BAEF1B500B1C682 /* SwiftRecognitionViewController.swift */; };
@@ -32,6 +33,7 @@
 /* Begin PBXFileReference section */
 		210D6046DE03F46F0C90049F /* Pods-ClarifaiApiDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiApiDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiApiDemo/Pods-ClarifaiApiDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		2C96310E8AE89EB32A1BF45E /* Pods-ClarifaiApiDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiApiDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiApiDemo/Pods-ClarifaiApiDemo.release.xcconfig"; sourceTree = "<group>"; };
+		4032B3FD1C57AEBA0093FA9E /* Credentials.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		404EFC741BACA33F009D4381 /* ClarifaiClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiClient.h; sourceTree = "<group>"; };
 		404EFC751BACA33F009D4381 /* ClarifaiClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClarifaiClient.m; sourceTree = "<group>"; };
 		4071951F1BADD02B0076B650 /* RecognitionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecognitionViewController.h; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				408D395D1BACA1FA00C5608B /* AppDelegate.m */,
 				404EFC741BACA33F009D4381 /* ClarifaiClient.h */,
 				404EFC751BACA33F009D4381 /* ClarifaiClient.m */,
+				4032B3FD1C57AEBA0093FA9E /* Credentials.swift */,
 				4071951F1BADD02B0076B650 /* RecognitionViewController.h */,
 				407195201BADD02B0076B650 /* RecognitionViewController.m */,
 				4088A4371BAEF1B500B1C682 /* SwiftRecognitionViewController.swift */,
@@ -165,6 +168,7 @@
 				408D39521BACA1FA00C5608B /* Frameworks */,
 				408D39531BACA1FA00C5608B /* Resources */,
 				11374F1E7949B08128993552 /* Copy Pods Resources */,
+				ACFB00216CB35F99884A3BAC /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -283,6 +287,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		ACFB00216CB35F99884A3BAC /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClarifaiApiDemo/Pods-ClarifaiApiDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -290,6 +309,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4032B3FE1C57AEBA0093FA9E /* Credentials.swift in Sources */,
 				404EFC761BACA33F009D4381 /* ClarifaiClient.m in Sources */,
 				4088A4381BAEF1B500B1C682 /* SwiftRecognitionViewController.swift in Sources */,
 				408D395E1BACA1FA00C5608B /* AppDelegate.m in Sources */,

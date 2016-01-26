@@ -9,11 +9,6 @@ import UIKit
  * This view controller performs recognition using the Clarifai API.
  */
 class SwiftRecognitionViewController : UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    // IMPORTANT NOTE: you should replace these keys with your own App ID and secret.
-    // These can be obtained at https://developer.clarifai.com/applications
-    static let appID = "vM05qo55uhZard2dL4BixmMm4WsHIl6CsGCTgS_7"
-    static let appSecret = "rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM"
-
     // Custom Training (Alpha): to predict against a custom concept (instead of the standard
     // tag model), set this to be the name of the concept you wish to predict against. You must
     // have previously trained this concept using the same app ID and secret as above. For more
@@ -25,12 +20,8 @@ class SwiftRecognitionViewController : UIViewController, UIImagePickerController
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var button: UIButton!
 
-    private lazy var client : ClarifaiClient = {
-        let c = ClarifaiClient(appID: appID, appSecret: appSecret)
-        // Uncomment this to request embeddings. Contact us to enable embeddings for your app:
-        // c.enableEmbed = true
-        return c
-    }()
+    private lazy var client : ClarifaiClient =
+        ClarifaiClient(appID: clarifaiClientID, appSecret: clarifaiClientSecret)
 
     @IBAction func buttonPressed(sender: UIButton) {
         // Show a UIImagePickerController to let the user pick an image from their library.

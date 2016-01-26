@@ -4,13 +4,8 @@
 //
 
 #import "RecognitionViewController.h"
+#import "ClarifaiApiDemo-Swift.h"
 #import "ClarifaiClient.h"
-
-
-// IMPORTANT NOTE: you should replace these keys with your own App ID and secret.
-// These can be obtained at https://developer.clarifai.com/applications
-static NSString * const kAppID = @"vM05qo55uhZard2dL4BixmMm4WsHIl6CsGCTgS_7";
-static NSString * const kAppSecret = @"rx4oPPiXiCWNRVcoJ0huLz02cKiQUZtq5JPVrhjM";
 
 
 // Custom Training (Alpha): to predict against a custom concept (instead of the standard tag model),
@@ -37,9 +32,8 @@ static NSString * const kConceptNamespace = @"default";
 
 - (ClarifaiClient *)client {
     if (!_client) {
-        _client = [[ClarifaiClient alloc] initWithAppID:kAppID appSecret:kAppSecret];
-        // Uncomment this to request embeddings. Contact us to enable embeddings for your app:
-        // _client.enableEmbed = YES;
+        _client = [[ClarifaiClient alloc] initWithAppID:[Credentials clientID]
+                                              appSecret:[Credentials clientSecret]];
     }
     return _client;
 }
