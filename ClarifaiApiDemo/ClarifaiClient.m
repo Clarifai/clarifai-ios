@@ -10,8 +10,6 @@
 #define SafeRunBlock(block, ...) block ? block(__VA_ARGS__) : nil
 
 static NSString * const kApiBaseUrl = @"https://api.clarifai.com/v1";
-static NSString * const kUploadUrl = @"https://s3.amazonaws.com/clarifai-mobile-sdk-temp-storage";
-static NSString * const kConceptBaseUrl = @"https://api-alpha.clarifai.com/v1/curator/concepts";
 static NSString * const kErrorDomain = @"com.clarifai.ClarifaiClient";
 static NSString * const kKeyAccessToken = @"com.clarifai.ClarifaiClient.AccessToken";
 static NSString * const kKeyAppID = @"com.clarifai.ClarifaiClient.AppID";
@@ -40,19 +38,6 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
 @end
 
 
-@implementation ClarifaiPredictionResult
-
-- (instancetype)initWithDictionary:(NSDictionary *)dict {
-    self = [super init];
-    if (self) {
-        _score = [dict[@"score"] doubleValue];
-    }
-    return self;
-}
-
-@end
-
-
 /** Response to the a multiop API call. */
 @interface ClarifaiMultiopResponse : NSObject
 @property (strong, nonatomic) NSString *statusCode;
@@ -71,32 +56,6 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
         }
         _statusCode = dict[@"status_code"];
         _statusMessage = dict[@"status_msg"];
-        _results = results;
-    }
-    return self;
-}
-
-@end
-
-
-/** Response to the a predict API call. */
-@interface ClarifaiPredictResponse : NSObject
-@property (strong, nonatomic) NSString *statusCode;
-@property (strong, nonatomic) NSString *statusMessage;
-@property (strong, nonatomic) NSArray<ClarifaiPredictionResult *> *results;
-@end
-
-@implementation ClarifaiPredictResponse
-
-- (instancetype)initWithDictionary:(NSDictionary *)dict {
-    self = [super init];
-    if (self) {
-        NSMutableArray<ClarifaiPredictionResult *> *results = [[NSMutableArray alloc] init];
-        for (NSDictionary *res in dict[@"urls"]) {
-            [results addObject:[[ClarifaiPredictionResult alloc] initWithDictionary:res]];
-        }
-        _statusCode = dict[@"status"][@"status"];
-        _statusMessage = dict[@"status"][@"message"];
         _results = results;
     }
     return self;
@@ -187,60 +146,6 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
     } completion:completion];
 }
 
-- (void)predictJpegs:(NSArray<NSData *> *)jpegs
-    conceptNamespace:(NSString *)conceptNamespace
-         conceptName:(NSString *)conceptName
-          completion:(ClarifaiPredictionCompletion)completion {
-  // The prediction API does not support sending image bytes yet (it's coming soon!), so for now,
-  // we upload to S3 temporarily and then pass the URL to the predictURLs.
-  [self uploadJpegs:jpegs completion:^(NSArray<NSString *> *urls, NSError *error) {
-      if (error) {
-          SafeRunBlock(completion, nil, error);
-      } else {
-          [self predictURLs:urls conceptNamespace:conceptNamespace conceptName:conceptName
-                 completion:completion];
-      }
-  }];
-}
-
-- (void)predictURLs:(NSArray<NSString *> *)urls
-   conceptNamespace:(NSString *)conceptNamespace
-        conceptName:(NSString *)conceptName
-         completion:(ClarifaiPredictionCompletion)completion {
-    [self ensureValidAccessToken:^(NSError *error) {
-        if (error) {
-            SafeRunBlock(completion, nil, error);
-            return;
-        }
-        NSString *url = [NSString stringWithFormat:@"%@/%@/%@/predict",
-                         kConceptBaseUrl, conceptNamespace ?: @"default", conceptName];
-        NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-        req.HTTPMethod = @"POST";
-        req.HTTPBody = [NSJSONSerialization dataWithJSONObject:@{@"urls": urls} options:0 error:nil];
-        [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-        [req setValue:[NSString stringWithFormat:@"Bearer %@", self.accessToken]
-             forHTTPHeaderField:@"Authorization"];
-        AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:req];
-        op.responseSerializer = [AFJSONResponseSerializer serializer];
-        [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *op, id res) {
-            NSArray *results = [[ClarifaiPredictResponse alloc] initWithDictionary:res].results;
-            SafeRunBlock(completion, results, nil);
-        } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-            if (op.response.statusCode >= 400) {
-                error = [self errorFromHttpResponse:op];  // Generate a more informative error.
-            }
-            if (op.response.statusCode == 401) {
-                NSLog(@"/predict: Received 401 response. Access token was revoked.");
-                [self invalidateAccessToken];
-                SafeRunBlock(completion, nil, error);
-            } else {
-                SafeRunBlock(completion, nil, error);
-            }
-        }];
-        [op start];
-    }];
-}
-
 #pragma mark -
 
 - (void)recognizeWithBodyBlock:(void (^)(id<AFMultipartFormData> formData))bodyBlock
@@ -251,8 +156,7 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
             return;
         }
         NSString *url = [kApiBaseUrl stringByAppendingString:@"/multiop"];
-        NSDictionary *params = self.enableEmbed ? @{@"model": @"general-v1.2", @"op": @"tag,embed"}
-                : @{@"model": @"general-v1.2", @"op": @"tag"};
+        NSDictionary *params = self.enableEmbed ? @{@"op": @"tag,embed"} : @{@"op": @"tag"};
         [self.manager POST:url parameters:params constructingBodyWithBlock:bodyBlock success:
          ^(AFHTTPRequestOperation *op, NSDictionary *res) {
              // Batch requests return a separate response for each component. Ignore the top-level
@@ -272,46 +176,6 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
              }
          }];
     }];
-}
-
-- (void)uploadJpegs:(NSArray<NSData *> *)jpegs
-         completion:(void (^)(NSArray<NSString *> *urls, NSError *error))completion {
-    if (jpegs.count == 0) {
-        SafeRunBlock(completion, @[], nil);
-        return;
-    }
-    NSMutableArray *urls = [[NSMutableArray alloc] init];
-    __block NSError *error = nil;
-    __block NSInteger numResponses = 0;
-    for (NSData *jpeg in jpegs) {
-        NSString *url = [self randomURL];
-        [urls addObject:url];
-        NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-        req.HTTPMethod = @"PUT";
-        req.HTTPBody = jpeg;
-        NSString *contentLength = [NSString stringWithFormat:@"%d", (int)jpeg.length];
-        [req addValue:contentLength forHTTPHeaderField:@"Content-Length"];
-        [req addValue:@"ClarifaiClient" forHTTPHeaderField:@"User-Agent"];
-
-        AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:req];
-        [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            if (++numResponses == jpegs.count) {
-                SafeRunBlock(completion, error ? nil : urls, error);
-            }
-        } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-            if (!error) {
-                error = e;
-            }
-            if (++numResponses == jpegs.count) {
-                SafeRunBlock(completion, nil, error);
-            }
-        }];
-        [op start];
-    }
-}
-
-- (NSString *)randomURL {
-    return [NSString stringWithFormat:@"%@/%08x%08x.jpg", kUploadUrl, arc4random(), arc4random()];
 }
 
 #pragma mark - Access Token Management

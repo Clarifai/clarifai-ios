@@ -9,19 +9,11 @@ import UIKit
  * This view controller performs recognition using the Clarifai API.
  */
 class SwiftRecognitionViewController : UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    // Custom Training (Alpha): to predict against a custom concept (instead of the standard
-    // tag model), set this to be the name of the concept you wish to predict against. You must
-    // have previously trained this concept using the same app ID and secret as above. For more
-    // info on custom training, see https://github.com/Clarifai/hackathon
-    static let conceptName: String? = nil
-    static let conceptNamespace = "default"
-
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var button: UIButton!
 
-    private lazy var client : ClarifaiClient =
-        ClarifaiClient(appID: clarifaiClientID, appSecret: clarifaiClientSecret)
+    private lazy var client : ClarifaiClient = ClarifaiClient(appID: clarifaiClientID, appSecret: clarifaiClientSecret)
 
     @IBAction func buttonPressed(sender: UIButton) {
         // Show a UIImagePickerController to let the user pick an image from their library.
@@ -59,30 +51,16 @@ class SwiftRecognitionViewController : UIViewController, UIImagePickerController
         // Encode as a JPEG.
         let jpeg = UIImageJPEGRepresentation(scaledImage, 0.9)!
 
-        if SwiftRecognitionViewController.conceptName == nil {
-            // Standard Recognition: Send the JPEG to Clarifai for standard image tagging.
-            client.recognizeJpegs([jpeg]) {
-                (results: [ClarifaiResult]?, error: NSError?) in
-                if error != nil {
-                    print("Error: \(error)\n")
-                    self.textView.text = "Sorry, there was an error recognizing your image."
-                } else {
-                    self.textView.text = "Tags:\n" + results![0].tags.joinWithSeparator(", ")
-                }
-                self.button.enabled = true
+        // Send the JPEG to Clarifai for standard image tagging.
+        client.recognizeJpegs([jpeg]) {
+            (results: [ClarifaiResult]?, error: NSError?) in
+            if error != nil {
+                print("Error: \(error)\n")
+                self.textView.text = "Sorry, there was an error recognizing your image."
+            } else {
+                self.textView.text = "Tags:\n" + results![0].tags.joinWithSeparator(", ")
             }
-        } else {
-            // Custom Training: Send the JPEG to Clarifai for prediction against a custom model.
-            client.predictJpegs([jpeg], conceptNamespace: SwiftRecognitionViewController.conceptNamespace, conceptName: SwiftRecognitionViewController.conceptName) {
-                (results: [ClarifaiPredictionResult]?, error: NSError?) in
-                if error != nil {
-                    print("Error: \(error)\n")
-                    self.textView.text = "Sorry, there was an error running prediction on your image."
-                } else {
-                    self.textView.text = "Prediction score for \(SwiftRecognitionViewController.conceptName!):\n\(results![0].score)"
-                }
-                self.button.enabled = true
-            }
+            self.button.enabled = true
         }
     }
 }

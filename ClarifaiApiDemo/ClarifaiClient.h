@@ -33,15 +33,6 @@
 @end
 
 
-/** Single result in a response from the Clarifai custom training prediction API. */
-@interface ClarifaiPredictionResult : NSObject
-
-/** Value between 0 and 1 indicating the confidence that the image belongs to the concept. */
-@property (assign, nonatomic, readonly) double score;
-
-@end
-
-
 /**
  * Block invoked when image recognition completes.
  *
@@ -49,16 +40,6 @@
  * @param error   error, if any, or nil on success.
  */
 typedef void (^ClarifaiRecognitionCompletion)(NSArray<ClarifaiResult *> *results, NSError *error);
-
-
-/**
- * Block invoked when custom training prediction completes.
- *
- * @param results array of ClarifaiPredictionResults, one for each requested image.
- * @param error   error, if any, or nil on success.
- */
-typedef void (^ClarifaiPredictionCompletion)(NSArray<ClarifaiPredictionResult *> *results,
-                                             NSError *error);
 
 
 /** Client for the CLarifai API. */
@@ -98,40 +79,5 @@ typedef void (^ClarifaiPredictionCompletion)(NSArray<ClarifaiPredictionResult *>
  */
 - (void)recognizeURLs:(NSArray<NSString *> *)urls
            completion:(ClarifaiRecognitionCompletion)completion;
-
-
-#pragma mark - Custom Training (Alpha)
-
-/**
- * Runs prediction on one or more JPEGs against a custom-trained concept with a given namespace
- * and concept name. You must have previously trained this concept using the same app ID and secret
- * that you passed to this class's initializer. Note that custom training is currently in alpha and
- * is subject to breaking changes in the future.
- *
- * @param jpegs             Array of NSData containing JPEG images to send to the server
- * @param conceptNamespace  The namespace of the custom-trained concept
- * @param conceptName       The name of the custom-trained concept
- * @param completion        Invoked when the request completes
- */
-- (void)predictJpegs:(NSArray<NSData *> *)jpegs
-    conceptNamespace:(NSString *)conceptNamespace
-         conceptName:(NSString *)conceptName
-          completion:(ClarifaiPredictionCompletion)completion;
-
-/**
- * Runs prediction on one or more URLs against a custom-trained concept with a given namespace
- * and concept name. You must have previously trained this concept using the same app ID and secret
- * that you passed to this class's initializer. Note that custom training is currently in alpha and
- * is subject to breaking changes in the future.
- *
- * @param urls              Array of NSStrings containing publicly accessible URLs to predict on
- * @param conceptNamespace  The namespace of the custom-trained concept
- * @param conceptName       The name of the custom-trained concept
- * @param completion        Invoked when the request completes
- */
-- (void)predictURLs:(NSArray<NSString *> *)urls
-   conceptNamespace:(NSString *)conceptNamespace
-        conceptName:(NSString *)conceptName
-         completion:(ClarifaiPredictionCompletion)completion;
 
 @end
