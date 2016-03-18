@@ -31,7 +31,7 @@ class SwiftRecognitionViewController : UIViewController, UIImagePickerController
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: AnyObject]) {
         dismissViewControllerAnimated(true, completion: nil)
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            // The user picked an image. Send it Clarifai for recognition.
+            // The user picked an image. Send it to Clarifai for recognition.
             imageView.image = image
             textView.text = "Recognizing..."
             button.enabled = false
