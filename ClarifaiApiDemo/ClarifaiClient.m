@@ -86,7 +86,7 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
 
 @interface ClarifaiClient ()
 @property (assign, nonatomic) BOOL authenticating;
-@property (strong, nonatomic) AFHTTPRequestOperationManager *manager;
+@property (strong, nonatomic) AFHTTPSessionManager *manager;
 @property (strong, nonatomic) NSString *appID;
 @property (strong, nonatomic) NSString *appSecret;
 @property (strong, nonatomic) NSString *accessToken;
@@ -103,7 +103,7 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
         _appSecret = appSecret;
 
         // Configure AFNetworking:
-        _manager = [AFHTTPRequestOperationManager manager];
+        _manager = [AFHTTPSessionManager manager];
         _manager.operationQueue.maxConcurrentOperationCount = 4;
         _manager.responseSerializer = [AFJSONResponseSerializer serializer];
         _manager.responseSerializer.acceptableContentTypes =
@@ -157,24 +157,21 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
         }
         NSString *url = [kApiBaseUrl stringByAppendingString:@"/multiop"];
         NSDictionary *params = self.enableEmbed ? @{@"op": @"tag,embed"} : @{@"op": @"tag"};
-        [self.manager POST:url parameters:params constructingBodyWithBlock:bodyBlock success:
-         ^(AFHTTPRequestOperation *op, NSDictionary *res) {
-             // Batch requests return a separate response for each component. Ignore the top-level
-             // response and process the sub-responses if they exist.
-             NSArray *results = [[ClarifaiMultiopResponse alloc] initWithDictionary:res].results;
-             SafeRunBlock(completion, results, nil);
-         } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-             if (op.response.statusCode >= 400) {
-                 error = [self errorFromHttpResponse:op];  // Generate a more informative error.
-             }
-             if (op.response.statusCode == 401) {
-                 NSLog(@"/multiop: Received 401 response. Access token was revoked.");
-                 [self invalidateAccessToken];
-                 SafeRunBlock(completion, nil, error);
-             } else {
-                 SafeRunBlock(completion, nil, error);
-             }
-         }];
+        [self.manager POST:url parameters:params constructingBodyWithBlock:bodyBlock progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+          // Batch requests return a separate response for each component. Ignore the top-level
+          // response and process the sub-responses if they exist.
+          NSArray *results = [[ClarifaiMultiopResponse alloc] initWithDictionary:responseObject].results;
+          SafeRunBlock(completion, results, nil);
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)task.response;
+          if (httpResponse.statusCode == 401) {
+            NSLog(@"/multiop: Received 401 response. Access token was revoked.");
+            [self invalidateAccessToken];
+            SafeRunBlock(completion, nil, error);
+          } else {
+            SafeRunBlock(completion, nil, error);
+          }
+        }];
     }];
 }
 
@@ -190,21 +187,17 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
         NSDictionary *params = @{@"grant_type": @"client_credentials",
                                  @"client_id": self.appID,
                                  @"client_secret": self.appSecret};
-        [self.manager POST:[kApiBaseUrl stringByAppendingString:@"/token"]
-                parameters:params
-                   success:^(AFHTTPRequestOperation *op, id response) {
-                       ClarifaiAccessTokenResponse *res = [[ClarifaiAccessTokenResponse alloc]
-                                                           initWithDictionary:response];
-                       [self saveAccessToken:res];
-                       self.authenticating = NO;
-                       handler(nil);
-                   } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                       if (op.response.statusCode >= 400) {
-                           error = [self errorFromHttpResponse:op];
-                       }
-                       self.authenticating = NO;
-                       handler(error);
-                   }];
+      [self.manager POST:[kApiBaseUrl stringByAppendingString:@"/token"] parameters:params progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        ClarifaiAccessTokenResponse *res = [[ClarifaiAccessTokenResponse alloc]
+                                            initWithDictionary:responseObject];
+        [self saveAccessToken:res];
+        self.authenticating = NO;
+        handler(nil);
+      } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)task.response;
+        self.authenticating = NO;
+        handler(error);
+      }];
     }
 }
 
@@ -239,21 +232,6 @@ static NSTimeInterval const kMinTokenLifetime = 60.0;
     [defaults synchronize];
     self.accessToken = nil;
     self.accessTokenExpiration = nil;
-}
-
-#pragma mark -
-
-- (NSError *)errorFromHttpResponse:(AFHTTPRequestOperation *)op {
-    NSString *desc;
-    if (op.responseString) {
-        desc = op.responseString;
-    } else {
-        desc = [NSString stringWithFormat:@"HTTP Status %d", (int)op.response.statusCode];
-    }
-    NSString *url = [op.request.URL absoluteString];
-    return [[NSError alloc] initWithDomain:kErrorDomain
-                                      code:op.response.statusCode
-                                  userInfo:@{@"description": desc, @"url": url}];
 }
 
 @end
