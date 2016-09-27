@@ -13,8 +13,8 @@ import Foundation
 // Also, if you're committing your code to a public repo, be careful not to check in your
 // credentials -- we're including these here so you can get started out of the box, but this is
 // generally a bad practice.
-let clarifaiClientID = "CUnWfeKR9C2FyBvjLZwuumEBDztv_gqzw4TukmD3"
-let clarifaiClientSecret = "KvqSM_ZoChUr1DEDsYYG1QpfXPzY-ECS9XfeGj9L"
+let clarifaiClientID = ""
+let clarifaiClientSecret = ""
 
 
 @objc class Credentials : NSObject {

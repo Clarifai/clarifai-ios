@@ -10,7 +10,7 @@ of the API in both Swift and Objective-C. Full Clarifai API documentation can be
 
 [![Build Status](https://travis-ci.org/Clarifai/clarifai-ios-starter.svg?branch=master)](https://travis-ci.org/Clarifai/clarifai-ios-starter)
 
-To build this project, you need [Xcode 7](https://developer.apple.com/xcode/download/) and [CocoaPods](http://cocoapods.org/). To build and run:
+To build this project, you need [Xcode 8](https://developer.apple.com/xcode/download/) and [CocoaPods](http://cocoapods.org/). To build and run:
 
 1. Install dependencies and generate workspace.
   ```
@@ -48,9 +48,3 @@ you need to:
 2. Select "Clarifai Scene"
 3. In the Identity Inspector, change the custom class to `RecognitionViewController`
 
-
-## Next steps
-Feel free to use this project as a base for building your app. Alternately, you can copy
-[ClarifaiClient.h](ClarifaiApiDemo/ClarifaiClient.h) and
-[ClarifaiClient.m](ClarifaiApiDemo/ClarifaiClient.m) into a your own project and use them to make
-calls to Clarifai. Have fun!

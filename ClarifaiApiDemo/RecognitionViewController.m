@@ -5,7 +5,7 @@
 
 #import "RecognitionViewController.h"
 #import "ClarifaiApiDemo-Swift.h"
-#import "ClarifaiClient.h"
+#import "ClarifaiApp.h"
 
 
 /**
@@ -16,18 +16,11 @@
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UITextView *textView;
 @property (weak, nonatomic) IBOutlet UIButton *button;
-@property (strong, nonatomic) ClarifaiClient *client;
+@property (strong, nonatomic) ClarifaiApp *app;
 @end
 
 
 @implementation RecognitionViewController
-
-- (ClarifaiClient *)client {
-    if (!_client) {
-        _client = [[ClarifaiClient alloc] initWithAppID:[Credentials clientID] appSecret:[Credentials clientSecret]];
-    }
-    return _client;
-}
 
 - (IBAction)buttonPressed:(id)sender {
     // Show a UIImagePickerController to let the user pick an image from their library.
@@ -55,29 +48,24 @@
 }
 
 - (void)recognizeImage:(UIImage *)image {
-    // Scale down the image. This step is optional. However, sending large images over the
-    // network is slow and does not significantly improve recognition performance.
-    CGSize size = CGSizeMake(320, 320 * image.size.height / image.size.width);
-    UIGraphicsBeginImageContext(size);
-    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
-    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-
-    // Encode as a JPEG.
-    NSData *jpeg = UIImageJPEGRepresentation(scaledImage, 0.9);
-
-    // Send the JPEG to Clarifai for standard image tagging.
-    [self.client recognizeJpegs:@[jpeg] completion:^(NSArray *results, NSError *error) {
-        // Handle the response from Clarifai. This happens asynchronously.
-        if (error) {
-            NSLog(@"Error: %@", error);
-            self.textView.text = @"Sorry, there was an error recognizing the image.";
-        } else {
-            ClarifaiResult *result = results.firstObject;
-            self.textView.text = [NSString stringWithFormat:@"Tags:\n%@", [result.tags componentsJoinedByString:@", "]];
+  ClarifaiApp *app = [[ClarifaiApp alloc] initWithAppID:@"RUm2D9QVp2xNLAE9qEYGdLVMYszAGutsuOiS4es3"
+                                              appSecret:@"wGumnBX_0qHZSu_I0i0VV7fiWPVjG6QQm31dIMVH"];
+  
+  ClarifaiImage *clarifaiImage = [[ClarifaiImage alloc] initWithImage:image];
+  [app getModelByName:@"general-v1.3" completion:^(ClarifaiModel *model, NSError *error) {
+    [model predictOnImages:@[clarifaiImage] completion:^(NSArray<ClarifaiOutput *> *outputs, NSError *error) {
+      if (!error) {
+        ClarifaiOutput *output = outputs[0];
+        NSMutableArray *tags = [NSMutableArray array];
+        for (ClarifaiConcept *concept in output.concepts) {
+          [tags addObject:concept.conceptName];
         }
-        self.button.enabled = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+          self.textView.text = [NSString stringWithFormat:@"Tags:\n%@", [tags componentsJoinedByString:@", "]];
+        });
+      }
     }];
+  }];
 }
 
 @end
