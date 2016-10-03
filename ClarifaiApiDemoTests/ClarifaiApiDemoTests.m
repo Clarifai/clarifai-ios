@@ -22,8 +22,8 @@
 @implementation ClarifaiApiDemoTests
 
 - (void)setUp {
-  _app = [[ClarifaiApp alloc] initWithAppID:@"ob4VtfG9zi8nwFrnR__XurJuoXit7SdLi4QWa10I"
-                                  appSecret:@"ldYBWkDMKXNUPsfmgA-guxEXS_-Z4cy89vLAzUNy"];
+  _app = [[ClarifaiApp alloc] initWithAppID:@""
+                                  appSecret:@""];
   _conCount = 0;
 }
 
