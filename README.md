@@ -7,7 +7,7 @@ A client for iOS apps using the Clarifai v2 API.
 
 ## Installation
 ### CocoaPods
-The client will be up on Cocoapods soon. For now, download the repo and add the following to your Podfile to locally install it into your project:
+Clarifai api client can be easily installed with cocoapods. For more details on setting up cocoapods see [here](https://cocoapods.org). To integrate Clarifai into your project, simply add the following to your podfile:
 
 ```
 pod 'Clarifai'
