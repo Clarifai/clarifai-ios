@@ -4,13 +4,11 @@
 //
 
 #import "RecognitionViewController.h"
-#import "ClarifaiApiDemo-Swift.h"
 #import "ClarifaiApp.h"
 
-
 /**
- * This view controller performs recognition using the Clarifai API. This code is not run by
- * default (the Swift version is). See the README for instructions on using Objective-C.
+ * This view controller performs recognition using the Clarifai API.
+ * See the README for instructions on running the demo.
  */
 @interface RecognitionViewController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
@@ -48,24 +46,32 @@
 }
 
 - (void)recognizeImage:(UIImage *)image {
-  ClarifaiApp *app = [[ClarifaiApp alloc] initWithAppID:@""
-                                              appSecret:@""];
+
+    // Initialize the Clarifai app with your app's ID and Secret.
+    ClarifaiApp *app = [[ClarifaiApp alloc] initWithAppID:@""
+                                                appSecret:@""];
   
-  ClarifaiImage *clarifaiImage = [[ClarifaiImage alloc] initWithImage:image];
-  [app getModelByName:@"general-v1.3" completion:^(ClarifaiModel *model, NSError *error) {
-    [model predictOnImages:@[clarifaiImage] completion:^(NSArray<ClarifaiOutput *> *outputs, NSError *error) {
-      if (!error) {
-        ClarifaiOutput *output = outputs[0];
-        NSMutableArray *tags = [NSMutableArray array];
-        for (ClarifaiConcept *concept in output.concepts) {
-          [tags addObject:concept.conceptName];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-          self.textView.text = [NSString stringWithFormat:@"Tags:\n%@", [tags componentsJoinedByString:@", "]];
-        });
-      }
+    // Fetch Clarifai's general model.
+    [app getModelByName:@"general-v1.3" completion:^(ClarifaiModel *model, NSError *error) {
+        // Create a Clarifai image from a uiimage.
+        ClarifaiImage *clarifaiImage = [[ClarifaiImage alloc] initWithImage:image];
+        
+        // Use Clarifai's general model to pedict tags for the given image.
+        [model predictOnImages:@[clarifaiImage] completion:^(NSArray<ClarifaiOutput *> *outputs, NSError *error) {
+            if (!error) {
+                ClarifaiOutput *output = outputs[0];
+                
+                // Loop through predicted concepts (tags), and display them on the screen.
+                NSMutableArray *tags = [NSMutableArray array];
+                for (ClarifaiConcept *concept in output.concepts) {
+                    [tags addObject:concept.conceptName];
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.textView.text = [NSString stringWithFormat:@"Tags:\n%@", [tags componentsJoinedByString:@", "]];
+                });
+            }
+        }];
     }];
-  }];
 }
 
 @end

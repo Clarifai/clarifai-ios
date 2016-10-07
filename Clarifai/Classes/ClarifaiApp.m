@@ -107,6 +107,7 @@
         if (![input.mediaURL isEqual: @""] && input.mediaURL != nil) {
           // input has url
           image[@"url"] = input.mediaURL;
+          image[@"allow_duplicate_url"] = input.allowDuplicateURLs ? @YES : @NO;
         } else if (input.mediaData != nil) {
           // input has image data
           NSString *encodedString = [input.mediaData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];

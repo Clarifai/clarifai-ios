@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <AFNetworking/AFNetworking.h>
+@import AFNetworking;
 #import "ClarifaiModel.h"
 #import "ClarifaiSearchTerm.h"
 #import "ClarifaiConcept.h"
