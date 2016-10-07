@@ -10,7 +10,7 @@
         <!--Clarifai-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController title="Clarifai" automaticallyAdjustsScrollViewInsets="NO" id="vXZ-lx-hvc" customClass="SwiftRecognitionViewController" customModule="ClarifaiApiDemo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Clarifai" automaticallyAdjustsScrollViewInsets="NO" id="vXZ-lx-hvc" customClass="RecognitionViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>

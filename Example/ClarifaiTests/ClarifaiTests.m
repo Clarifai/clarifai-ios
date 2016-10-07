@@ -87,6 +87,7 @@ conceptsMutuallyExclusive:NO
 - (void)testAddInputs {
   CAIFuture *future = [[CAIFuture alloc] init];
   ClarifaiImage *img = [[ClarifaiImage alloc] initWithURL:@"https://samples.clarifai.com/metro-north.jpg"];
+  img.allowDuplicateURLs = YES;
   ClarifaiConcept *concept1 = [[ClarifaiConcept alloc] initWithConceptName:@"dogg"];
   concept1.score = 0;
   img.concepts = @[concept1];

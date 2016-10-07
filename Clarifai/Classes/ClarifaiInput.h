@@ -27,6 +27,9 @@
 /** Concepts associated with this input. */
 @property (strong, nonatomic) NSArray <ClarifaiConcept *> *concepts;
 
+/** If set to true, this input can use a duplicate url of one already added to the app. Defaults to false.*/
+@property BOOL allowDuplicateURLs;
+
 - (instancetype)initWithURL:(NSString *)url;
 - (instancetype)initWithURL:(NSString *)URL andConcepts:(NSArray *)concepts;
 

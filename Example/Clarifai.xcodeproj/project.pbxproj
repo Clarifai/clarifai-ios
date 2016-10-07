@@ -7,28 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4032B3FE1C57AEBA0093FA9E /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4032B3FD1C57AEBA0093FA9E /* Credentials.swift */; };
+		128147A778D8B3259B046C69 /* Pods_Clarifai.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C569392294295773E7FF66F7 /* Pods_Clarifai.framework */; };
+		2ECE15ED1620BFF3032BC8D3 /* Pods_ClarifaiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9C7FF2E7E021481371589B5 /* Pods_ClarifaiTests.framework */; };
 		407195211BADD02B0076B650 /* RecognitionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 407195201BADD02B0076B650 /* RecognitionViewController.m */; };
-		4088A4381BAEF1B500B1C682 /* SwiftRecognitionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4088A4371BAEF1B500B1C682 /* SwiftRecognitionViewController.swift */; };
 		408D395B1BACA1FA00C5608B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 408D395A1BACA1FA00C5608B /* main.m */; };
 		408D395E1BACA1FA00C5608B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 408D395D1BACA1FA00C5608B /* AppDelegate.m */; };
 		408D39641BACA1FA00C5608B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 408D39621BACA1FA00C5608B /* Main.storyboard */; };
 		408D39661BACA1FA00C5608B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 408D39651BACA1FA00C5608B /* Images.xcassets */; };
 		408D39691BACA1FA00C5608B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 408D39671BACA1FA00C5608B /* LaunchScreen.xib */; };
-		408D39751BACA1FA00C5608B /* ClarifaiApiDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 408D39741BACA1FA00C5608B /* ClarifaiApiDemoTests.m */; };
-		6D5D44C10112AA303F1D9832 /* libPods-ClarifaiApiDemoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E29E2F7329FB2713B8EB691 /* libPods-ClarifaiApiDemoTests.a */; };
-		85A8549BF1D35E1606A5BC2C /* libPods-ClarifaiApiDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3908FCAEDB4ED9DE2B4BCF4 /* libPods-ClarifaiApiDemo.a */; };
-		EB1CEBD01D78D034009391EA /* ClarifaiApp.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1CEBCF1D78D034009391EA /* ClarifaiApp.m */; };
-		EB1CEBD31D78E3B7009391EA /* ClarifaiInput.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1CEBD21D78E3B7009391EA /* ClarifaiInput.m */; };
-		EB1CEBD61D78E4EE009391EA /* ClarifaiImage.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1CEBD51D78E4EE009391EA /* ClarifaiImage.m */; };
-		EB1CEBD91D78ED1E009391EA /* ClarifaiOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1CEBD81D78ED1E009391EA /* ClarifaiOutput.m */; };
-		EB1CEBDC1D78EDCE009391EA /* ClarifaiModel.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1CEBDB1D78EDCE009391EA /* ClarifaiModel.m */; };
-		EB1CEBDF1D78EE72009391EA /* ClarifaiFace.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1CEBDE1D78EE72009391EA /* ClarifaiFace.m */; };
-		EB1CEBE21D78EECE009391EA /* ClarifaiConcept.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1CEBE11D78EECE009391EA /* ClarifaiConcept.m */; };
-		EB5290E11D8B0FBE005AF0FF /* ClarifaiModelVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = EB5290E01D8B0FBD005AF0FF /* ClarifaiModelVersion.m */; };
-		FB1E87911D89FE500013C976 /* NSArray+Clarifai.m in Sources */ = {isa = PBXBuildFile; fileRef = FB1E87901D89FE500013C976 /* NSArray+Clarifai.m */; };
-		FB1E88021D8B19460013C976 /* ClarifaiSearchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FB1E88011D8B19460013C976 /* ClarifaiSearchResult.m */; };
-		FB513E9F1D8C73F9001233FF /* ClarifaiSearchTerm.m in Sources */ = {isa = PBXBuildFile; fileRef = FB513E9E1D8C73F9001233FF /* ClarifaiSearchTerm.m */; };
+		408D39751BACA1FA00C5608B /* ClarifaiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 408D39741BACA1FA00C5608B /* ClarifaiTests.m */; };
 		FB714F801CFBE7A6007FD7E3 /* CAIFuture.m in Sources */ = {isa = PBXBuildFile; fileRef = FB714F7F1CFBE7A6007FD7E3 /* CAIFuture.m */; };
 		FB714F871CFBF15C007FD7E3 /* geth.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FB714F861CFBF15C007FD7E3 /* geth.jpg */; };
 		FB714F891CFBF189007FD7E3 /* geth.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FB714F861CFBF15C007FD7E3 /* geth.jpg */; };
@@ -45,16 +32,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		210D6046DE03F46F0C90049F /* Pods-ClarifaiApiDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiApiDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiApiDemo/Pods-ClarifaiApiDemo.debug.xcconfig"; sourceTree = "<group>"; };
-		2C96310E8AE89EB32A1BF45E /* Pods-ClarifaiApiDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiApiDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiApiDemo/Pods-ClarifaiApiDemo.release.xcconfig"; sourceTree = "<group>"; };
-		3D1EEB80D5A7BF58E5E96014 /* Pods-ClarifaiApiDemoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiApiDemoTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiApiDemoTests/Pods-ClarifaiApiDemoTests.release.xcconfig"; sourceTree = "<group>"; };
 		3E29E2F7329FB2713B8EB691 /* libPods-ClarifaiApiDemoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClarifaiApiDemoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4032B3FD1C57AEBA0093FA9E /* Credentials.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		4071951F1BADD02B0076B650 /* RecognitionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecognitionViewController.h; sourceTree = "<group>"; };
 		407195201BADD02B0076B650 /* RecognitionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecognitionViewController.m; sourceTree = "<group>"; };
-		4088A4361BAEF1B400B1C682 /* ClarifaiApiDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ClarifaiApiDemo-Bridging-Header.h"; sourceTree = "<group>"; };
-		4088A4371BAEF1B500B1C682 /* SwiftRecognitionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftRecognitionViewController.swift; sourceTree = "<group>"; };
-		408D39551BACA1FA00C5608B /* ClarifaiApiDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClarifaiApiDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		408D39551BACA1FA00C5608B /* Clarifai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clarifai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		408D39591BACA1FA00C5608B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		408D395A1BACA1FA00C5608B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		408D395C1BACA1FA00C5608B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -62,36 +43,18 @@
 		408D39631BACA1FA00C5608B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		408D39651BACA1FA00C5608B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		408D39681BACA1FA00C5608B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		408D396E1BACA1FA00C5608B /* ClarifaiApiDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClarifaiApiDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		408D396E1BACA1FA00C5608B /* Clarifai.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Clarifai.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		408D39731BACA1FA00C5608B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		408D39741BACA1FA00C5608B /* ClarifaiApiDemoTests.m */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = ClarifaiApiDemoTests.m; sourceTree = "<group>"; tabWidth = 2; };
-		60B79E2D4ADC327E7651CA7C /* Pods-ClarifaiApiDemoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiApiDemoTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiApiDemoTests/Pods-ClarifaiApiDemoTests.debug.xcconfig"; sourceTree = "<group>"; };
+		408D39741BACA1FA00C5608B /* ClarifaiTests.m */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = ClarifaiTests.m; sourceTree = "<group>"; tabWidth = 2; };
+		6B78A92C1B666D40C85F2E86 /* Pods-Clarifai.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarifai.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai.debug.xcconfig"; sourceTree = "<group>"; };
+		73491E5B15BE035CEE1E28D6 /* Pods-ClarifaiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiTests/Pods-ClarifaiTests.debug.xcconfig"; sourceTree = "<group>"; };
+		9B950B5C14C35065712E2498 /* Pods-Clarifai.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarifai.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai.release.xcconfig"; sourceTree = "<group>"; };
+		A9C7FF2E7E021481371589B5 /* Pods_ClarifaiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClarifaiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF2D2C71F3981D15F040DA18 /* Pods-ClarifaiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiTests/Pods-ClarifaiTests.release.xcconfig"; sourceTree = "<group>"; };
+		C569392294295773E7FF66F7 /* Pods_Clarifai.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clarifai.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3908FCAEDB4ED9DE2B4BCF4 /* libPods-ClarifaiApiDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClarifaiApiDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		EB1CEBCE1D78D034009391EA /* ClarifaiApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiApp.h; sourceTree = "<group>"; };
-		EB1CEBCF1D78D034009391EA /* ClarifaiApp.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = ClarifaiApp.m; sourceTree = "<group>"; tabWidth = 2; };
-		EB1CEBD11D78E3B7009391EA /* ClarifaiInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiInput.h; sourceTree = "<group>"; };
-		EB1CEBD21D78E3B7009391EA /* ClarifaiInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClarifaiInput.m; sourceTree = "<group>"; };
-		EB1CEBD41D78E4EE009391EA /* ClarifaiImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiImage.h; sourceTree = "<group>"; };
-		EB1CEBD51D78E4EE009391EA /* ClarifaiImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClarifaiImage.m; sourceTree = "<group>"; };
-		EB1CEBD71D78ED1E009391EA /* ClarifaiOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiOutput.h; sourceTree = "<group>"; };
-		EB1CEBD81D78ED1E009391EA /* ClarifaiOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClarifaiOutput.m; sourceTree = "<group>"; };
-		EB1CEBDA1D78EDCE009391EA /* ClarifaiModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiModel.h; sourceTree = "<group>"; };
-		EB1CEBDB1D78EDCE009391EA /* ClarifaiModel.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = ClarifaiModel.m; sourceTree = "<group>"; tabWidth = 2; };
-		EB1CEBDD1D78EE72009391EA /* ClarifaiFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiFace.h; sourceTree = "<group>"; };
-		EB1CEBDE1D78EE72009391EA /* ClarifaiFace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClarifaiFace.m; sourceTree = "<group>"; };
-		EB1CEBE01D78EECE009391EA /* ClarifaiConcept.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiConcept.h; sourceTree = "<group>"; };
-		EB1CEBE11D78EECE009391EA /* ClarifaiConcept.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = ClarifaiConcept.m; sourceTree = "<group>"; tabWidth = 2; };
-		EB1CEBF11D80972A009391EA /* ClarifaiConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiConstants.h; sourceTree = "<group>"; };
-		EB5290DF1D8B0FBD005AF0FF /* ClarifaiModelVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiModelVersion.h; sourceTree = "<group>"; };
-		EB5290E01D8B0FBD005AF0FF /* ClarifaiModelVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClarifaiModelVersion.m; sourceTree = "<group>"; };
-		FB1E878F1D89FE500013C976 /* NSArray+Clarifai.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+Clarifai.h"; sourceTree = "<group>"; };
-		FB1E87901D89FE500013C976 /* NSArray+Clarifai.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Clarifai.m"; sourceTree = "<group>"; };
-		FB1E88001D8B19460013C976 /* ClarifaiSearchResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiSearchResult.h; sourceTree = "<group>"; };
-		FB1E88011D8B19460013C976 /* ClarifaiSearchResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClarifaiSearchResult.m; sourceTree = "<group>"; };
-		FB513E9D1D8C73F9001233FF /* ClarifaiSearchTerm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClarifaiSearchTerm.h; sourceTree = "<group>"; };
-		FB513E9E1D8C73F9001233FF /* ClarifaiSearchTerm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClarifaiSearchTerm.m; sourceTree = "<group>"; };
-		FB714F7E1CFBE7A6007FD7E3 /* CAIFuture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CAIFuture.h; path = ../ClarifaiApiDemo/CAIFuture.h; sourceTree = "<group>"; };
-		FB714F7F1CFBE7A6007FD7E3 /* CAIFuture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CAIFuture.m; path = ../ClarifaiApiDemo/CAIFuture.m; sourceTree = "<group>"; };
+		FB714F7E1CFBE7A6007FD7E3 /* CAIFuture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CAIFuture.h; path = ../Clarifai/CAIFuture.h; sourceTree = "<group>"; };
+		FB714F7F1CFBE7A6007FD7E3 /* CAIFuture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CAIFuture.m; path = ../Clarifai/CAIFuture.m; sourceTree = "<group>"; };
 		FB714F861CFBF15C007FD7E3 /* geth.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = geth.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -100,7 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85A8549BF1D35E1606A5BC2C /* libPods-ClarifaiApiDemo.a in Frameworks */,
+				128147A778D8B3259B046C69 /* Pods_Clarifai.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,7 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D5D44C10112AA303F1D9832 /* libPods-ClarifaiApiDemoTests.a in Frameworks */,
+				2ECE15ED1620BFF3032BC8D3 /* Pods_ClarifaiTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,8 +81,8 @@
 		408D394C1BACA1FA00C5608B = {
 			isa = PBXGroup;
 			children = (
-				408D39571BACA1FA00C5608B /* ClarifaiApiDemo */,
-				408D39711BACA1FA00C5608B /* ClarifaiApiDemoTests */,
+				408D39571BACA1FA00C5608B /* Clarifai */,
+				408D39711BACA1FA00C5608B /* ClarifaiTests */,
 				408D39561BACA1FA00C5608B /* Products */,
 				70057D02BE2C147CA2058B7D /* Pods */,
 				B3D5CE5DCC12FDEE33B911C2 /* Frameworks */,
@@ -129,35 +92,26 @@
 		408D39561BACA1FA00C5608B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				408D39551BACA1FA00C5608B /* ClarifaiApiDemo.app */,
-				408D396E1BACA1FA00C5608B /* ClarifaiApiDemoTests.xctest */,
+				408D39551BACA1FA00C5608B /* Clarifai.app */,
+				408D396E1BACA1FA00C5608B /* Clarifai.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		408D39571BACA1FA00C5608B /* ClarifaiApiDemo */ = {
+		408D39571BACA1FA00C5608B /* Clarifai */ = {
 			isa = PBXGroup;
 			children = (
 				FB714F861CFBF15C007FD7E3 /* geth.jpg */,
-				FB02FEBF1D81FAF600A4FD78 /* App */,
-				FB513E9C1D8C73CE001233FF /* Search */,
-				FB02FEBD1D81FAB300A4FD78 /* Models */,
-				FB02FEBC1D81FAAB00A4FD78 /* Inputs */,
-				FB02FEC01D81FB3A00A4FD78 /* Outputs */,
 				408D395C1BACA1FA00C5608B /* AppDelegate.h */,
 				408D395D1BACA1FA00C5608B /* AppDelegate.m */,
-				EB1CEBF11D80972A009391EA /* ClarifaiConstants.h */,
-				4032B3FD1C57AEBA0093FA9E /* Credentials.swift */,
 				4071951F1BADD02B0076B650 /* RecognitionViewController.h */,
 				407195201BADD02B0076B650 /* RecognitionViewController.m */,
-				4088A4371BAEF1B500B1C682 /* SwiftRecognitionViewController.swift */,
-				4088A4361BAEF1B400B1C682 /* ClarifaiApiDemo-Bridging-Header.h */,
 				408D39621BACA1FA00C5608B /* Main.storyboard */,
 				408D39651BACA1FA00C5608B /* Images.xcassets */,
 				408D39671BACA1FA00C5608B /* LaunchScreen.xib */,
 				408D39581BACA1FA00C5608B /* Supporting Files */,
 			);
-			path = ClarifaiApiDemo;
+			path = Clarifai;
 			sourceTree = "<group>";
 		};
 		408D39581BACA1FA00C5608B /* Supporting Files */ = {
@@ -169,17 +123,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		408D39711BACA1FA00C5608B /* ClarifaiApiDemoTests */ = {
+		408D39711BACA1FA00C5608B /* ClarifaiTests */ = {
 			isa = PBXGroup;
 			children = (
 				FB714F7E1CFBE7A6007FD7E3 /* CAIFuture.h */,
 				FB714F7F1CFBE7A6007FD7E3 /* CAIFuture.m */,
-				FB1E878F1D89FE500013C976 /* NSArray+Clarifai.h */,
-				FB1E87901D89FE500013C976 /* NSArray+Clarifai.m */,
-				408D39741BACA1FA00C5608B /* ClarifaiApiDemoTests.m */,
+				408D39741BACA1FA00C5608B /* ClarifaiTests.m */,
 				408D39721BACA1FA00C5608B /* Supporting Files */,
 			);
-			path = ClarifaiApiDemoTests;
+			path = ClarifaiTests;
 			sourceTree = "<group>";
 		};
 		408D39721BACA1FA00C5608B /* Supporting Files */ = {
@@ -193,10 +145,10 @@
 		70057D02BE2C147CA2058B7D /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				210D6046DE03F46F0C90049F /* Pods-ClarifaiApiDemo.debug.xcconfig */,
-				2C96310E8AE89EB32A1BF45E /* Pods-ClarifaiApiDemo.release.xcconfig */,
-				60B79E2D4ADC327E7651CA7C /* Pods-ClarifaiApiDemoTests.debug.xcconfig */,
-				3D1EEB80D5A7BF58E5E96014 /* Pods-ClarifaiApiDemoTests.release.xcconfig */,
+				6B78A92C1B666D40C85F2E86 /* Pods-Clarifai.debug.xcconfig */,
+				9B950B5C14C35065712E2498 /* Pods-Clarifai.release.xcconfig */,
+				73491E5B15BE035CEE1E28D6 /* Pods-ClarifaiTests.debug.xcconfig */,
+				AF2D2C71F3981D15F040DA18 /* Pods-ClarifaiTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -206,71 +158,18 @@
 			children = (
 				D3908FCAEDB4ED9DE2B4BCF4 /* libPods-ClarifaiApiDemo.a */,
 				3E29E2F7329FB2713B8EB691 /* libPods-ClarifaiApiDemoTests.a */,
+				C569392294295773E7FF66F7 /* Pods_Clarifai.framework */,
+				A9C7FF2E7E021481371589B5 /* Pods_ClarifaiTests.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		FB02FEBC1D81FAAB00A4FD78 /* Inputs */ = {
-			isa = PBXGroup;
-			children = (
-				EB1CEBE01D78EECE009391EA /* ClarifaiConcept.h */,
-				EB1CEBE11D78EECE009391EA /* ClarifaiConcept.m */,
-				EB1CEBD11D78E3B7009391EA /* ClarifaiInput.h */,
-				EB1CEBD21D78E3B7009391EA /* ClarifaiInput.m */,
-				EB1CEBD41D78E4EE009391EA /* ClarifaiImage.h */,
-				EB1CEBD51D78E4EE009391EA /* ClarifaiImage.m */,
-				FB1E88001D8B19460013C976 /* ClarifaiSearchResult.h */,
-				FB1E88011D8B19460013C976 /* ClarifaiSearchResult.m */,
-			);
-			name = Inputs;
-			sourceTree = "<group>";
-		};
-		FB02FEBD1D81FAB300A4FD78 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				EB1CEBDA1D78EDCE009391EA /* ClarifaiModel.h */,
-				EB1CEBDB1D78EDCE009391EA /* ClarifaiModel.m */,
-				EB5290DF1D8B0FBD005AF0FF /* ClarifaiModelVersion.h */,
-				EB5290E01D8B0FBD005AF0FF /* ClarifaiModelVersion.m */,
-			);
-			name = Models;
-			sourceTree = "<group>";
-		};
-		FB02FEBF1D81FAF600A4FD78 /* App */ = {
-			isa = PBXGroup;
-			children = (
-				EB1CEBCE1D78D034009391EA /* ClarifaiApp.h */,
-				EB1CEBCF1D78D034009391EA /* ClarifaiApp.m */,
-			);
-			name = App;
-			sourceTree = "<group>";
-		};
-		FB02FEC01D81FB3A00A4FD78 /* Outputs */ = {
-			isa = PBXGroup;
-			children = (
-				EB1CEBDD1D78EE72009391EA /* ClarifaiFace.h */,
-				EB1CEBDE1D78EE72009391EA /* ClarifaiFace.m */,
-				EB1CEBD71D78ED1E009391EA /* ClarifaiOutput.h */,
-				EB1CEBD81D78ED1E009391EA /* ClarifaiOutput.m */,
-			);
-			name = Outputs;
-			sourceTree = "<group>";
-		};
-		FB513E9C1D8C73CE001233FF /* Search */ = {
-			isa = PBXGroup;
-			children = (
-				FB513E9D1D8C73F9001233FF /* ClarifaiSearchTerm.h */,
-				FB513E9E1D8C73F9001233FF /* ClarifaiSearchTerm.m */,
-			);
-			name = Search;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		408D39541BACA1FA00C5608B /* ClarifaiApiDemo */ = {
+		408D39541BACA1FA00C5608B /* Clarifai */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 408D39781BACA1FA00C5608B /* Build configuration list for PBXNativeTarget "ClarifaiApiDemo" */;
+			buildConfigurationList = 408D39781BACA1FA00C5608B /* Build configuration list for PBXNativeTarget "Clarifai" */;
 			buildPhases = (
 				6B0F309093B45DA44CC62E2B /* Check Pods Manifest.lock */,
 				408D39511BACA1FA00C5608B /* Sources */,
@@ -283,14 +182,14 @@
 			);
 			dependencies = (
 			);
-			name = ClarifaiApiDemo;
+			name = Clarifai;
 			productName = ClarifaiApiDemo;
-			productReference = 408D39551BACA1FA00C5608B /* ClarifaiApiDemo.app */;
+			productReference = 408D39551BACA1FA00C5608B /* Clarifai.app */;
 			productType = "com.apple.product-type.application";
 		};
-		408D396D1BACA1FA00C5608B /* ClarifaiApiDemoTests */ = {
+		408D396D1BACA1FA00C5608B /* ClarifaiTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 408D397B1BACA1FA00C5608B /* Build configuration list for PBXNativeTarget "ClarifaiApiDemoTests" */;
+			buildConfigurationList = 408D397B1BACA1FA00C5608B /* Build configuration list for PBXNativeTarget "ClarifaiTests" */;
 			buildPhases = (
 				A6BCD0CFE8DC7820815CBDFC /* Check Pods Manifest.lock */,
 				408D396A1BACA1FA00C5608B /* Sources */,
@@ -304,9 +203,9 @@
 			dependencies = (
 				408D39701BACA1FA00C5608B /* PBXTargetDependency */,
 			);
-			name = ClarifaiApiDemoTests;
+			name = ClarifaiTests;
 			productName = ClarifaiApiDemoTests;
-			productReference = 408D396E1BACA1FA00C5608B /* ClarifaiApiDemoTests.xctest */;
+			productReference = 408D396E1BACA1FA00C5608B /* Clarifai.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -332,7 +231,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 408D39501BACA1FA00C5608B /* Build configuration list for PBXProject "ClarifaiApiDemo" */;
+			buildConfigurationList = 408D39501BACA1FA00C5608B /* Build configuration list for PBXProject "Clarifai" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -345,8 +244,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				408D39541BACA1FA00C5608B /* ClarifaiApiDemo */,
-				408D396D1BACA1FA00C5608B /* ClarifaiApiDemoTests */,
+				408D39541BACA1FA00C5608B /* Clarifai */,
+				408D396D1BACA1FA00C5608B /* ClarifaiTests */,
 			);
 		};
 /* End PBXProject section */
@@ -386,7 +285,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClarifaiApiDemo/Pods-ClarifaiApiDemo-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		4EBC033A94751189D1410545 /* Copy Pods Resources */ = {
@@ -401,7 +300,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClarifaiApiDemoTests/Pods-ClarifaiApiDemoTests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClarifaiTests/Pods-ClarifaiTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		5739D3476F41847452888FBF /* Embed Pods Frameworks */ = {
@@ -416,7 +315,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClarifaiApiDemoTests/Pods-ClarifaiApiDemoTests-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClarifaiTests/Pods-ClarifaiTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		6B0F309093B45DA44CC62E2B /* Check Pods Manifest.lock */ = {
@@ -461,7 +360,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClarifaiApiDemo/Pods-ClarifaiApiDemo-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -471,22 +370,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EB5290E11D8B0FBE005AF0FF /* ClarifaiModelVersion.m in Sources */,
-				4032B3FE1C57AEBA0093FA9E /* Credentials.swift in Sources */,
 				FB714F801CFBE7A6007FD7E3 /* CAIFuture.m in Sources */,
-				EB1CEBD91D78ED1E009391EA /* ClarifaiOutput.m in Sources */,
-				FB513E9F1D8C73F9001233FF /* ClarifaiSearchTerm.m in Sources */,
-				4088A4381BAEF1B500B1C682 /* SwiftRecognitionViewController.swift in Sources */,
-				EB1CEBD01D78D034009391EA /* ClarifaiApp.m in Sources */,
 				408D395E1BACA1FA00C5608B /* AppDelegate.m in Sources */,
-				EB1CEBD31D78E3B7009391EA /* ClarifaiInput.m in Sources */,
 				408D395B1BACA1FA00C5608B /* main.m in Sources */,
-				EB1CEBDF1D78EE72009391EA /* ClarifaiFace.m in Sources */,
-				FB1E88021D8B19460013C976 /* ClarifaiSearchResult.m in Sources */,
-				EB1CEBD61D78E4EE009391EA /* ClarifaiImage.m in Sources */,
-				EB1CEBDC1D78EDCE009391EA /* ClarifaiModel.m in Sources */,
 				407195211BADD02B0076B650 /* RecognitionViewController.m in Sources */,
-				EB1CEBE21D78EECE009391EA /* ClarifaiConcept.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -494,8 +381,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				408D39751BACA1FA00C5608B /* ClarifaiApiDemoTests.m in Sources */,
-				FB1E87911D89FE500013C976 /* NSArray+Clarifai.m in Sources */,
+				408D39751BACA1FA00C5608B /* ClarifaiTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,7 +390,7 @@
 /* Begin PBXTargetDependency section */
 		408D39701BACA1FA00C5608B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 408D39541BACA1FA00C5608B /* ClarifaiApiDemo */;
+			target = 408D39541BACA1FA00C5608B /* Clarifai */;
 			targetProxy = 408D396F1BACA1FA00C5608B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -612,17 +498,17 @@
 		};
 		408D39791BACA1FA00C5608B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 210D6046DE03F46F0C90049F /* Pods-ClarifaiApiDemo.debug.xcconfig */;
+			baseConfigurationReference = 6B78A92C1B666D40C85F2E86 /* Pods-Clarifai.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 32E6VH74P3;
-				INFOPLIST_FILE = ClarifaiApiDemo/Info.plist;
+				INFOPLIST_FILE = Clarifai/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clarifai.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "ClarifaiApiDemo/ClarifaiApiDemo-Bridging-Header.h";
+				PRODUCT_NAME = Clarifai;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
@@ -630,24 +516,24 @@
 		};
 		408D397A1BACA1FA00C5608B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C96310E8AE89EB32A1BF45E /* Pods-ClarifaiApiDemo.release.xcconfig */;
+			baseConfigurationReference = 9B950B5C14C35065712E2498 /* Pods-Clarifai.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 32E6VH74P3;
-				INFOPLIST_FILE = ClarifaiApiDemo/Info.plist;
+				INFOPLIST_FILE = Clarifai/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clarifai.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "ClarifaiApiDemo/ClarifaiApiDemo-Bridging-Header.h";
+				PRODUCT_NAME = Clarifai;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
 		408D397C1BACA1FA00C5608B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 60B79E2D4ADC327E7651CA7C /* Pods-ClarifaiApiDemoTests.debug.xcconfig */;
+			baseConfigurationReference = 73491E5B15BE035CEE1E28D6 /* Pods-ClarifaiTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 32E6VH74P3;
@@ -656,33 +542,33 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = ClarifaiApiDemoTests/Info.plist;
+				INFOPLIST_FILE = ClarifaiTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clarifai.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClarifaiApiDemo.app/ClarifaiApiDemo";
+				PRODUCT_NAME = Clarifai;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Clarifai.app/Clarifai";
 			};
 			name = Debug;
 		};
 		408D397D1BACA1FA00C5608B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3D1EEB80D5A7BF58E5E96014 /* Pods-ClarifaiApiDemoTests.release.xcconfig */;
+			baseConfigurationReference = AF2D2C71F3981D15F040DA18 /* Pods-ClarifaiTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 32E6VH74P3;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = ClarifaiApiDemoTests/Info.plist;
+				INFOPLIST_FILE = ClarifaiTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clarifai.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClarifaiApiDemo.app/ClarifaiApiDemo";
+				PRODUCT_NAME = Clarifai;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Clarifai.app/Clarifai";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		408D39501BACA1FA00C5608B /* Build configuration list for PBXProject "ClarifaiApiDemo" */ = {
+		408D39501BACA1FA00C5608B /* Build configuration list for PBXProject "Clarifai" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				408D39761BACA1FA00C5608B /* Debug */,
@@ -691,7 +577,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		408D39781BACA1FA00C5608B /* Build configuration list for PBXNativeTarget "ClarifaiApiDemo" */ = {
+		408D39781BACA1FA00C5608B /* Build configuration list for PBXNativeTarget "Clarifai" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				408D39791BACA1FA00C5608B /* Debug */,
@@ -700,7 +586,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		408D397B1BACA1FA00C5608B /* Build configuration list for PBXNativeTarget "ClarifaiApiDemoTests" */ = {
+		408D397B1BACA1FA00C5608B /* Build configuration list for PBXNativeTarget "ClarifaiTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				408D397C1BACA1FA00C5608B /* Debug */,
