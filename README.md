@@ -10,7 +10,7 @@ A client for iOS apps using the Clarifai v2 API.
 The client will be up on Cocoapods soon. For now, download the repo and add the following to your Podfile to locally install it into your project:
 
 ```
-pod 'Clarifai', :path => '/path-to-downloaded-repo-folder/'
+pod 'Clarifai'
 ```
 
 ## Getting Started
@@ -19,7 +19,7 @@ pod 'Clarifai', :path => '/path-to-downloaded-repo-folder/'
 
 2. Add Clarifai to podfile and generate workspace.
     ```
-    pod 'Clarifai', :path => '/path-to-downloaded-repo-folder/'
+    pod 'Clarifai'
     ```
     ```
     pod install
