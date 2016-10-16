@@ -1,5 +1,5 @@
 # Clarifai Objective-C Client
-A client for iOS apps using the Clarifai v2 API.
+A client for iOS apps using the Clarifai V2 API.
 
 * Sign up for a free developer account at: https://developer.clarifai.com/signup/
 * Read the developer guide at: https://developer.clarifai.com/guide-v2/
@@ -7,7 +7,7 @@ A client for iOS apps using the Clarifai v2 API.
 
 ## Installation
 ### CocoaPods
-Clarifai api client can be easily installed with cocoapods. For more details on setting up cocoapods see [here](https://cocoapods.org). To integrate Clarifai into your project, simply add the following to your podfile:
+The Clarifai API client can be easily installed with CocoaPods. For more details on setting up CocoaPods, go [here](https://cocoapods.org). To integrate Clarifai into your project, simply add the following to your Podfile:
 
 ```
 pod 'Clarifai'
@@ -17,7 +17,7 @@ pod 'Clarifai'
 
 1. Create a new XCode project, or use a current one.
 
-2. Add Clarifai to podfile and generate workspace.
+2. Add Clarifai to your Podfile and generate workspace.
     ```
     pod 'Clarifai'
     ```
@@ -38,7 +38,7 @@ have an account or application, you'll need to sign up first).
     ```
     ClarifaiApp *app = [[ClarifaiApp alloc] initWithAppID:@"" appSecret:@""];
     ```
-6. That's it! Explore the API docs and guide.
+6. That's it! Explore the [API docs and guide](https://developer.clarifai.com).
 
 ## Documentation
 
@@ -60,8 +60,8 @@ There is a simple demo included in the repo to help you get started. To build th
 
 3. Go to [developer.clarifai.com/applications](https://developer.clarifai.com/applications), click
    on your application, then copy the "Client ID" and "Client Secret" values (if you don't already
-   have an account or application, you'll need to sign up first).
+   have an account or application, you'll need to [sign up first](https://developer.clarifai.com/signup/)).
 
-   Add the values of your Client ID and Client Secret to the recognizeImage method in RecognitionViewController.m.
+   Add the values of your Client ID and Client Secret to the `recognizeImage` method in RecognitionViewController.m.
 
 4. Press the "Play" button in the toolbar to build, install, and run the app.
