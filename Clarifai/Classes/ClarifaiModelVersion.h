@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * ClarifaiModelVersion contains version info for models.
+ */
 @interface ClarifaiModelVersion : NSObject
 
 /** The version id of the model. */

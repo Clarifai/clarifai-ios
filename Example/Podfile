@@ -6,6 +6,7 @@ use_frameworks!
 
 target 'Clarifai' do
 pod 'AFNetworking', '~> 2.0'
+pod 'AFNetworkActivityLogger'
 pod 'Clarifai', :path => '../'
 end
 

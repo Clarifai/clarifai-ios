@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@import AFNetworking;
+#import <AFNetworking/AFNetworking.h>
 #import "ClarifaiModel.h"
 #import "ClarifaiSearchTerm.h"
 #import "ClarifaiConcept.h"
@@ -16,12 +16,9 @@
 #import "ClarifaiOutput.h"
 #import "ClarifaiConstants.h"
 
-typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
-    ClarifaiPredictionTypeAny,
-    ClarifaiPredictionTypeAll,
-    ClarifaiPredictionTypeNot
-};
-
+/**
+ * API calls are tied to an account and application. Any model you create or inputs you add, will be contained within an application. After creating an app on the [Clarifai developer page](https://developer.clarifai.com/applications) you can use your app's id and secret to create a ClarifaiApp object. A ClarifaiApp instance will be the main hub of interfacing with an application. It is used to create, get, update, and search the various components of your application including: inputs, concepts, and models.
+ */
 @interface ClarifaiApp : NSObject
 
 @property (strong, nonatomic) AFHTTPRequestOperationManager *manager;
@@ -38,33 +35,52 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
 /**
  * Saves inputs to your Clarifai application.
  *
- * @param images       Array containing ClarifaiInputs to save to your application.
+ * @param inputs       Array containing ClarifaiInputs to save to your application.
  * @param completion   Invoked when the request completes.
  */
-
 - (void)addInputs:(NSArray <ClarifaiInput *> *)inputs completion:(ClarifaiInputsCompletion)completion;
 
 /**
- * This can be used to add tags to an existing input.
+ * Add tags to an existing input.
  *
  * @param concepts      Array of new ClarifaiConcepts.
  * @param inputID       String containing the id of the input you'd like to update
  *                      concepts for.
  * @param completion    Invoked when the update completes.
  */
-
 - (void)addConcepts:(NSArray <ClarifaiConcept *> *)concepts forInputWithID:(NSString *)inputID completion:(ClarifaiStoreInputCompletion)completion;
 
 /**
- * This can be used to delete tags from an existing input.
+ * Add tags to one or more existing inputs.
  *
- * @param concepts      Array of ClarifaiConcepts to delete (these need to have matching conceptID's
- *                      to whichever ones are being deleted).
+ * @param inputs        Array of ClarifaiInputs to add tags to. Each input should contain 
+ *                      the tags to be added in it's concepts array property. These new 
+ *                      concepts will be merged with the existing tags of the input. 
+ *                      Each input must also have an inputID.
+ * @param completion    Invoked when the update completes.
+ */
+- (void)updateConceptsForInputs:(NSArray<ClarifaiInput *> *)inputs completion:(ClarifaiInputsCompletion)completion;
+
+/**
+ * Delete tags from an existing input.
+ *
+ * @param concepts      Array of ClarifaiConcepts to delete. These must have matching conceptID's
+ *                      to whichever ones are being deleted.
  * @param inputID       String containing the id of the input you'd like to update
  *                      concepts for.
  * @param completion    Invoked when the update completes.
  */
 - (void)deleteConcepts:(NSArray <ClarifaiConcept *> *)concepts forInputWithID:(NSString *)inputID completion:(ClarifaiStoreInputCompletion)completion;
+
+/**
+ * Delete tags from one or more existing inputs.
+ *
+ * @param inputs        Array of ClarifaiInputs to delete tags from. Each input should contain
+ *                      the tags to be delete in it's concepts array property. Each input must
+ *                      also have an inputID.
+ * @param completion    Invoked when the update completes.
+ */
+- (void)deleteConceptsForInputs:(NSArray<ClarifaiInput *> *)inputs completion:(ClarifaiInputsCompletion)completion;
 
 /**
  * Retrieves images that have been saved to your Clarifai application on the specified page.
@@ -81,7 +97,7 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
  * @param inputID      String containing the id of the image you'd like to retrieve.
  * @param completion   Invoked when the request completes.
  */
-- (void)getInput:(NSString *)inuptID completion:(ClarifaiStoreInputCompletion)completion;
+- (void)getInput:(NSString *)inputID completion:(ClarifaiStoreInputCompletion)completion;
 
 /**
  * Retrieves the status of all inputs in your Clarifai application.
@@ -99,16 +115,24 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
 - (void)deleteInput:(NSString *)inputID completion:(ClarifaiRequestCompletion)completion;
 
 /**
- * Deletes images specified by an array of ClarifaiInputs. Note that each Clarifai input
- * must contain an inputID at the very least, that matches the input you would like to delete.
+ * Deletes images specified by either an array of ClarifaiInputs or inputID NSStrings. Note that each
+ * ClarifaiInput must contain an inputID at the very least, that matches the input you would like to delete. 
+ * 
+ * @warning This method is async on the server, meaning that the request returns immediately,
+ * before inputs have finished being deleted. To check for completion, use getInput: above. 
+ * If one input in the list is gone, all have been deleted.
  *
  * @param inputs      Array of ClarifaiInputs containing id's of the inputs you want to delete.
  * @param completion  Invoked when the request completes.
  */
-- (void)deleteInputsByIDList:(NSArray <ClarifaiInput *> *)inputs completion:(ClarifaiRequestCompletion)completion;
+- (void)deleteInputsByIDList:(NSArray *)inputs completion:(ClarifaiRequestCompletion)completion;
 
 /**
  * Deletes all inputs associated with you app.
+ *
+ * @warning This method is async on the server, meaning that the request returns immediately,
+ * before inputs have finished being deleted. To check for completion, use getInput: above.
+ * If one input in the list is gone, all have been deleted.
  *
  * @param completion  Invoked when the request completes.
  */
@@ -149,7 +173,7 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
  * This can be used to add tags to an existing model.
  *
  * @param concepts      Array of new ClarifaiConcepts.
- * @param inputID       String containing the id of the model you'd like to update
+ * @param modelID       String containing the id of the model you'd like to update
  *                      concepts for.
  * @param completion    Invoked when the update completes.
  */
@@ -159,7 +183,7 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
  * This can be used to remove tags from an existing model.
  *
  * @param concepts      Array of ClarifaiConcepts.
- * @param inputID       String containing the id of the model you'd like to update
+ * @param modelID       String containing the id of the model you'd like to update
  *                      concepts for.
  * @param completion    Invoked when the update completes.
  */
@@ -170,7 +194,7 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
 /**
  * Search using tags and/or visual similarity.
  *
- * @param tags            An array of arrays that are anded together to create the query. Each tag in the sub-arrays is or'd togther.
+ * @param searchTerms     An array of ClarifaiSearchTerms that are and-ed together to create the query.
  * @param page            The page number of results to show.
  * @param perPage  Number of results per page.
  * @param completion      Invoked when the request completes.
@@ -184,7 +208,7 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
 #pragma mark - Models
 
 /**
- * Get  models in your application.
+ * Get models in your application.
  *
  * @param page            Results page to load.
  * @param resultsPerPage  Number of results per page.
@@ -201,7 +225,11 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
 - (void)getModelByID:(NSString *)modelID completion:(ClarifaiModelCompletion)completion;
 
 /**
- * Retrieve a specific model by name.
+ * Search for matching model names and retrieve the first one found.
+ *
+ * @warning This method only searches for models of type ClarifaiModelTypeConcept. 
+ * To search for a model by name and type, such as Clarifai's color model, use 
+ * searchForModelByName:modelType:
  *
  * @param modelName       Name of the model to find.
  * @param completion      Invoked when the request completes.
@@ -235,7 +263,7 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
 /**
  * Delete specific version of a given model.
  *
- * @param model           ID of model to find different versions of.
+ * @param modelID         ID of model to find different versions of.
  * @param versionID       ID of the version info you want to retrieve.
  * @param completion      Invoked when the request completes.
  */
@@ -259,7 +287,7 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
 /**
  * Get training inputs associated with a given model and version.
  *
- * @param modelID           ID of model to find version of.
+ * @param modelID         ID of model to find version of.
  * @param versionID       ID of the version you want to retrieve.
  * @param page            Results page to load.
  * @param resultsPerPage  Number of results to return per page.
@@ -272,7 +300,7 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
                         completion:(ClarifaiInputsCompletion)completion;
 
 /**
- * Search for model by name.
+ * Search for model by name and type. 
  *
  * @param modelName       Name of the model you'd like to search for.
  * @param modelType       Type of model you'd like to search for. {embed, concept, cluster, detection, color}
@@ -285,28 +313,61 @@ typedef NS_ENUM(NSInteger, ClarifaiPredictionType) {
 /**
  * Create a model.
  *
- * @param concepts                      Concepts that belong to the new model. These MUST be concepts that already 
- *                                      have been added within the app, either directly or to inputs. This will 
- *                                      not create new concepts for conceptIDs that the app doesn't contain already.
- *                                      You can pass in ClarifaiConcepts or NSStrings. If you pass strings, concepts
- *                                      this method will create a model with concepts named with the given strings.
- * @param name                          Name of the model.
- * @param conceptsMutuallyExclusive     Do you expect to see more than one of the concepts in this 
- *                                      model in the SAME image? If Yes, then 
- *                                      conceptsMutuallyExclusive: false (default), if No, then 
- *                                      conceptsMutuallyExclusive: true.
- * @param closedEnvironment             Do you expect to run the trained model on images that do not
- *                                      contain ANY of the concepts in the model? If yes, 
- *                                      closedEnvironment: false (default), if no closedEnvironment:
- *                                      true.
- *                                      as negative examples for concepts in the model.
- * @param completion                    Invoked when the request completes.
+ * @param concepts    Concepts that belong to the new model. These MUST be concepts
+ * that already have been added within the app, either directly or to inputs. 
+ * This will not create new concepts for conceptIDs that the app doesn't
+ * contain already. You can pass in ClarifaiConcepts or NSStrings. If you 
+ * pass strings this method will create a model with concepts named
+ * with the given strings.
+ *
+ * @param modelName    Name of the model. This will automatically use the name as the ModelID as well.
+ *
+ * @param conceptsMutuallyExclusive    Do you expect to see more than one of 
+ * the concepts in this model in the SAME image? If Yes, then 
+ * conceptsMutuallyExclusive: false (default), if No, then conceptsMutuallyExclusive: true.
+ *
+ * @param closedEnvironment    Do you expect to run the trained model on images that do not
+ * contain ANY of the concepts in the model? If yes, closedEnvironment: false (default),
+ * if no closedEnvironment: true.
+ *
+ * @param completion    Invoked when the request completes.
  */
-- (void)createModel:(NSArray <ClarifaiConcept *> *)concepts
-                     name:(NSString *)modelName
+- (void)createModel:(NSArray *)concepts
+               name:(NSString *)modelName
 conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
-        closedEnvironment:(BOOL)closedEnvironment
-               completion:(ClarifaiModelCompletion)completion;
+  closedEnvironment:(BOOL)closedEnvironment
+         completion:(ClarifaiModelCompletion)completion;
+
+/**
+ * Create a model.
+ *
+ * @param concepts    Concepts that belong to the new model. These MUST be concepts
+ * that already have been added within the app, either directly or to inputs.
+ * This will not create new concepts for conceptIDs that the app doesn't
+ * contain already. You can pass in ClarifaiConcepts or NSStrings. If you
+ * pass strings this method will create a model with concepts named
+ * with the given strings.
+ *
+ * @param modelName    Name of the model. This will automatically use the name as the ModelID as well.
+ *
+ * @param modelName    ID of the model. ID's MUST be unique for each model.
+ *
+ * @param conceptsMutuallyExclusive    Do you expect to see more than one of
+ * the concepts in this model in the SAME image? If Yes, then
+ * conceptsMutuallyExclusive: false (default), if No, then conceptsMutuallyExclusive: true.
+ *
+ * @param closedEnvironment    Do you expect to run the trained model on images that do not
+ * contain ANY of the concepts in the model? If yes, closedEnvironment: false (default),
+ * if no closedEnvironment: true.
+ *
+ * @param completion    Invoked when the request completes.
+ */
+- (void)createModel:(NSArray *)concepts
+               name:(NSString *)modelName
+            modelID:(NSString *)modelID
+conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
+  closedEnvironment:(BOOL)closedEnvironment
+         completion:(ClarifaiModelCompletion)completion;
 
 /**
  * Deletes model specified by an ID.
@@ -319,13 +380,29 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
 /**
  * Deletes all models associated with your app.
  *
+ * @warning This method is async on the server, meaning that the request returns immediately,
+ * before models have finished being deleted. To check for completion, use getModelByID: above.
+ * If one model in the list is gone, all have been deleted.
+ *
  * @param completion  Invoked when the request completes.
  */
 - (void)deleteAllModels:(ClarifaiRequestCompletion)completion;
 
 /**
- * Returns a ClarifaiModel with the requested ID, containing the outputinfo for the model. The outputinfo contains info like which concepts are associated with the model, the 
- * model's output type, etc.
+ * Deletes models specified by either an array of ClarifaiModels or modelID NSStrings. Note that each
+ * ClarifaiModel must contain a modelID at the very least, that matches the model you would like to delete.
+ *
+ * @warning This method is async on the server, meaning that the request returns immediately,
+ * before models have finished being deleted. To check for completion, use getModelByID: above.
+ * If one model in the list is gone, all have been deleted.
+ *
+ * @param models      Array of ClarifaiModels containing id's of the models you want to delete.
+ * @param completion  Invoked when the request completes.
+ */
+- (void)deleteModelsByIDList:(NSArray *)models completion:(ClarifaiRequestCompletion)completion;
+
+/**
+ * Returns a ClarifaiModel with the requested ID, containing the outputinfo for the model. The outputinfo contains info like which concepts are associated with the model, the model's output type, etc.
  *
  * @param modelID     id of the model.
  * @param completion  Invoked when the request completes.

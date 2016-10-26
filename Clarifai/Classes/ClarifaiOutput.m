@@ -29,16 +29,6 @@
         }
         self.concepts = concepts;
         
-        // add faces to output, if any.
-        NSArray *facesArray = dict[@"data"][@"detections"];
-        NSMutableArray *faces = [[NSMutableArray alloc] init];
-        for (NSDictionary *faceData in facesArray) {
-            ClarifaiFace *face = [[ClarifaiFace alloc] init];
-            face.faceCoords = [faceData[@"faceCoords"] CGRectValue];
-            [faces addObject:face];
-        }
-        self.faces = faces;
-        
         // add colors to output, if any.
         NSArray *colorsArray = dict[@"data"][@"colors"];
         NSMutableArray *colors = [NSMutableArray array];

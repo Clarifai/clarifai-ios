@@ -3,7 +3,7 @@ A client for iOS apps using the Clarifai V2 API.
 
 * Sign up for a free developer account at: https://developer.clarifai.com/signup/
 * Read the developer guide at: https://developer.clarifai.com/guide-v2/
-* Read the full Objective-C docs at: https://sdk.clarifai.com/iOS/docs-2.0.0/masterTOC.html
+* Read the full Objective-C docs at: https://sdk.clarifai.com/iOS/docs-{{version-number}}/masterTOC.html
 
 ## Installation
 ### CocoaPods

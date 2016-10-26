@@ -35,11 +35,63 @@
     return self;
 }
 
+- (instancetype)initWithImage:(UIImage *)image andCrop:(ClarifaiCrop *)crop {
+    self = [super init];
+    if (self) {
+        self.image = image;
+        self.mediaData = UIImageJPEGRepresentation(image, 1.0);
+        self.crop = crop;
+    }
+    return self;
+}
+
 - (instancetype)initWithImage:(UIImage *)image andConcepts:(NSArray *)concepts {
     self = [super init];
     if (self) {
         self.image = image;
         self.mediaData = UIImageJPEGRepresentation(image, 1.0);
+        self.concepts = [concepts map:^(id concept) {
+            if ([concept isKindOfClass:[NSString class]]) {
+                return [[ClarifaiConcept alloc] initWithConceptName:concept];
+            } else {
+                return (ClarifaiConcept *)concept;
+            }
+        }];
+    }
+    return self;
+}
+
+- (instancetype)initWithImage:(UIImage *)image crop:(ClarifaiCrop *)crop andConcepts:(NSArray *)concepts {
+    self = [super init];
+    if (self) {
+        self.image = image;
+        self.crop = crop;
+        self.mediaData = UIImageJPEGRepresentation(image, 1.0);
+        self.concepts = [concepts map:^(id concept) {
+            if ([concept isKindOfClass:[NSString class]]) {
+                return [[ClarifaiConcept alloc] initWithConceptName:concept];
+            } else {
+                return (ClarifaiConcept *)concept;
+            }
+        }];
+    }
+    return self;
+}
+
+- (instancetype)initWithURL:(NSString *)url andCrop:(ClarifaiCrop *)crop {
+    self = [super init];
+    if (self) {
+        self.mediaURL = url;
+        self.crop = crop;
+    }
+    return self;
+}
+
+- (instancetype)initWithURL:(NSString *)url crop:(ClarifaiCrop *)crop andConcepts:(NSArray *)concepts {
+    self = [super init];
+    if (self) {
+        self.mediaURL = url;
+        self.crop = crop;
         self.concepts = [concepts map:^(id concept) {
             if ([concept isKindOfClass:[NSString class]]) {
                 return [[ClarifaiConcept alloc] initWithConceptName:concept];

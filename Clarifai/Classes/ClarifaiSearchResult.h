@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "ClarifaiInput.h"
 
+/**
+ * ClarifaiSearchResults are returned when searching across inputs in your application.
+ */
 @interface ClarifaiSearchResult : ClarifaiInput
 
 /** The score of the input  */
