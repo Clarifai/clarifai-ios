@@ -9,7 +9,6 @@
 #import "ClarifaiApp.h"
 #import "NSArray+Clarifai.h"
 #import "ClarifaiSearchResult.h"
-#import "ClarifaiSearchTerm.h"
 
 /** OAuth access token response. */
 @interface ClarifaiAccessTokenResponse : NSObject
@@ -30,7 +29,6 @@
 
 @end
 
-
 @interface ClarifaiApp ()
 
 @property (assign, nonatomic) BOOL authenticating;
@@ -41,7 +39,6 @@
 @property (strong, nonatomic) NSDictionary *modelTypes;
 
 @end
-
 
 @implementation ClarifaiApp
 
@@ -58,14 +55,7 @@
     _manager.responseSerializer = [AFJSONResponseSerializer serializer];
     _manager.responseSerializer.acceptableContentTypes = [[NSSet alloc] initWithArray:@[@"application/json"]];
     _manager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    
-    _predictionTypes =
-    @{
-      @(ClarifaiPredictionTypeAny): @"or_terms",
-      @(ClarifaiPredictionTypeAll): @"and_terms",
-      @(ClarifaiPredictionTypeNot): @"not_terms"
-      };
-    
+        
     _modelTypes = @{
                     @(ClarifaiModelTypeEmbed): @"embed",
                     @(ClarifaiModelTypeConcept): @"concept",
@@ -99,48 +89,48 @@
         inputEntry[@"id"] = input.inputID;
       }
       
-      if ([input isKindOfClass:[ClarifaiImage class]]) {
-        // set data dict (contains image and tags).
-        NSMutableDictionary *data = [NSMutableDictionary dictionary];
-        // add url or imageData to image dict.
-        NSMutableDictionary *image = [NSMutableDictionary dictionary];
-        if (![input.mediaURL isEqual: @""] && input.mediaURL != nil) {
-          // input has url
-          image[@"url"] = input.mediaURL;
-          image[@"allow_duplicate_url"] = input.allowDuplicateURLs ? @YES : @NO;
-        } else if (input.mediaData != nil) {
-          // input has image data
-          NSString *encodedString = [input.mediaData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-          image[@"base64"] = encodedString;
-        }
-        
-        // add crop, if exists, to image dict.
-        if (!CGRectIsNull(((ClarifaiImage *)input).crop) && !CGRectIsEmpty(((ClarifaiImage *)input).crop)) {
-          [image setObject:@[ @(((ClarifaiImage *)input).crop.origin.x),
-                              @(((ClarifaiImage *)input).crop.origin.y),
-                              @(((ClarifaiImage *)input).crop.size.width),
-                              @(((ClarifaiImage *)input).crop.size.height) ] forKey:@"crop"];
-        }
-        
-        data[@"image"] = image;
-        
-        // add concepts to data dict.
-        if (input.concepts != nil && input.concepts.count != 0) {
-          NSMutableArray *concepts = [NSMutableArray array];
-          // init concepts
-          for (ClarifaiConcept *concept in input.concepts) {
-            NSMutableDictionary *conceptDict = [NSMutableDictionary dictionary];
-            conceptDict[@"id"] = concept.conceptID;
-            // can only be true or false when adding concepts with inputs.
-            conceptDict[@"value"] = concept.score > 0 ? [NSNumber numberWithInt:1] : [NSNumber numberWithInt:0];
-            [concepts addObject:conceptDict];
-          }
-          data[@"concepts"] = concepts;
-        }
-        
-        inputEntry[@"data"] = data;
-        [inputsArray addObject:inputEntry];
+      // set data dict (contains image and tags).
+      NSMutableDictionary *data = [NSMutableDictionary dictionary];
+      
+      // add url or imageData to image dict.
+      NSMutableDictionary *image = [NSMutableDictionary dictionary];
+      if (![input.mediaURL isEqual: @""] && input.mediaURL != nil) {
+        // input has url
+        image[@"url"] = input.mediaURL;
+        image[@"allow_duplicate_url"] = input.allowDuplicateURLs ? @YES : @NO;
+      } else if (input.mediaData != nil) {
+        // input has image data
+        NSString *encodedString = [input.mediaData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        image[@"base64"] = encodedString;
       }
+
+      if ([input isKindOfClass:[ClarifaiImage class]]) {
+        // add crop, if exists, to image dict.
+        if (((ClarifaiImage *)input).crop != nil) {
+          [image setObject:@[ @(((ClarifaiImage *)input).crop.top),
+                              @(((ClarifaiImage *)input).crop.left),
+                              @(((ClarifaiImage *)input).crop.bottom),
+                              @(((ClarifaiImage *)input).crop.right) ] forKey:@"crop"];
+        }
+      }
+      data[@"image"] = image;
+      
+      // add concepts to data dict.
+      if (input.concepts != nil && input.concepts.count != 0) {
+        NSMutableArray *concepts = [NSMutableArray array];
+        // init concepts
+        for (ClarifaiConcept *concept in input.concepts) {
+          NSMutableDictionary *conceptDict = [NSMutableDictionary dictionary];
+          conceptDict[@"id"] = concept.conceptID;
+          // can only be true or false when adding concepts with inputs.
+          conceptDict[@"value"] = concept.score > 0 ? [NSNumber numberWithInt:1] : [NSNumber numberWithInt:0];
+          [concepts addObject:conceptDict];
+        }
+        data[@"concepts"] = concepts;
+      }
+      
+      inputEntry[@"data"] = data;
+      [inputsArray addObject:inputEntry];
     }
     
     NSDictionary *params = @{ @"inputs": inputsArray };
@@ -262,7 +252,8 @@
     NSMutableDictionary *inputDict = [NSMutableDictionary dictionary];
     inputDict[@"id"] = inputID;
     
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    // create concepts array
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
     NSMutableArray *conceptsArray = [NSMutableArray array];
     for (ClarifaiConcept *concept in concepts) {
       NSMutableDictionary *conceptDict = [NSMutableDictionary dictionary];
@@ -271,15 +262,70 @@
       [conceptsArray addObject:conceptDict];
     }
     
-    params[@"concepts"] = conceptsArray;
+    data[@"concepts"] = conceptsArray;
+    inputDict[@"data"] = data;
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"inputs"] = @[inputDict];
     params[@"action"] = @"merge_concepts";
     
-    NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/%@/data/concepts", inputID];
+    NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/"];
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
     [self.manager PATCH:apiURL
              parameters:params
                 success:^(AFHTTPRequestOperation *op, id response) {
-                  completion([[ClarifaiInput alloc] initWithDictionary:response[@"input"]], nil);
+                  ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:response[@"inputs"][0]];
+                  completion(input, nil);
+                } failure:^(AFHTTPRequestOperation *op, NSError *error) {
+                  if (op.response.statusCode >= 400) {
+                    error = [self errorFromHttpResponse:op];
+                  }
+                  completion(nil, error);
+                }];
+  }];
+}
+
+- (void)updateConceptsForInputs:(NSArray<ClarifaiInput *> *)inputs completion:(ClarifaiInputsCompletion)completion {
+  [self ensureValidAccessToken:^(NSError *error) {
+    if (error) {
+      SafeRunBlock(completion, nil, error);
+      return;
+    }
+    NSMutableArray *inputsArray = [[NSMutableArray alloc] init];
+    for (ClarifaiInput *input in inputs) {
+      NSMutableDictionary *inputDict = [NSMutableDictionary dictionary];
+      inputDict[@"id"] = input.inputID;
+      
+      // create concepts array
+      NSMutableDictionary *data = [NSMutableDictionary dictionary];
+      NSMutableArray *conceptsArray = [NSMutableArray array];
+      for (ClarifaiConcept *concept in input.concepts) {
+        NSMutableDictionary *conceptDict = [NSMutableDictionary dictionary];
+        conceptDict[@"id"] = concept.conceptID;
+        conceptDict[@"value"] = [NSNumber numberWithFloat:concept.score];
+        [conceptsArray addObject:conceptDict];
+      }
+      
+      data[@"concepts"] = conceptsArray;
+      inputDict[@"data"] = data;
+      [inputsArray addObject:inputDict];
+    }
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"inputs"] = inputsArray;
+    params[@"action"] = @"merge_concepts";
+    
+    NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/"];
+    NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
+    [self.manager PATCH:apiURL
+             parameters:params
+                success:^(AFHTTPRequestOperation *op, id response) {
+                  NSMutableArray *inputs = [[NSMutableArray alloc] init];
+                  for (NSDictionary *inputDict in response[@"inputs"]) {
+                    ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
+                    [inputs addObject:input];
+                  }
+                  completion(inputs, nil);
                 } failure:^(AFHTTPRequestOperation *op, NSError *error) {
                   if (op.response.statusCode >= 400) {
                     error = [self errorFromHttpResponse:op];
@@ -299,7 +345,8 @@
     NSMutableDictionary *inputDict = [NSMutableDictionary dictionary];
     inputDict[@"id"] = inputID;
     
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    // create concepts array
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
     NSMutableArray *conceptsArray = [NSMutableArray array];
     for (ClarifaiConcept *concept in concepts) {
       NSMutableDictionary *conceptDict = [NSMutableDictionary dictionary];
@@ -307,15 +354,69 @@
       [conceptsArray addObject:conceptDict];
     }
     
-    params[@"concepts"] = conceptsArray;
+    data[@"concepts"] = conceptsArray;
+    inputDict[@"data"] = data;
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"inputs"] = @[inputDict];
     params[@"action"] = @"delete_concepts";
     
-    NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/%@/data/concepts", inputID];
+    NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/"];
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
     [self.manager PATCH:apiURL
              parameters:params
                 success:^(AFHTTPRequestOperation *op, id response) {
-                  completion([[ClarifaiInput alloc] initWithDictionary:response[@"input"]], nil);
+                  ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:response[@"inputs"][0]];
+                  completion(input, nil);
+                } failure:^(AFHTTPRequestOperation *op, NSError *error) {
+                  if (op.response.statusCode >= 400) {
+                    error = [self errorFromHttpResponse:op];
+                  }
+                  completion(nil, error);
+                }];
+  }];
+}
+
+- (void)deleteConceptsForInputs:(NSArray<ClarifaiInput *> *)inputs completion:(ClarifaiInputsCompletion)completion {
+  [self ensureValidAccessToken:^(NSError *error) {
+    if (error) {
+      SafeRunBlock(completion, nil, error);
+      return;
+    }
+    NSMutableArray *inputsArray = [[NSMutableArray alloc] init];
+    for (ClarifaiInput *input in inputs) {
+      NSMutableDictionary *inputDict = [NSMutableDictionary dictionary];
+      inputDict[@"id"] = input.inputID;
+      
+      // create concepts array
+      NSMutableDictionary *data = [NSMutableDictionary dictionary];
+      NSMutableArray *conceptsArray = [NSMutableArray array];
+      for (ClarifaiConcept *concept in input.concepts) {
+        NSMutableDictionary *conceptDict = [NSMutableDictionary dictionary];
+        conceptDict[@"id"] = concept.conceptID;
+        [conceptsArray addObject:conceptDict];
+      }
+      
+      data[@"concepts"] = conceptsArray;
+      inputDict[@"data"] = data;
+      [inputsArray addObject:inputDict];
+    }
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"inputs"] = inputsArray;
+    params[@"action"] = @"delete_concepts";
+    
+    NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/"];
+    NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
+    [self.manager PATCH:apiURL
+             parameters:params
+                success:^(AFHTTPRequestOperation *op, id response) {
+                  NSMutableArray *inputs = [[NSMutableArray alloc] init];
+                  for (NSDictionary *inputDict in response[@"inputs"]) {
+                    ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
+                    [inputs addObject:input];
+                  }
+                  completion(inputs, nil);
                 } failure:^(AFHTTPRequestOperation *op, NSError *error) {
                   if (op.response.statusCode >= 400) {
                     error = [self errorFromHttpResponse:op];
@@ -427,7 +528,7 @@
     NSString *endpoint = @"/inputs/";
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:endpoint];
     [self.manager DELETE:apiURL
-              parameters:nil
+              parameters:@{@"delete_all":@YES}
                  success:^(AFHTTPRequestOperation *op, id response) {
                    completion(nil);
                  } failure:^(AFHTTPRequestOperation *op, NSError *error) {
@@ -439,27 +540,28 @@
   }];
 }
 
-- (void)deleteInputsByIDList:(NSArray <ClarifaiInput *> *)inputs completion:(ClarifaiRequestCompletion)completion {
+- (void)deleteInputsByIDList:(NSArray *)inputs completion:(ClarifaiRequestCompletion)completion {
   [self ensureValidAccessToken:^(NSError *error) {
     if (error) {
       SafeRunBlock(completion, error);
       return;
     }
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+
     NSMutableArray *inputsArray = [NSMutableArray array];
-    for (ClarifaiInput *input in inputs) {
-      NSMutableDictionary *inputDict = [NSMutableDictionary dictionary];
-      inputDict[@"id"] = input.inputID;
-      [inputsArray addObject:inputDict];
+    for (id input in inputs) {
+      if ([input isKindOfClass:[NSString class]]) {
+        [inputsArray addObject:input];
+      } else if ([input isKindOfClass:[ClarifaiInput class]]) {
+        [inputsArray addObject:((ClarifaiInput *)input).inputID];
+      }
     }
     
-    params[@"inputs"] = inputsArray;
-    params[@"action"] = @"delete_inputs";
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"ids"] = inputsArray;
     
     NSString *inputURLSuffix = @"/inputs/";
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
-    [self.manager PATCH:apiURL
+    [self.manager DELETE:apiURL
              parameters:params
                 success:^(AFHTTPRequestOperation *op, id response) {
                   completion(nil);
@@ -567,15 +669,15 @@
     ClarifaiImage *image = (ClarifaiImage *)searchTerm.searchItem;
     if (image.inputID) {
       if (searchTerm.isInput) {
-        return @{@"input": @{@"id": image.inputID, @"data": @{@"image": @{@"crop": @[@(image.crop.origin.x),
-                                                                                     @(image.crop.origin.y),
-                                                                                     @(image.crop.size.width),
-                                                                                     @(image.crop.size.height)]}}}};
+        return @{@"input": @{@"id": image.inputID, @"data": @{@"image": @{@"crop": @[@(image.crop.top),
+                                                                                     @(image.crop.left),
+                                                                                     @(image.crop.bottom),
+                                                                                     @(image.crop.right)]}}}};
       } else {
-        return  @{@"output": @{@"input": @{@"id": image.inputID, @"data": @{@"image": @{@"crop": @[@(image.crop.origin.x),
-                                                                                                   @(image.crop.origin.y),
-                                                                                                   @(image.crop.size.width),
-                                                                                                   @(image.crop.size.height)]}}}}};
+        return  @{@"output": @{@"input": @{@"id": image.inputID, @"data": @{@"image": @{@"crop": @[@(image.crop.top),
+                                                                                                   @(image.crop.left),
+                                                                                                   @(image.crop.bottom),
+                                                                                                   @(image.crop.right)]}}}}};
       }
     } else if (image.mediaURL) {
       if (searchTerm.isInput) {
@@ -656,7 +758,9 @@
       return;
     }
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/models"];
-    [self.manager GET:apiURL parameters:@{@"page": @(page), @"per_page": @(resultsPerPage)} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [self.manager GET:apiURL
+           parameters:@{@"page": @(page), @"per_page": @(resultsPerPage)}
+              success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableArray *clarifaiModels = [NSMutableArray array];
       NSArray *models = responseObject[@"models"];
       for (NSDictionary *model in models) {
@@ -857,6 +961,17 @@
   conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
   closedEnvironment:(BOOL)closedEnvironment
          completion:(ClarifaiModelCompletion)completion {
+  
+  // Call createModel below using the modelName as both the name and ID.
+  [self createModel:concepts name:modelName modelID:modelName conceptsMutuallyExclusive:conceptsMutuallyExclusive closedEnvironment:closedEnvironment completion:completion];
+ }
+
+- (void)createModel:(NSArray *)concepts
+               name:(NSString *)modelName
+                 modelID:(NSString *)modelID
+conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
+  closedEnvironment:(BOOL)closedEnvironment
+         completion:(ClarifaiModelCompletion)completion {
   [self ensureValidAccessToken:^(NSError *error) {
     if (error) {
       SafeRunBlock(completion, nil, error);
@@ -876,6 +991,7 @@
     @{
       @"model": @{
           @"name": modelName,
+          @"id": modelID,
           @"output_info": @{
               @"data": @{
                   @"concepts": conceptsArray
@@ -929,7 +1045,7 @@
     NSString *endpoint = @"/models/";
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:endpoint];
     [self.manager DELETE:apiURL
-              parameters:nil
+              parameters:@{@"delete_all":@YES}
                  success:^(AFHTTPRequestOperation *op, id response) {
                    completion(nil);
                  } failure:^(AFHTTPRequestOperation *op, NSError *error) {
@@ -941,6 +1057,39 @@
   }];
 }
 
+- (void)deleteModelsByIDList:(NSArray *)models completion:(ClarifaiRequestCompletion)completion {
+    [self ensureValidAccessToken:^(NSError *error) {
+        if (error) {
+            SafeRunBlock(completion, error);
+            return;
+        }
+        
+        NSMutableArray *modelsArray = [NSMutableArray array];
+        for (id model in models) {
+            if ([model isKindOfClass:[NSString class]]) {
+                 [modelsArray addObject:model];
+            } else if ([model isKindOfClass:[ClarifaiModel class]]) {
+                [modelsArray addObject:((ClarifaiModel *)model).modelID];
+            }
+        }
+        
+        NSMutableDictionary *params = [NSMutableDictionary dictionary];
+        params[@"ids"] = modelsArray;
+        
+        NSString *inputURLSuffix = @"/models/";
+        NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
+        [self.manager DELETE:apiURL
+                  parameters:params
+                     success:^(AFHTTPRequestOperation *op, id response) {
+                         completion(nil);
+                     } failure:^(AFHTTPRequestOperation *op, NSError *error) {
+                         if (op.response.statusCode >= 400) {
+                             error = [self errorFromHttpResponse:op];
+                         }
+                         completion(error);
+                     }];
+    }];
+}
 
 - (void)getOutputInfoForModel:(NSString *)modelID completion:(ClarifaiModelCompletion)completion {
   [self ensureValidAccessToken:^(NSError *error) {
@@ -967,6 +1116,7 @@
   NSString *value = [NSString stringWithFormat:@"Bearer %@", self.accessToken];
   [self.manager.requestSerializer setValue:value forHTTPHeaderField:@"Authorization"];
   [self.manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+  [self.manager.requestSerializer setValue:@"objc:2.0.2" forHTTPHeaderField:@"X-Clarifai-Client"];
 }
 
 - (void)ensureValidAccessToken:(void (^)(NSError *error))handler {

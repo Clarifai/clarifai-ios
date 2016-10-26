@@ -9,6 +9,12 @@
 #import "ClarifaiModel.h"
 #import "ClarifaiApp.h"
 
+@interface ClarifaiModel() {
+  __block BOOL finishedTrainingAttempt;
+  __block double curStatus;
+}
+@end
+
 @implementation ClarifaiModel
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
@@ -56,22 +62,63 @@
   return self;
 }
 
-- (void)train:(ClarifaiModelCompletion)completion {
+- (void)train:(ClarifaiModelVersionCompletion)completion {
   [_app ensureValidAccessToken:^(NSError *error) {
+    if (error) {
+      SafeRunBlock(completion, nil, error);
+      return;
+    }
+    finishedTrainingAttempt = NO;
     NSString *apiURL = [NSString stringWithFormat:@"%@/models/%@/versions", kApiBaseUrl, self.modelID];
-    [_app.manager POST:apiURL parameters:nil success:^(AFHTTPRequestOperation *operation, id response) {
-      ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:response[@"model"]];
-      model.app = _app;
-      completion(model, nil);
-    } failure:^(AFHTTPRequestOperation * _Nullable operation, NSError * _Nonnull error) {
-      completion(nil, error);
-    }];
+    [_app.manager POST:apiURL
+            parameters:nil
+               success:^(AFHTTPRequestOperation *operation, id response) {
+                 //update version info
+                 ClarifaiModelVersion *curVersion = [[ClarifaiModelVersion alloc] initWithDictionary:response[@"model"][@"model_version"]];
+                 _version = curVersion;
+                 curStatus = curVersion.statusCode.doubleValue;
+                 finishedTrainingAttempt = NO;
+                 
+                 // Training is async on the server, poll to check when training completes.
+                 [self pollUntilTrained:completion];
+               } failure:^(AFHTTPRequestOperation * _Nullable operation, NSError * _Nonnull error) {
+                 completion(nil, error);
+               }];
   }];
+}
+
+- (void) pollUntilTrained:(ClarifaiModelVersionCompletion)completion {
+  [_app getModelByID:_modelID completion:^(ClarifaiModel *model, NSError *error) {
+    @synchronized (self) {
+      if (!finishedTrainingAttempt) {
+        if (error == nil) {
+          curStatus = model.version.statusCode.doubleValue;
+          if (curStatus == 21100 || floor(curStatus/10.0) == 2111) {
+            finishedTrainingAttempt = YES;
+            _version = model.version;
+            completion(model.version, nil);
+          }
+        } else {
+          finishedTrainingAttempt = YES;
+          completion(nil, error);
+        }
+      }
+    }
+  }];
+  if (!finishedTrainingAttempt) {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
+      [self pollUntilTrained:completion];
+    });
+  }
 }
 
 - (void)predictOnImages:(NSArray <ClarifaiImage *> *)images
                  completion:(ClarifaiPredictionsCompletion)completion {
   [_app ensureValidAccessToken:^(NSError *error) {
+    if (error) {
+      SafeRunBlock(completion, nil, error);
+      return;
+    }
     NSString *apiURL = [NSString stringWithFormat:@"%@/models/%@/versions/%@/outputs", kApiBaseUrl, self.modelID, self.version.versionID];
     NSMutableArray *imagesToPredictOn = [NSMutableArray array];
     for (ClarifaiImage *image in images) {
@@ -100,7 +147,7 @@
 
 - (void)listVersions:(int)page
       resultsPerPage:(int)resultsPerPage
-                  completion:(ClarifaiModelVersionsCompletion)completion {
+          completion:(ClarifaiModelVersionsCompletion)completion {
   [_app ensureValidAccessToken:^(NSError *error) {
     if (error) {
       SafeRunBlock(completion, nil, error);

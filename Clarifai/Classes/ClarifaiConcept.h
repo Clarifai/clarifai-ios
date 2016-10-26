@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 @class ClarifaiModel;
 
+/**
+ * A ClarifaiConcept represents a tag that will be predicted from an image (or any input). You can also use this class to create your own tags when adding to inputs or creating custom models.
+ */
 @interface ClarifaiConcept : NSObject
 
 /** The model that this concept is associated with. */
