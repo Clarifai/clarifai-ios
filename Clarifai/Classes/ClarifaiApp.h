@@ -196,7 +196,7 @@
  *
  * @param searchTerms     An array of ClarifaiSearchTerms that are and-ed together to create the query.
  * @param page            The page number of results to show.
- * @param perPage  Number of results per page.
+ * @param perPage         Number of results per page.
  * @param completion      Invoked when the request completes.
  */
 - (void)search:(NSArray <ClarifaiSearchTerm *> *)searchTerms
@@ -204,6 +204,20 @@
        perPage:(NSNumber *)perPage
     completion:(ClarifaiSearchCompletion)completion;
 
+/**
+ * Search using metadata previously added to the inputs in your application.
+ *
+ * @param metadata        Metadata to search inputs for. This can be any valid json object.
+ * @param page            The page number of results to show.
+ * @param perPage         Number of results per page.
+ * @param isInput         Bool that indicates searching across inputs (true) or outputs (false).
+ * @param completion      Invoked when the request completes.
+ */
+- (void)searchByMetadata:(NSDictionary *)metadata
+                    page:(NSNumber *)page
+                 perPage:(NSNumber *)perPage
+                 isInput:(BOOL)isInput
+              completion:(ClarifaiSearchCompletion)completion;
 
 #pragma mark - Models
 

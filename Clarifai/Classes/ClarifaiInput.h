@@ -30,8 +30,11 @@
 /** Concepts associated with this input. */
 @property (strong, nonatomic) NSArray <ClarifaiConcept *> *concepts;
 
-/** If set to true, this input can use a duplicate url of one already added to the app. Defaults to false.*/
+/** If set to true, this input can use a duplicate url of one already added to the app. Defaults to false. (only to be used when adding media to your app) */
 @property BOOL allowDuplicateURLs;
+
+/** Optionally you can set metadata for each input, which can be searched on within your app. This can be any valid json object.*/
+@property (strong, nonatomic) NSDictionary *metadata;
 
 - (instancetype)initWithURL:(NSString *)url;
 - (instancetype)initWithURL:(NSString *)URL andConcepts:(NSArray *)concepts;

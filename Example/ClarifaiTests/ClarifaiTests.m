@@ -27,11 +27,55 @@
   _conCount = 0;
 }
 
+- (void)testAddInputs {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  
+  //create first image and concept.
+  ClarifaiConcept *concept1 = [[ClarifaiConcept alloc] initWithConceptName:@"dogg"];
+  concept1.score = 0;
+  ClarifaiCrop *crop = [[ClarifaiCrop alloc] initWithTop:0.2 left:0.3 bottom:0.7 right:0.8];
+  ClarifaiImage *img1 = [[ClarifaiImage alloc] initWithURL:@"https://samples.clarifai.com/metro-north.jpg" crop:crop andConcepts:@[concept1]];
+  img1.allowDuplicateURLs = YES;
+  
+  //create second image and concept.
+  ClarifaiConcept *concept2 = [[ClarifaiConcept alloc] initWithConceptName:@"ggod"];
+  concept2.score = 1;
+  ClarifaiImage *img2 = [[ClarifaiImage alloc] initWithURL:@"http://www.pumapedia.com/wp-content/uploads/2012/10/puma-roca.jpg" crop:crop andConcepts:@[concept2]];
+  img2.metadata = @{@"metagurz":@"burf!"};
+  img2.allowDuplicateURLs = YES;
+  
+  [_app addInputs:@[img1,img2] completion:^(NSArray<ClarifaiInput *> *inputs, NSError *error) {
+    assert(error == nil);
+    ClarifaiInput *input1 = inputs[0];
+    ClarifaiInput *input2 = inputs[1];
+    _runningImageID = input1.inputID;
+    XCTAssert(input1.concepts[0].score == 0);
+    XCTAssert([input1.concepts[0].conceptName isEqualToString:@"dogg"]);
+    XCTAssert(input2.concepts[0].score == 1);
+    XCTAssert([input2.concepts[0].conceptName isEqualToString:@"ggod"]);
+    XCTAssert([input2.metadata[@"metagurz"] isEqualToString:@"burf!"]);
+    [future setResult:@(YES)];
+  }];
+  [future getResult];
+}
+
+- (void)testSearchWithMetadata {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [self testAddInputs];
+  [_app searchByMetadata:@{@"metagurz":@"burf!"} page:@1 perPage:@20 isInput:YES completion:^(NSArray<ClarifaiSearchResult *> *results, NSError *error) {
+    XCTAssert([results[0].metadata[@"metagurz"] isEqualToString:@"burf!"]);
+    [future setResult:@(YES)];
+  }];
+  
+  [future getResult];
+}
+
 - (void)testSearchWithImageData {
   CAIFuture *future = [[CAIFuture alloc] init];
   ClarifaiImage *image = [[ClarifaiImage alloc] initWithImage:[UIImage imageNamed:@"geth.jpg"]];
   ClarifaiSearchTerm *searchTerm = [[ClarifaiSearchTerm alloc] initWithSearchItem:image isInput:NO];
   [_app search:@[searchTerm] page:@1 perPage:@20 completion:^(NSArray<ClarifaiSearchResult *> *results, NSError *error) {
+    
     NSLog(@"results: %@", results);
     [future setResult:@(YES)];
   }];
@@ -82,36 +126,6 @@ conceptsMutuallyExclusive:NO
                 }];
   }];
   [future getResult];
-}
-
-- (void)testAddInputs {
-  CAIFuture *future = [[CAIFuture alloc] init];
-  
-  //create first image and concept.
-  ClarifaiConcept *concept1 = [[ClarifaiConcept alloc] initWithConceptName:@"dogg"];
-  concept1.score = 0;
-  ClarifaiCrop *crop = [[ClarifaiCrop alloc] initWithTop:0.2 left:0.3 bottom:0.7 right:0.8];
-  ClarifaiImage *img1 = [[ClarifaiImage alloc] initWithURL:@"https://samples.clarifai.com/metro-north.jpg" crop:crop andConcepts:@[concept1]];
-  img1.allowDuplicateURLs = YES;
-  
-  //create second image and concept.
-  ClarifaiConcept *concept2 = [[ClarifaiConcept alloc] initWithConceptName:@"ggod"];
-  concept2.score = 1;
-  ClarifaiImage *img2 = [[ClarifaiImage alloc] initWithURL:@"https://samples.clarifai.com/metro-north.jpg" crop:crop andConcepts:@[concept2]];
-  img2.allowDuplicateURLs = YES;
-  
-  [_app addInputs:@[img1,img2] completion:^(NSArray<ClarifaiInput *> *inputs, NSError *error) {
-    assert(error == nil);
-    ClarifaiInput *input1 = inputs[0];
-    ClarifaiInput *input2 = inputs[1];
-    _runningImageID = input1.inputID;
-    XCTAssert(input1.concepts[0].score == 0);
-    XCTAssert([input1.concepts[0].conceptName isEqualToString:@"dogg"]);
-    XCTAssert(input2.concepts[0].score == 1);
-    XCTAssert([input2.concepts[0].conceptName isEqualToString:@"ggod"]);
-    [future setResult:@(YES)];
-  }];
-  [future getResult];  
 }
 
 - (void)testAddConceptsToInput {
@@ -249,8 +263,8 @@ conceptsMutuallyExclusive:NO
 
 - (void)testSearchByImageURL {
   CAIFuture *future = [[CAIFuture alloc] init];
-  ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"http://i.imgur.com/HEoT5xR.png"];
-  ClarifaiSearchTerm *searchTerm = [[ClarifaiSearchTerm alloc] initWithSearchItem:image isInput:YES];
+  ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"http://thedigitalstory.com/2012/07/27/Train%20Tracks%20P7242542%20Retina.jpg"];
+  ClarifaiSearchTerm *searchTerm = [[ClarifaiSearchTerm alloc] initWithSearchItem:image isInput:NO];
   [_app search:@[searchTerm] page:@1 perPage:@20 completion:^(NSArray<ClarifaiSearchResult *> *outputs, NSError *error) {
     assert(error == nil);
     [future setResult:@(YES)];
