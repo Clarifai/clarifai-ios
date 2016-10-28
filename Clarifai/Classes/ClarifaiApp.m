@@ -129,10 +129,15 @@
         data[@"concepts"] = concepts;
       }
       
+      // add metadata, if any.
+      if (input.metadata != nil) {
+        data[@"metadata"] = input.metadata;
+      }
+      
       inputEntry[@"data"] = data;
       [inputsArray addObject:inputEntry];
     }
-    
+      
     NSDictionary *params = @{ @"inputs": inputsArray };
     [self.manager POST:apiURL
             parameters:params
@@ -665,7 +670,7 @@
 #pragma mark - Search
 
 - (NSDictionary *)formatItemForSearch:(ClarifaiSearchTerm *)searchTerm {
-  if ([searchTerm.searchItem isKindOfClass:[ClarifaiImage class]]) {
+  if ([searchTerm.searchItem isKindOfClass:[ClarifaiInput class]]) {
     ClarifaiImage *image = (ClarifaiImage *)searchTerm.searchItem;
     if (image.inputID) {
       if (searchTerm.isInput) {
@@ -692,6 +697,12 @@
       } else {
         return @{@"output": @{@"input": @{@"data": @{@"image": @{@"base64": [image.mediaData
                                                                              base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength] }}}}};
+      }
+    } else if (image.metadata) {
+      if (searchTerm.isInput) {
+        return @{@"input": @{@"data": @{@"metadata": image.metadata}}};
+      } else {
+        return @{@"output": @{@"input": @{@"data": @{@"metadata": image.metadata}}}};
       }
     }
   } else if ([searchTerm.searchItem isKindOfClass:[ClarifaiConcept class]]) {
@@ -737,6 +748,41 @@
       NSDictionary *pagination = @{@"page": page, @"per_page": perPage};
 
       [self.manager POST:apiURL parameters:@{@"query": query, @"pagination":pagination} success:^(AFHTTPRequestOperation *operation, NSDictionary *response) {
+        NSArray *hits = response[@"hits"];
+        NSArray<ClarifaiSearchResult *> *searchResults = [hits map:^(NSDictionary *hit) {
+          return [[ClarifaiSearchResult alloc] initWithDictionary:hit];
+        }];
+        completion(searchResults, nil);
+      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        completion(nil, error);
+      }];
+    }
+  }];
+}
+
+- (void)searchByMetadata:(NSDictionary *)metadata
+                    page:(NSNumber *)page
+                 perPage:(NSNumber *)perPage
+                 isInput:(BOOL)isInput
+              completion:(ClarifaiSearchCompletion)completion {
+  [self ensureValidAccessToken:^(NSError *error) {
+    if (error) {
+      completion(nil, error);
+    } else {
+      NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/searches"];
+      
+      NSMutableDictionary *query = [NSMutableDictionary dictionary];
+      if (isInput) {
+        query[@"ands"] = @[ @{@"input": @{@"data":@{@"metadata": metadata}}} ];
+      } else {
+        query[@"ands"] = @[ @{@"output": @{@"input": @{@"data":@{@"metadata": metadata}}}} ];
+      }
+      
+      NSDictionary *pagination = @{@"page": page, @"per_page": perPage};
+      
+      [self.manager POST:apiURL
+              parameters:@{@"query": query, @"pagination":pagination}
+                 success:^(AFHTTPRequestOperation *operation, NSDictionary *response) {
         NSArray *hits = response[@"hits"];
         NSArray<ClarifaiSearchResult *> *searchResults = [hits map:^(NSDictionary *hit) {
           return [[ClarifaiSearchResult alloc] initWithDictionary:hit];

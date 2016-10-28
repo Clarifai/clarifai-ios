@@ -36,6 +36,7 @@
       _concepts = concepts;
     }
     
+    _metadata = data[@"metadata"];
   }
   return self;
 }
