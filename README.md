@@ -3,7 +3,7 @@ A client for iOS apps using the Clarifai V2 API.
 
 * Sign up for a free developer account at: https://developer.clarifai.com/signup/
 * Read the developer guide at: https://developer.clarifai.com/guide-v2/
-* Read the full Objective-C docs at: https://sdk.clarifai.com/iOS/docs-{{version-number}}/masterTOC.html
+* Read the full Objective-C docs at: http://cocoadocs.org/docsets/Clarifai/
 
 ## Installation
 ### CocoaPods
@@ -40,9 +40,14 @@ have an account or application, you'll need to sign up first).
     ```
 6. That's it! Explore the [API docs and guide](https://developer.clarifai.com).
 
+NOTE- to use Clarifai in Swift, make sure to add use_frameworks! to your podfile and import into any swift file using:
+    ```
+    import Clarifai
+    ```
+
 ## Documentation
 
-The most recent docs can currently be found [here](https://sdk.clarifai.com/iOS/docs-2.0.0/masterTOC.html). 
+The most recent docs can be found [here](http://cocoadocs.org/docsets/Clarifai/) on Cocoadocs. 
 
 ## Example Project
 

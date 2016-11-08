@@ -27,6 +27,7 @@
   _conCount = 0;
 }
 
+// TEST INPUTS
 - (void)testAddInputs {
   CAIFuture *future = [[CAIFuture alloc] init];
   
@@ -34,7 +35,7 @@
   ClarifaiConcept *concept1 = [[ClarifaiConcept alloc] initWithConceptName:@"dogg"];
   concept1.score = 0;
   ClarifaiCrop *crop = [[ClarifaiCrop alloc] initWithTop:0.2 left:0.3 bottom:0.7 right:0.8];
-  ClarifaiImage *img1 = [[ClarifaiImage alloc] initWithURL:@"https://samples.clarifai.com/metro-north.jpg" crop:crop andConcepts:@[concept1]];
+  ClarifaiImage *img1 = [[ClarifaiImage alloc] initWithURL:@"https://samples.clarifai.com/metro-north.jpg" andConcepts:@[concept1]];
   img1.allowDuplicateURLs = YES;
   
   //create second image and concept.
@@ -59,6 +60,124 @@
   [future getResult];
 }
 
+- (void)testGetInputs {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [self testAddInputs];
+  [_app getInputsOnPage:1 pageSize:30 completion:^(NSArray<ClarifaiInput *> *inputs, NSError *error) {
+    assert(error == nil);
+    XCTAssert([inputs count] > 0);
+    [future setResult:@(YES)];
+  }];
+  [future getResult];
+}
+
+- (void)testGetInputByID {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [self testAddInputs];
+  [_app getInput:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
+    assert(error == nil);
+    XCTAssert([_runningImageID isEqualToString:input.inputID]);
+    [future setResult:@(YES)];
+  }];
+  
+  [future getResult];
+}
+
+- (void)testGetInputStatus {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [_app getInputsStatus:^(int numProcessed, int numToProcess, int errors, NSError *error) {
+    assert(error == nil);
+    [future setResult:@(YES)];
+  }];
+  
+  [future getResult];
+}
+
+- (void)testDeleteInputByID {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [self testAddInputs];
+  [_app deleteInput:_runningImageID completion:^(NSError *error) {
+    assert(error == nil);
+    [_app getInput:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
+      //should be error if input was properly deleted.
+      XCTAssert(error != nil);
+      [future setResult:@(YES)];
+    }];
+  }];
+  
+  [future getResult];
+}
+
+- (void)testDeleteInputByIDListInputs {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [self testAddInputs];
+  ClarifaiInput *input = [[ClarifaiInput alloc] init];
+  input.inputID = _runningImageID;
+  [_app deleteInputsByIDList:@[input] completion:^(NSError *error) {
+    assert(error == nil);
+    //poll to check for input until deletion completes.
+    [self pollForInputWithTimeout:20 completion:^(NSError *error) {
+      XCTAssert(error == nil);
+      [future setResult:@(YES)];
+    }];
+  }];
+  
+  [future getResult];
+}
+
+- (void)testDeleteInputByIDListStrings {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [self testAddInputs];
+  [_app deleteInputsByIDList:@[_runningImageID] completion:^(NSError *error) {
+    assert(error == nil);
+    //poll to check for input until deletion completes.
+    [self pollForInputWithTimeout:20 completion:^(NSError *error) {
+      XCTAssert(error == nil);
+      [future setResult:@(YES)];
+    }];
+  }];
+  
+  [future getResult];
+}
+
+- (void)testDeleteAllInputs {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [self testAddInputs];
+  [_app deleteAllInputs:^(NSError *error) {
+    assert(error == nil);
+    //poll until deletion completes, getinput returns 404 error.
+    [self pollForInputWithTimeout:20 completion:^(NSError *error) {
+      XCTAssert(error == nil);
+      [future setResult:@(YES)];
+    }];
+  }];
+  [future getResult];
+}
+
+- (void) pollForInputWithTimeout:(NSInteger)attempts completion:(ClarifaiRequestCompletion)completion {
+  if (attempts > 0) {
+    [_app getInput:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
+      if (input == nil && error != nil) {
+        if ([error code] == (NSInteger)404) {
+          // error code was 404, resource does not exist. input was deleted.
+          completion(nil);
+        } else {
+          // some other error, pass on to completion.
+          completion(error);
+        }
+      } else if (input != nil && error == nil) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
+          [self pollForInputWithTimeout:attempts-1 completion:completion];
+        });
+      }
+    }];
+  } else {
+    // timed out, all attempts completed.
+    NSError *error = [[NSError alloc] initWithDomain:@"com.clarifai.ClarifaiClient" code:(NSInteger)408 userInfo:@{@"description":@"Request timed out. Input still existed after all attempts."}];
+    completion(error);
+  }
+}
+
 - (void)testSearchWithMetadata {
   CAIFuture *future = [[CAIFuture alloc] init];
   [self testAddInputs];
@@ -72,11 +191,11 @@
 
 - (void)testSearchWithImageData {
   CAIFuture *future = [[CAIFuture alloc] init];
+  [self testAddInputs];
   ClarifaiImage *image = [[ClarifaiImage alloc] initWithImage:[UIImage imageNamed:@"geth.jpg"]];
   ClarifaiSearchTerm *searchTerm = [[ClarifaiSearchTerm alloc] initWithSearchItem:image isInput:NO];
   [_app search:@[searchTerm] page:@1 perPage:@20 completion:^(NSArray<ClarifaiSearchResult *> *results, NSError *error) {
-    
-    NSLog(@"results: %@", results);
+    XCTAssert([results count] > 0);
     [future setResult:@(YES)];
   }];
   [future getResult];
@@ -128,25 +247,30 @@ conceptsMutuallyExclusive:NO
   [future getResult];
 }
 
-- (void)testAddConceptsToInput {
+- (void)testMergeConceptsToInput {
   CAIFuture *future = [[CAIFuture alloc] init];
   [self testAddInputs];
   ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithConceptName:@"cat"];
-  [_app addConcepts:@[concept] forInputWithID:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
+  concept.score = 0;
+  [_app mergeConcepts:@[concept] forInputWithID:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
     assert(error == nil);
     bool cat = NO;
+    bool dogg = NO;
     for (ClarifaiConcept *concept in input.concepts) {
       if ([concept.conceptID  isEqualToString: @"cat"]) {
         cat = YES;
+      } else if ([concept.conceptID  isEqualToString: @"dogg"]) {
+        dogg = YES;
       }
     }
     XCTAssert(cat);
+    XCTAssert(dogg);
     [future setResult:@(YES)];
   }];
   [future getResult];
 }
 
-- (void)testUpdateConceptsForInputs {
+- (void)testMergeConceptsForInputs {
   CAIFuture *future = [[CAIFuture alloc] init];
   [self testAddInputs];
   [_app getInputsOnPage:1 pageSize:30 completion:^(NSArray<ClarifaiInput *> *inputs, NSError *error) {
@@ -156,7 +280,7 @@ conceptsMutuallyExclusive:NO
       ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithConceptName:@"cat"];
       input1.concepts = @[concept];
       input2.concepts = @[concept];
-      [_app updateConceptsForInputs:@[input1,input2] completion:^(NSArray<ClarifaiInput *> *inputs, NSError *error) {
+      [_app mergeConceptsForInputs:@[input1,input2] completion:^(NSArray<ClarifaiInput *> *inputs, NSError *error) {
         assert(error == nil);
         bool catInput1 = NO;
         bool catInput2 = NO;
@@ -179,9 +303,71 @@ conceptsMutuallyExclusive:NO
   [future getResult];
 }
 
+- (void)testSetConceptsForInput {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [self testAddInputs];
+  ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithConceptName:@"cat"];
+  concept.score = 0;
+  [_app setConcepts:@[concept] forInputWithID:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
+    assert(error == nil);
+    bool cat = NO;
+    bool otherConcepts = NO; // should be no others after overwrite
+    for (ClarifaiConcept *concept in input.concepts) {
+      if ([concept.conceptID  isEqualToString: @"cat"]) {
+        cat = YES;
+      } else {
+        otherConcepts = YES;
+      }
+    }
+    XCTAssert(cat);
+    XCTAssert(!otherConcepts);
+    [future setResult:@(YES)];
+  }];
+  [future getResult];
+}
+
+- (void)testSetConceptsForInputs {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [self testAddInputs];
+  [_app getInputsOnPage:1 pageSize:30 completion:^(NSArray<ClarifaiInput *> *inputs, NSError *error) {
+    if (inputs.count >= 2) {
+      ClarifaiInput *input1 = inputs[0];
+      ClarifaiInput *input2 = inputs[1];
+      ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithConceptName:@"cat"];
+      input1.concepts = @[concept];
+      input2.concepts = @[concept];
+      [_app setConceptsForInputs:@[input1,input2] completion:^(NSArray<ClarifaiInput *> *inputs, NSError *error) {
+        assert(error == nil);
+        bool catInput1 = NO;
+        bool catInput2 = NO;
+        bool otherConcepts = NO; // should be no others after overwrite
+        for (ClarifaiConcept *concept in inputs[0].concepts) {
+          if ([concept.conceptID  isEqualToString: @"cat"]) {
+            catInput1 = YES;
+          } else {
+            otherConcepts = YES;
+          }
+        }
+        for (ClarifaiConcept *concept in inputs[1].concepts) {
+          if ([concept.conceptID  isEqualToString: @"cat"]) {
+            catInput2 = YES;
+          } else {
+            otherConcepts = YES;
+          }
+        }
+        XCTAssert(catInput1);
+        XCTAssert(catInput2);
+        XCTAssert(!otherConcepts);
+        [future setResult:@(YES)];
+      }];
+    }
+  }];
+  [future getResult];
+}
+
 - (void)testDeleteConceptsFromInput {
   CAIFuture *future = [[CAIFuture alloc] init];
-  [self testAddConceptsToInput];
+  [self testSetConceptsForInput];
   ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithConceptName:@"cat"];
   [_app deleteConcepts:@[concept] forInputWithID:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
     assert(error == nil);
@@ -199,7 +385,7 @@ conceptsMutuallyExclusive:NO
 
 - (void)testDeleteConceptsForInputs {
   CAIFuture *future = [[CAIFuture alloc] init];
-  [self testUpdateConceptsForInputs];
+  [self testSetConceptsForInputs];
   [_app getInputsOnPage:1 pageSize:30 completion:^(NSArray<ClarifaiInput *> *inputs, NSError *error) {
     if (inputs.count >= 2) {
       ClarifaiInput *input1 = inputs[0];
@@ -230,37 +416,6 @@ conceptsMutuallyExclusive:NO
   [future getResult];
 }
 
-- (void)testGetInputs {
-  CAIFuture *future = [[CAIFuture alloc] init];
-  [_app getInputsOnPage:1 pageSize:30 completion:^(NSArray<ClarifaiInput *> *inputs, NSError *error) {
-    assert(error == nil);
-    [future setResult:@(YES)];
-  }];
-  [future getResult];
-}
-
-- (void)testGetInputByID {
-  CAIFuture *future = [[CAIFuture alloc] init];
-  [self testAddInputs];
-  [_app getInput:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
-    assert(error == nil);
-    XCTAssert([_runningImageID isEqualToString:input.inputID]);
-    [future setResult:@(YES)];
-  }];
-  
-  [future getResult];
-}
-
-- (void)testGetInputStatus {
-  CAIFuture *future = [[CAIFuture alloc] init];
-  [_app getInputsStatus:^(int numProcessed, int numToProcess, int errors, NSError *error) {
-    assert(error == nil);
-    [future setResult:@(YES)];
-  }];
-  
-  [future getResult];
-}
-
 - (void)testSearchByImageURL {
   CAIFuture *future = [[CAIFuture alloc] init];
   ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"http://thedigitalstory.com/2012/07/27/Train%20Tracks%20P7242542%20Retina.jpg"];
@@ -272,12 +427,31 @@ conceptsMutuallyExclusive:NO
   [future getResult];
 }
 
-- (void)testSearchByConcept {
+- (void)testSearchByConceptNameOutputs {
   CAIFuture *future = [[CAIFuture alloc] init];
-  ClarifaiConcept *concept1 = [[ClarifaiConcept alloc] initWithConceptName:@"ai_2nvg6rJ6"];
-  ClarifaiSearchTerm *searchTerm = [[ClarifaiSearchTerm alloc] initWithSearchItem:concept1 isInput:YES];
+  [self testAddInputs];
+  ClarifaiConcept *concept1 = [[ClarifaiConcept alloc] initWithConceptName:@"train"];
+  ClarifaiSearchTerm *searchTerm = [[ClarifaiSearchTerm alloc] initWithSearchItem:concept1 isInput:NO];
   [_app search:@[searchTerm] page:@1 perPage:@20 completion:^(NSArray<ClarifaiSearchResult *> *outputs, NSError *error) {
     assert(error == nil);
+    XCTAssert([outputs count] > 0);
+    XCTAssert([outputs[0].mediaURL isEqualToString:@"https://samples.clarifai.com/metro-north.jpg"]);
+    XCTAssert(outputs[0].score.doubleValue > 0.5);
+    [future setResult:@(YES)];
+  }];
+  [future getResult];
+}
+
+- (void)testSearchByConceptIDInputs {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [self testAddInputs];
+  ClarifaiConcept *concept1 = [[ClarifaiConcept alloc] initWithConceptID:@"ggod"];
+  ClarifaiSearchTerm *searchTerm = [[ClarifaiSearchTerm alloc] initWithSearchItem:concept1 isInput:YES];
+  [_app search:@[searchTerm] page:@1 perPage:@20 completion:^(NSArray<ClarifaiSearchResult *> *inputs, NSError *error) {
+    assert(error == nil);
+    XCTAssert([inputs count] > 0);
+    XCTAssert([inputs[0].mediaURL isEqualToString:@"http://www.pumapedia.com/wp-content/uploads/2012/10/puma-roca.jpg"]);
+    XCTAssert(inputs[0].score.doubleValue > 0.5);
     [future setResult:@(YES)];
   }];
   [future getResult];
@@ -317,73 +491,6 @@ conceptsMutuallyExclusive:NO
     assert(error == nil);
     [future setResult:@(YES)];
   }];
-  [future getResult];
-}
-
-- (void)testDeleteInputByID {
-  CAIFuture *future = [[CAIFuture alloc] init];
-  [self testAddInputs];
-  [_app deleteInput:_runningImageID completion:^(NSError *error) {
-    assert(error == nil);
-    [_app getInput:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
-      //should be error if input was properly deleted.
-      XCTAssert(error != nil);
-      [future setResult:@(YES)];
-    }];
-  }];
-  
-  [future getResult];
-}
-
-- (void)testDeleteInputByIDListInputs {
-  CAIFuture *future = [[CAIFuture alloc] init];
-  [self testAddInputs];
-  ClarifaiInput *input = [[ClarifaiInput alloc] init];
-  input.inputID = _runningImageID;
-  [_app deleteInputsByIDList:@[input] completion:^(NSError *error) {
-    assert(error == nil);
-    [NSThread sleepForTimeInterval:2.0]; //Delete batch is async
-    [_app getInput:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
-      //should be error if input was properly deleted.
-      XCTAssert(error != nil);
-      [future setResult:@(YES)];
-    }];
-  }];
-  
-  [future getResult];
-}
-
-- (void)testDeleteInputByIDListStrings {
-  CAIFuture *future = [[CAIFuture alloc] init];
-  [self testAddInputs];
-  [_app deleteInputsByIDList:@[_runningImageID] completion:^(NSError *error) {
-    assert(error == nil);
-    [NSThread sleepForTimeInterval:2.0]; //Delete batch is async
-    [_app getInput:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
-      //should be error if input was properly deleted.
-      XCTAssert(error != nil);
-      [future setResult:@(YES)];
-    }];
-  }];
-  
-  [future getResult];
-}
-
-- (void)testDeleteAllInputs {
-  CAIFuture *future = [[CAIFuture alloc] init];
-  [self testAddInputs];
-  ClarifaiInput *input = [[ClarifaiInput alloc] init];
-  input.inputID = _runningImageID;
-  [_app deleteAllInputs:^(NSError *error) {
-    assert(error == nil);
-    [NSThread sleepForTimeInterval:2.0]; //Delete all is async
-    [_app getInput:_runningImageID completion:^(ClarifaiInput *input, NSError *error) {
-      //should be error if input was properly deleted.
-      XCTAssert(error != nil);
-      [future setResult:@(YES)];
-    }];
-  }];
-  
   [future getResult];
 }
 
@@ -429,36 +536,79 @@ conceptsMutuallyExclusive:NO
   [future getResult];
 }
 
-- (void)testAddConceptsToModel {
+- (void)testMergeConceptsToModel {
   CAIFuture *future = [[CAIFuture alloc] init];
+  [self testCreateModel];
   ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithConceptName:@"burf"];
-  ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"https://samples.clarifai.com/metro-north.jpg" andConcepts:@[@"burf"]];
-  NSString *modelID = @"b06ced930c784b2fa59b8e1d90551201";
-  __weak ClarifaiApp *app = _app;
-  [app addInputs:@[image] completion:^(NSArray<ClarifaiInput *> *inputs, NSError *error) {
+  NSString *modelID = @"burfgerz";
+  [_app mergeConcepts:@[concept] forModelWithID:modelID completion:^(ClarifaiModel *model, NSError *error) {
     assert(error == nil);
-    [app addConcepts:@[concept] toModelWithID:modelID completion:^(ClarifaiModel *model, NSError *error) {
+    [_app getModelByID:modelID completion:^(ClarifaiModel *model, NSError *error) {
       assert(error == nil);
-      [app getModelByID:modelID completion:^(ClarifaiModel *model, NSError *error) {
-        assert(error == nil);
-        [future setResult:@(YES)];
-      }];
+      bool burf = NO;
+      bool dogg = NO;
+      for (ClarifaiConcept *concept in model.concepts) {
+        if ([concept.conceptID isEqualToString:@"burf"]) {
+          burf = YES;
+        } else if ([concept.conceptID isEqualToString:@"dogg"]) {
+          dogg = YES;
+        }
+      }
+      XCTAssert(burf);
+      XCTAssert(dogg);
+      [future setResult:@(YES)];
     }];
   }];
   [future getResult];
-  
 }
 
-- (void)testAddAndRemoveConceptFromModel {
+- (void)testSetConceptsToModel {
   CAIFuture *future = [[CAIFuture alloc] init];
+  [self testCreateModel];
   ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithConceptName:@"burf"];
-  __weak ClarifaiApp *app = _app;
-  
-  [_app addConcepts:@[concept] toModelWithID:@"b06ced930c784b2fa59b8e1d90551201" completion:^(ClarifaiModel *model, NSError *error) {
+  NSString *modelID = @"burfgerz";
+  [_app setConcepts:@[concept] forModelWithID:modelID completion:^(ClarifaiModel *model, NSError *error) {
     assert(error == nil);
-    [app deleteConcepts:@[concept] fromModelWithID:@"b06ced930c784b2fa59b8e1d90551201" completion:^(ClarifaiModel *model, NSError *error) {
+    [_app getModelByID:modelID completion:^(ClarifaiModel *model, NSError *error) {
       assert(error == nil);
-      [future setResult:@YES];
+      bool burf = NO;
+      bool otherConcepts = NO; // should have no others after overwrite.
+      for (ClarifaiConcept *concept in model.concepts) {
+        if ([concept.conceptID isEqualToString:@"burf"]) {
+          burf = YES;
+        } else {
+          otherConcepts = YES;
+        }
+      }
+      XCTAssert(burf);
+      XCTAssert(!otherConcepts);
+      [future setResult:@(YES)];
+    }];
+  }];
+  [future getResult];
+}
+
+- (void)testDeleteConceptsToModel {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  [self testCreateModel];
+  ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithConceptName:@"dogg"];
+  NSString *modelID = @"burfgerz";
+  [_app deleteConcepts:@[concept] fromModelWithID:modelID completion:^(ClarifaiModel *model, NSError *error) {
+    assert(error == nil);
+    [_app getModelByID:modelID completion:^(ClarifaiModel *model, NSError *error) {
+      assert(error == nil);
+      bool dogg = NO;
+      bool otherConcepts = NO; // should have no others after delete.
+      for (ClarifaiConcept *concept in model.concepts) {
+        if ([concept.conceptID isEqualToString:@"dogg"]) {
+          dogg = YES;
+        } else {
+          otherConcepts = YES;
+        }
+      }
+      XCTAssert(!dogg);
+      XCTAssert(!otherConcepts);
+      [future setResult:@(YES)];
     }];
   }];
   [future getResult];
@@ -467,16 +617,14 @@ conceptsMutuallyExclusive:NO
 - (void)testCreateModel {
   CAIFuture *future = [[CAIFuture alloc] init];
   NSString *modelName = @"burfgerz";
-  ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithConceptName:@"bunz"];
-//  [_app addConcepts:@[concept] completion:^(NSArray<ClarifaiConcept *> *concepts, NSError *error) { //UNCOMMENT ON FIRST RUN TO CREATE BUNZ CONCEPT, after that it'll be fine.
-//    assert(error == nil);
+  [_app deleteModel:modelName completion:^(NSError *error) {
+    ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithConceptName:@"dogg"];
     [_app createModel:@[concept] name:modelName conceptsMutuallyExclusive:NO closedEnvironment:NO completion:^(ClarifaiModel *model, NSError *error) {
       XCTAssert(error == nil);
       XCTAssert([modelName isEqualToString:model.name]);
       [future setResult:@(YES)];
     }];
- // }];
-  
+  }];
   [future getResult];
 }
 
@@ -533,13 +681,11 @@ conceptsMutuallyExclusive:NO
 
 - (void)testDeleteAllModels {
   CAIFuture *future = [[CAIFuture alloc] init];
-  [self testGetModelsOnPage];
   [_app deleteAllModels:^(NSError *error) {
     assert(error == nil);
     [NSThread sleepForTimeInterval:2.0]; //Delete batch is async
-    [_app getModelByID:_runningModelID completion:^(ClarifaiModel *model, NSError *error) {
-      //should be error if model was properly deleted.
-      XCTAssert(error != nil);
+    [_app getModels:1 resultsPerPage:20 completion:^(NSArray<ClarifaiModel *> *models, NSError *error) {
+      XCTAssert([models count] <= 8); // general models, etc remain.
       [future setResult:@(YES)];
     }];
   }];
@@ -615,7 +761,7 @@ conceptsMutuallyExclusive:NO
       assert(error == nil);
       
       // add concept to model
-      [_app addConcepts:@[concept] toModelWithID:modelToTrain.modelID completion:^(ClarifaiModel *model, NSError *error) {
+      [_app mergeConcepts:@[concept] forModelWithID:modelToTrain.modelID completion:^(ClarifaiModel *model, NSError *error) {
         assert(error == nil);
         [NSThread sleepForTimeInterval:1.0];
         // train model
