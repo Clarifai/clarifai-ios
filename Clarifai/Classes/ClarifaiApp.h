@@ -41,33 +41,61 @@
 - (void)addInputs:(NSArray <ClarifaiInput *> *)inputs completion:(ClarifaiInputsCompletion)completion;
 
 /**
- * Add tags to an existing input.
+ * Merge tags to an existing input.
  *
- * @param concepts      Array of new ClarifaiConcepts.
- * @param inputID       String containing the id of the input you'd like to update
- *                      concepts for.
+ * @warning             Merging will overwrite values for tags with matching id's, or append to the
+ *                      input's existing list of tags in the app.
+ *
+ * @param concepts      Array of new or updated ClarifaiConcepts to merge.
+ * @param inputID       String containing the id of the input you'd like to merge concepts to.
  * @param completion    Invoked when the update completes.
  */
-- (void)addConcepts:(NSArray <ClarifaiConcept *> *)concepts forInputWithID:(NSString *)inputID completion:(ClarifaiStoreInputCompletion)completion;
+- (void)mergeConcepts:(NSArray <ClarifaiConcept *> *)concepts forInputWithID:(NSString *)inputID completion:(ClarifaiStoreInputCompletion)completion;
 
 /**
- * Add tags to one or more existing inputs.
+ * Merge tags to one or more existing inputs.
  *
- * @param inputs        Array of ClarifaiInputs to add tags to. Each input should contain 
- *                      the tags to be added in it's concepts array property. These new 
- *                      concepts will be merged with the existing tags of the input. 
- *                      Each input must also have an inputID.
+ * @warning             Merging will overwrite values for tags with matching id's, or append to an
+ *                      input's existing list of tags in the app.
+ *
+ * @param inputs        Array of ClarifaiInputs to merge tags to. Each input should contain the 
+ *                      list of tags to be merged in it's concepts array property. Each input
+ *                      must also have an inputID.
  * @param completion    Invoked when the update completes.
  */
-- (void)updateConceptsForInputs:(NSArray<ClarifaiInput *> *)inputs completion:(ClarifaiInputsCompletion)completion;
+- (void)mergeConceptsForInputs:(NSArray<ClarifaiInput *> *)inputs completion:(ClarifaiInputsCompletion)completion;
+
+/**
+ * Overwrites tags of existing input with given ID.
+ *
+ * @warning             This method will overwrite values for tags with matching id's, or overwrite the
+ *                      input's list of tags with the new list of tags.
+ *
+ * @param inputID       String containing the id of the input you'd like to overwrite concepts for.
+ * @param completion    Invoked when the update completes.
+ */
+- (void)setConcepts:(NSArray <ClarifaiConcept *> *)concepts forInputWithID:(NSString *)inputID completion:(ClarifaiStoreInputCompletion)completion;
+
+/**
+ * Overwrites tags of one or more existing inputs.
+ *
+ * @warning             This method will overwrite values for tags with matching id's, or overwrite each 
+ *                      input's list of tags with the new list of tags.
+ *
+ * @param inputs        Array of ClarifaiInputs to add tags to. Each input should contain
+ *                      the tags to be added in it's concepts array property. Each input must also 
+ *                      have an inputID.
+ * @param completion    Invoked when the update completes.
+ */
+- (void)setConceptsForInputs:(NSArray<ClarifaiInput *> *)inputs completion:(ClarifaiInputsCompletion)completion;
 
 /**
  * Delete tags from an existing input.
  *
  * @param concepts      Array of ClarifaiConcepts to delete. These must have matching conceptID's
  *                      to whichever ones are being deleted.
- * @param inputID       String containing the id of the input you'd like to update
- *                      concepts for.
+ * @param inputID       String containing the id of the input you'd like to delete
+ *                      concepts from.
  * @param completion    Invoked when the update completes.
  */
 - (void)deleteConcepts:(NSArray <ClarifaiConcept *> *)concepts forInputWithID:(NSString *)inputID completion:(ClarifaiStoreInputCompletion)completion;
@@ -76,7 +104,7 @@
  * Delete tags from one or more existing inputs.
  *
  * @param inputs        Array of ClarifaiInputs to delete tags from. Each input should contain
- *                      the tags to be delete in it's concepts array property. Each input must
+ *                      a list of tags to be deleted as it's concepts array property. Each input must
  *                      also have an inputID.
  * @param completion    Invoked when the update completes.
  */
@@ -168,21 +196,33 @@
  */
 - (void)addConcepts:(NSArray <ClarifaiConcept *> *)concepts completion:(ClarifaiSearchConceptCompletion)completion;
 
-
 /**
- * This can be used to add tags to an existing model.
+ * Merge a list of tags to an existing model.
+ *
+ * @warning             Merging will overwrite values for tags with matching id's, or append to the
+ *                      model's existing list of tags in the app.
  *
  * @param concepts      Array of new ClarifaiConcepts.
  * @param modelID       String containing the id of the model you'd like to update
  *                      concepts for.
  * @param completion    Invoked when the update completes.
  */
-- (void)addConcepts:(NSArray <ClarifaiConcept *> *)concepts toModelWithID:(NSString *)modelID completion:(ClarifaiModelCompletion)completion;
+- (void)mergeConcepts:(NSArray <ClarifaiConcept *> *)concepts forModelWithID:(NSString *)modelID completion:(ClarifaiModelCompletion)completion;
 
 /**
- * This can be used to remove tags from an existing model.
+ * Overwrite the list of tags of an existing model with a new list of tags.
  *
- * @param concepts      Array of ClarifaiConcepts.
+ * @param concepts      Array of new ClarifaiConcepts.
+ * @param modelID       String containing the id of the model you'd like to update
+ *                      concepts for.
+ * @param completion    Invoked when the update completes.
+ */
+- (void)setConcepts:(NSArray <ClarifaiConcept *> *)concepts forModelWithID:(NSString *)modelID completion:(ClarifaiModelCompletion)completion;
+
+/**
+ * Remove tags from an existing model.
+ *
+ * @param concepts      Array of ClarifaiConcepts with id's matching the tags to be removed.
  * @param modelID       String containing the id of the model you'd like to update
  *                      concepts for.
  * @param completion    Invoked when the update completes.
