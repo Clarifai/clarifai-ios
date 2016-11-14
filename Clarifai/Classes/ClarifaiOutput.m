@@ -14,6 +14,10 @@
     self = [super init];
     if (self) {
         
+        if ([dict[@"data"] isKindOfClass: [NSNull class]]) {
+            return self;
+        }
+
         // add link to input, to the output. (contains media like images).
         ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:dict[@"input"]];
         self.input = input;
