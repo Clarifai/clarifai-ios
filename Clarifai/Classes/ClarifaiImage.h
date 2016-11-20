@@ -8,7 +8,7 @@
 
 #import "ClarifaiInput.h"
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "CLImage+Clarifai.h"
 #import "ClarifaiCrop.h"
 
 /**
@@ -19,17 +19,17 @@
 /** A crop for media can be specified when adding. Nil otherwise. */
 @property ClarifaiCrop *crop;
 
-/** Optionally, you can set a UIImage instead of a ClarifaiInput's mediaURL. Set this using an initializer so that the mediaData parameter is also properly set. */
-@property (strong, nonatomic) UIImage *image;
+/** Optionally, you can set a CLImage instead of a ClarifaiInput's mediaURL. Set this using an initializer so that the mediaData parameter is also properly set. */
+@property (strong, nonatomic) CLImage *image;
 
-- (instancetype)initWithImage:(UIImage *)image;
+- (instancetype)initWithImage:(CLImage *)image;
 
-- (instancetype)initWithImage:(UIImage *)image andCrop:(ClarifaiCrop *)crop;
+- (instancetype)initWithImage:(CLImage *)image andCrop:(ClarifaiCrop *)crop;
 
 /* The concepts array can take ClarifaiConcepts or NSStrings. If it finds strings, it will automatically create concepts named with the given strings. */
-- (instancetype)initWithImage:(UIImage *)image andConcepts:(NSArray *)concepts;
+- (instancetype)initWithImage:(CLImage *)image andConcepts:(NSArray *)concepts;
 
-- (instancetype)initWithImage:(UIImage *)image crop:(ClarifaiCrop *)crop andConcepts:(NSArray *)concepts;
+- (instancetype)initWithImage:(CLImage *)image crop:(ClarifaiCrop *)crop andConcepts:(NSArray *)concepts;
 
 - (instancetype)initWithURL:(NSString *)url andCrop:(ClarifaiCrop *)crop;
 

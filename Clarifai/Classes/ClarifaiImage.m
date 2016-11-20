@@ -26,30 +26,31 @@
     return self;
 }
 
-- (instancetype)initWithImage:(UIImage *)image {
+- (instancetype)initWithImage:(CLImage *)image {
     self = [super init];
     if (self) {
         self.image = image;
-        self.mediaData = UIImageJPEGRepresentation(image, 1.0);
+        self.mediaData = image.dataRepresentation;
+
     }
     return self;
 }
 
-- (instancetype)initWithImage:(UIImage *)image andCrop:(ClarifaiCrop *)crop {
+- (instancetype)initWithImage:(CLImage *)image andCrop:(ClarifaiCrop *)crop {
     self = [super init];
     if (self) {
         self.image = image;
-        self.mediaData = UIImageJPEGRepresentation(image, 1.0);
+        self.mediaData = image.dataRepresentation;
         self.crop = crop;
     }
     return self;
 }
 
-- (instancetype)initWithImage:(UIImage *)image andConcepts:(NSArray *)concepts {
+- (instancetype)initWithImage:(CLImage *)image andConcepts:(NSArray *)concepts {
     self = [super init];
     if (self) {
         self.image = image;
-        self.mediaData = UIImageJPEGRepresentation(image, 1.0);
+        self.mediaData = image.dataRepresentation;
         self.concepts = [concepts map:^(id concept) {
             if ([concept isKindOfClass:[NSString class]]) {
                 return [[ClarifaiConcept alloc] initWithConceptName:concept];
@@ -61,12 +62,12 @@
     return self;
 }
 
-- (instancetype)initWithImage:(UIImage *)image crop:(ClarifaiCrop *)crop andConcepts:(NSArray *)concepts {
+- (instancetype)initWithImage:(CLImage *)image crop:(ClarifaiCrop *)crop andConcepts:(NSArray *)concepts {
     self = [super init];
     if (self) {
         self.image = image;
         self.crop = crop;
-        self.mediaData = UIImageJPEGRepresentation(image, 1.0);
+        self.mediaData = image.dataRepresentation;
         self.concepts = [concepts map:^(id concept) {
             if ([concept isKindOfClass:[NSString class]]) {
                 return [[ClarifaiConcept alloc] initWithConceptName:concept];
