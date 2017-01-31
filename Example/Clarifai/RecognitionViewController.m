@@ -70,6 +70,11 @@
                     self.textView.text = [NSString stringWithFormat:@"Tags:\n%@", [tags componentsJoinedByString:@", "]];
                 });
             }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.button.enabled = YES;
+            });
+
         }];
     }];
 }
