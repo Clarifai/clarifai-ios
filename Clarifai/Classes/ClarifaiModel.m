@@ -125,7 +125,7 @@
       if (image.mediaURL) {
         [imagesToPredictOn addObject:@{@"data": @{@"image": @{@"url": image.mediaURL}}}];
       } else if (image.image) {
-        NSData *imageData = UIImageJPEGRepresentation(image.image, 0.88);
+        NSData *imageData = image.image.dataRepresentation;
         [imagesToPredictOn addObject:@{@"data": @{@"image": @{@"base64": imageData.base64Encoding}}}];
       }
     }

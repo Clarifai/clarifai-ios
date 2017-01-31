@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+
 #import "ClarifaiModel.h"
 #import "ClarifaiConcept.h"
 #import "ClarifaiInput.h"
