@@ -26,13 +26,17 @@
 /** The id of the app that this concept is associated with. */
 @property (strong, nonatomic) NSString *appID;
 
+/** The language of the concept name, or the default language of the ClarifaiApp. */
+@property (nonatomic) NSString *language;
+
 /** The score of the concept. This is set to true(1) or false(0) when using the concept as a training input. And it is set as a prediction probability, between 0-1, when returned with an output. */
 @property (nonatomic) float score;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
-// conceptID will match conceptName
+/** If no ID is specified, conceptID will match conceptName. */
 - (instancetype)initWithConceptName:(NSString *)conceptName;
 - (instancetype)initWithConceptID:(NSString *)conceptID;
+- (instancetype)initWithConceptName:(NSString *)conceptName conceptID:(NSString *)conceptID;
 
 @end

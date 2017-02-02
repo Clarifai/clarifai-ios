@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		128147A778D8B3259B046C69 /* Pods_Clarifai.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C569392294295773E7FF66F7 /* Pods_Clarifai.framework */; };
-		2ECE15ED1620BFF3032BC8D3 /* Pods_ClarifaiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9C7FF2E7E021481371589B5 /* Pods_ClarifaiTests.framework */; };
+		2964E55F49037F0979A34490 /* libPods-Clarifai.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83C54A18C2BB78C7FEB65157 /* libPods-Clarifai.a */; };
 		407195211BADD02B0076B650 /* RecognitionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 407195201BADD02B0076B650 /* RecognitionViewController.m */; };
 		408D395B1BACA1FA00C5608B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 408D395A1BACA1FA00C5608B /* main.m */; };
 		408D395E1BACA1FA00C5608B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 408D395D1BACA1FA00C5608B /* AppDelegate.m */; };
@@ -16,6 +15,7 @@
 		408D39661BACA1FA00C5608B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 408D39651BACA1FA00C5608B /* Images.xcassets */; };
 		408D39691BACA1FA00C5608B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 408D39671BACA1FA00C5608B /* LaunchScreen.xib */; };
 		408D39751BACA1FA00C5608B /* ClarifaiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 408D39741BACA1FA00C5608B /* ClarifaiTests.m */; };
+		AE10DABE73E3DAE6CBE5C904 /* libPods-ClarifaiTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8169D08DDEFC969649991F41 /* libPods-ClarifaiTests.a */; };
 		FB714F801CFBE7A6007FD7E3 /* CAIFuture.m in Sources */ = {isa = PBXBuildFile; fileRef = FB714F7F1CFBE7A6007FD7E3 /* CAIFuture.m */; };
 		FB714F871CFBF15C007FD7E3 /* geth.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FB714F861CFBF15C007FD7E3 /* geth.jpg */; };
 		FB714F891CFBF189007FD7E3 /* geth.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FB714F861CFBF15C007FD7E3 /* geth.jpg */; };
@@ -32,7 +32,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3E29E2F7329FB2713B8EB691 /* libPods-ClarifaiApiDemoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClarifaiApiDemoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C6A8A3FC61725EBF52F0A75 /* Pods-ClarifaiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiTests/Pods-ClarifaiTests.release.xcconfig"; sourceTree = "<group>"; };
 		4071951F1BADD02B0076B650 /* RecognitionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecognitionViewController.h; sourceTree = "<group>"; };
 		407195201BADD02B0076B650 /* RecognitionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecognitionViewController.m; sourceTree = "<group>"; };
 		408D39551BACA1FA00C5608B /* Clarifai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clarifai.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -46,13 +46,11 @@
 		408D396E1BACA1FA00C5608B /* Clarifai.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Clarifai.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		408D39731BACA1FA00C5608B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		408D39741BACA1FA00C5608B /* ClarifaiTests.m */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = ClarifaiTests.m; sourceTree = "<group>"; tabWidth = 2; };
-		6B78A92C1B666D40C85F2E86 /* Pods-Clarifai.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarifai.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai.debug.xcconfig"; sourceTree = "<group>"; };
-		73491E5B15BE035CEE1E28D6 /* Pods-ClarifaiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiTests/Pods-ClarifaiTests.debug.xcconfig"; sourceTree = "<group>"; };
-		9B950B5C14C35065712E2498 /* Pods-Clarifai.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarifai.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai.release.xcconfig"; sourceTree = "<group>"; };
-		A9C7FF2E7E021481371589B5 /* Pods_ClarifaiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClarifaiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AF2D2C71F3981D15F040DA18 /* Pods-ClarifaiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiTests/Pods-ClarifaiTests.release.xcconfig"; sourceTree = "<group>"; };
-		C569392294295773E7FF66F7 /* Pods_Clarifai.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clarifai.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D3908FCAEDB4ED9DE2B4BCF4 /* libPods-ClarifaiApiDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClarifaiApiDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8169D08DDEFC969649991F41 /* libPods-ClarifaiTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClarifaiTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		83C54A18C2BB78C7FEB65157 /* libPods-Clarifai.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Clarifai.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B331D8DA029B27C8BBE4A0D /* Pods-Clarifai.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarifai.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai.release.xcconfig"; sourceTree = "<group>"; };
+		AFFCFF9EEF2817433F721FDC /* Pods-ClarifaiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiTests/Pods-ClarifaiTests.debug.xcconfig"; sourceTree = "<group>"; };
+		E7453607865A1F22EC77F669 /* Pods-Clarifai.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarifai.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai.debug.xcconfig"; sourceTree = "<group>"; };
 		FB714F7E1CFBE7A6007FD7E3 /* CAIFuture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CAIFuture.h; path = ../Clarifai/CAIFuture.h; sourceTree = "<group>"; };
 		FB714F7F1CFBE7A6007FD7E3 /* CAIFuture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CAIFuture.m; path = ../Clarifai/CAIFuture.m; sourceTree = "<group>"; };
 		FB714F861CFBF15C007FD7E3 /* geth.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = geth.jpg; sourceTree = "<group>"; };
@@ -63,7 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				128147A778D8B3259B046C69 /* Pods_Clarifai.framework in Frameworks */,
+				2964E55F49037F0979A34490 /* libPods-Clarifai.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,7 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2ECE15ED1620BFF3032BC8D3 /* Pods_ClarifaiTests.framework in Frameworks */,
+				AE10DABE73E3DAE6CBE5C904 /* libPods-ClarifaiTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,8 +82,8 @@
 				408D39571BACA1FA00C5608B /* Clarifai */,
 				408D39711BACA1FA00C5608B /* ClarifaiTests */,
 				408D39561BACA1FA00C5608B /* Products */,
-				70057D02BE2C147CA2058B7D /* Pods */,
-				B3D5CE5DCC12FDEE33B911C2 /* Frameworks */,
+				F7E4E6FEBA5F8C372CA60249 /* Pods */,
+				BE00073EC8C5F3E46FBC92C6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -142,26 +140,24 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		70057D02BE2C147CA2058B7D /* Pods */ = {
+		BE00073EC8C5F3E46FBC92C6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6B78A92C1B666D40C85F2E86 /* Pods-Clarifai.debug.xcconfig */,
-				9B950B5C14C35065712E2498 /* Pods-Clarifai.release.xcconfig */,
-				73491E5B15BE035CEE1E28D6 /* Pods-ClarifaiTests.debug.xcconfig */,
-				AF2D2C71F3981D15F040DA18 /* Pods-ClarifaiTests.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
-		B3D5CE5DCC12FDEE33B911C2 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				D3908FCAEDB4ED9DE2B4BCF4 /* libPods-ClarifaiApiDemo.a */,
-				3E29E2F7329FB2713B8EB691 /* libPods-ClarifaiApiDemoTests.a */,
-				C569392294295773E7FF66F7 /* Pods_Clarifai.framework */,
-				A9C7FF2E7E021481371589B5 /* Pods_ClarifaiTests.framework */,
+				83C54A18C2BB78C7FEB65157 /* libPods-Clarifai.a */,
+				8169D08DDEFC969649991F41 /* libPods-ClarifaiTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F7E4E6FEBA5F8C372CA60249 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E7453607865A1F22EC77F669 /* Pods-Clarifai.debug.xcconfig */,
+				9B331D8DA029B27C8BBE4A0D /* Pods-Clarifai.release.xcconfig */,
+				AFFCFF9EEF2817433F721FDC /* Pods-ClarifaiTests.debug.xcconfig */,
+				2C6A8A3FC61725EBF52F0A75 /* Pods-ClarifaiTests.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -171,12 +167,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 408D39781BACA1FA00C5608B /* Build configuration list for PBXNativeTarget "Clarifai" */;
 			buildPhases = (
-				6B0F309093B45DA44CC62E2B /* Check Pods Manifest.lock */,
+				F37F8380E127C51D572436F2 /* [CP] Check Pods Manifest.lock */,
 				408D39511BACA1FA00C5608B /* Sources */,
 				408D39521BACA1FA00C5608B /* Frameworks */,
 				408D39531BACA1FA00C5608B /* Resources */,
-				11374F1E7949B08128993552 /* Copy Pods Resources */,
-				ACFB00216CB35F99884A3BAC /* Embed Pods Frameworks */,
+				50C570BE8B7FFDAD0824A095 /* [CP] Embed Pods Frameworks */,
+				3AEE1655FD4C8D9C1BA964AB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -191,12 +187,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 408D397B1BACA1FA00C5608B /* Build configuration list for PBXNativeTarget "ClarifaiTests" */;
 			buildPhases = (
-				A6BCD0CFE8DC7820815CBDFC /* Check Pods Manifest.lock */,
+				93FD3001696AF475F81A241C /* [CP] Check Pods Manifest.lock */,
 				408D396A1BACA1FA00C5608B /* Sources */,
 				408D396B1BACA1FA00C5608B /* Frameworks */,
 				408D396C1BACA1FA00C5608B /* Resources */,
-				5739D3476F41847452888FBF /* Embed Pods Frameworks */,
-				4EBC033A94751189D1410545 /* Copy Pods Resources */,
+				ADE3F3A3C95D091AE8708673 /* [CP] Embed Pods Frameworks */,
+				4581180B51720642DEFC250E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -273,14 +269,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		11374F1E7949B08128993552 /* Copy Pods Resources */ = {
+		3AEE1655FD4C8D9C1BA964AB /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -288,14 +284,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4EBC033A94751189D1410545 /* Copy Pods Resources */ = {
+		4581180B51720642DEFC250E /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -303,14 +299,44 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClarifaiTests/Pods-ClarifaiTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5739D3476F41847452888FBF /* Embed Pods Frameworks */ = {
+		50C570BE8B7FFDAD0824A095 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		93FD3001696AF475F81A241C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		ADE3F3A3C95D091AE8708673 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -318,49 +344,19 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClarifaiTests/Pods-ClarifaiTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6B0F309093B45DA44CC62E2B /* Check Pods Manifest.lock */ = {
+		F37F8380E127C51D572436F2 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		A6BCD0CFE8DC7820815CBDFC /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		ACFB00216CB35F99884A3BAC /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -483,6 +479,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -498,7 +495,7 @@
 		};
 		408D39791BACA1FA00C5608B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6B78A92C1B666D40C85F2E86 /* Pods-Clarifai.debug.xcconfig */;
+			baseConfigurationReference = E7453607865A1F22EC77F669 /* Pods-Clarifai.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -516,7 +513,7 @@
 		};
 		408D397A1BACA1FA00C5608B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9B950B5C14C35065712E2498 /* Pods-Clarifai.release.xcconfig */;
+			baseConfigurationReference = 9B331D8DA029B27C8BBE4A0D /* Pods-Clarifai.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -533,7 +530,7 @@
 		};
 		408D397C1BACA1FA00C5608B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 73491E5B15BE035CEE1E28D6 /* Pods-ClarifaiTests.debug.xcconfig */;
+			baseConfigurationReference = AFFCFF9EEF2817433F721FDC /* Pods-ClarifaiTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 32E6VH74P3;
@@ -552,7 +549,7 @@
 		};
 		408D397D1BACA1FA00C5608B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF2D2C71F3981D15F040DA18 /* Pods-ClarifaiTests.release.xcconfig */;
+			baseConfigurationReference = 2C6A8A3FC61725EBF52F0A75 /* Pods-ClarifaiTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 32E6VH74P3;

@@ -49,13 +49,15 @@
     _appSecret = appSecret;
     
     // Configure AFNetworking:
-    _manager = [AFHTTPRequestOperationManager manager];
-    _manager.operationQueue.maxConcurrentOperationCount = 4;
-    _manager.requestSerializer = [AFJSONRequestSerializer serializer];
-    _manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    _manager.responseSerializer.acceptableContentTypes = [[NSSet alloc] initWithArray:@[@"application/json"]];
-    _manager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        
+    _sessionManager = [AFHTTPSessionManager manager];
+    _sessionManager.operationQueue.maxConcurrentOperationCount = 4;
+    _sessionManager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    _sessionManager.requestSerializer = [AFJSONRequestSerializer serializer];
+    _sessionManager.requestSerializer.HTTPMethodsEncodingParametersInURI = [NSSet setWithObjects:@"GET", @"HEAD", nil];
+    [_sessionManager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    _sessionManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    _sessionManager.responseSerializer.acceptableContentTypes = [[NSSet alloc] initWithArray:@[@"application/json"]]; 
+    
     _modelTypes = @{
                     @(ClarifaiModelTypeEmbed): @"embed",
                     @(ClarifaiModelTypeConcept): @"concept",
@@ -75,6 +77,11 @@
   [self ensureValidAccessToken:^(NSError *error) {
     if (error) {
       SafeRunBlock(completion, nil, error);
+      return;
+    }
+    if ([inputs count] > 128) {
+      NSError *error = [[NSError alloc] initWithDomain:kErrorDomain code:400 userInfo:@{@"description": @"Cannot add more than 128 inputs at a time."}];
+      completion(nil,error);
       return;
     }
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/inputs"];
@@ -122,6 +129,9 @@
         for (ClarifaiConcept *concept in input.concepts) {
           NSMutableDictionary *conceptDict = [NSMutableDictionary dictionary];
           conceptDict[@"id"] = concept.conceptID;
+          if (concept.conceptName) {
+            conceptDict[@"name"] = concept.conceptName;
+          }
           // can only be true or false when adding concepts with inputs.
           conceptDict[@"value"] = concept.score > 0 ? [NSNumber numberWithInt:1] : [NSNumber numberWithInt:0];
           [concepts addObject:conceptDict];
@@ -139,21 +149,20 @@
     }
       
     NSDictionary *params = @{ @"inputs": inputsArray };
-    [self.manager POST:apiURL
-            parameters:params
-               success:^(AFHTTPRequestOperation *op, id response) {
-                 NSMutableArray *inputs = [NSMutableArray array];
-                 NSArray *inputsResponse = response[@"inputs"];
-                 for (NSDictionary *inputEntry in inputsResponse) {
-                   [inputs addObject:[[ClarifaiInput alloc] initWithDictionary:inputEntry]];
-                 }
-                 completion(inputs, nil);
-               } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                 if (op.response.statusCode >= 400) {
-                   error = [self errorFromHttpResponse:op];
-                 }
-                 completion(nil, error);
-               }];
+    
+    [_sessionManager POST:apiURL
+               parameters:params
+                 progress:nil
+                  success:^(NSURLSessionDataTask *task, id response) {
+                    NSMutableArray *inputs = [NSMutableArray array];
+                    NSArray *inputsResponse = response[@"inputs"];
+                    for (NSDictionary *inputEntry in inputsResponse) {
+                      [inputs addObject:[[ClarifaiInput alloc] initWithDictionary:inputEntry]];
+                    }
+                    completion(inputs, nil);
+                  } failure:^(NSURLSessionDataTask *task, NSError *error) {
+                    completion(nil, error);
+                  }];
   }];
 }
 
@@ -186,17 +195,15 @@
     
     NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/"];
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
-    [self.manager PATCH:apiURL
-             parameters:params
-                success:^(AFHTTPRequestOperation *op, id response) {
-                  ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:response[@"inputs"][0]];
-                  completion(input, nil);
-                } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                  if (op.response.statusCode >= 400) {
-                    error = [self errorFromHttpResponse:op];
-                  }
-                  completion(nil, error);
-                }];
+    
+    [_sessionManager PATCH:apiURL
+                parameters:params
+                   success:^(NSURLSessionDataTask *task, id response) {
+      ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:response[@"inputs"][0]];
+      completion(input, nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(nil, error);
+    }];
   }];
 }
 
@@ -232,21 +239,19 @@
     
     NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/"];
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
-    [self.manager PATCH:apiURL
-             parameters:params
-                success:^(AFHTTPRequestOperation *op, id response) {
-                  NSMutableArray *inputs = [[NSMutableArray alloc] init];
-                  for (NSDictionary *inputDict in response[@"inputs"]) {
-                    ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
-                    [inputs addObject:input];
-                  }
-                  completion(inputs, nil);
-                } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                  if (op.response.statusCode >= 400) {
-                    error = [self errorFromHttpResponse:op];
-                  }
-                  completion(nil, error);
-                }];
+    
+    [_sessionManager PATCH:apiURL
+                parameters:params
+                   success:^(NSURLSessionDataTask *task, id response) {
+      NSMutableArray *inputs = [[NSMutableArray alloc] init];
+      for (NSDictionary *inputDict in response[@"inputs"]) {
+        ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
+        [inputs addObject:input];
+      }
+      completion(inputs, nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(nil, error);
+    }];
   }];
 }
 
@@ -279,17 +284,15 @@
         
         NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/"];
         NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
-        [self.manager PATCH:apiURL
-                 parameters:params
-                    success:^(AFHTTPRequestOperation *op, id response) {
-                        ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:response[@"inputs"][0]];
-                        completion(input, nil);
-                    } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                        if (op.response.statusCode >= 400) {
-                            error = [self errorFromHttpResponse:op];
-                        }
-                        completion(nil, error);
-                    }];
+      
+        [_sessionManager PATCH:apiURL
+                    parameters:params
+                       success:^(NSURLSessionDataTask *task, id response) {
+          ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:response[@"inputs"][0]];
+          completion(input, nil);
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+          completion(nil, error);
+        }];
     }];
 }
 
@@ -325,21 +328,20 @@
         
         NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/"];
         NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
-        [self.manager PATCH:apiURL
-                 parameters:params
-                    success:^(AFHTTPRequestOperation *op, id response) {
-                        NSMutableArray *inputs = [[NSMutableArray alloc] init];
-                        for (NSDictionary *inputDict in response[@"inputs"]) {
-                            ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
-                            [inputs addObject:input];
-                        }
-                        completion(inputs, nil);
-                    } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                        if (op.response.statusCode >= 400) {
-                            error = [self errorFromHttpResponse:op];
-                        }
-                        completion(nil, error);
-                    }];
+      
+      
+        [_sessionManager PATCH:apiURL
+                    parameters:params
+                       success:^(NSURLSessionDataTask *task, id response) {
+          NSMutableArray *inputs = [[NSMutableArray alloc] init];
+          for (NSDictionary *inputDict in response[@"inputs"]) {
+            ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
+            [inputs addObject:input];
+          }
+          completion(inputs, nil);
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+          completion(nil, error);
+        }];
     }];
 }
 
@@ -371,17 +373,15 @@
     
     NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/"];
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
-    [self.manager PATCH:apiURL
-             parameters:params
-                success:^(AFHTTPRequestOperation *op, id response) {
-                  ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:response[@"inputs"][0]];
-                  completion(input, nil);
-                } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                  if (op.response.statusCode >= 400) {
-                    error = [self errorFromHttpResponse:op];
-                  }
-                  completion(nil, error);
-                }];
+    
+    [_sessionManager PATCH:apiURL
+                parameters:params
+                   success:^(NSURLSessionDataTask *task, id response) {
+      ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:response[@"inputs"][0]];
+      completion(input, nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(nil, error);
+    }];
   }];
 }
 
@@ -416,21 +416,19 @@
     
     NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/"];
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
-    [self.manager PATCH:apiURL
-             parameters:params
-                success:^(AFHTTPRequestOperation *op, id response) {
-                  NSMutableArray *inputs = [[NSMutableArray alloc] init];
-                  for (NSDictionary *inputDict in response[@"inputs"]) {
-                    ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
-                    [inputs addObject:input];
-                  }
-                  completion(inputs, nil);
-                } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                  if (op.response.statusCode >= 400) {
-                    error = [self errorFromHttpResponse:op];
-                  }
-                  completion(nil, error);
-                }];
+    
+    [_sessionManager PATCH:apiURL
+                parameters:params
+                   success:^(NSURLSessionDataTask *task, id response) {
+      NSMutableArray *inputs = [[NSMutableArray alloc] init];
+      for (NSDictionary *inputDict in response[@"inputs"]) {
+        ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
+        [inputs addObject:input];
+      }
+      completion(inputs, nil);
+    } failure:^(NSURLSessionDataTask * task, NSError *error) {
+      completion(nil, error);
+    }];
   }];
 }
 
@@ -441,21 +439,17 @@
       return;
     }
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/inputs"];
-    [self.manager GET:apiURL
-           parameters:@{ @"page": @(page), @"per_page": @(pageSize) }
-              success:^(AFHTTPRequestOperation *op, id response) {
-                NSMutableArray *inputs = [NSMutableArray array];
-                NSArray *inputsResponse = response[@"inputs"];
-                for (NSDictionary *input in inputsResponse) {
-                  [inputs addObject:[[ClarifaiImage alloc] initWithDictionary:input]];
-                }
-                completion(inputs, nil);
-              } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                if (op.response.statusCode >= 400) {
-                  error = [self errorFromHttpResponse:op];
-                }
-                completion(nil, error);
-              }];
+    
+    [self.sessionManager GET:apiURL parameters:@{ @"page": @(page), @"per_page": @(pageSize) } progress:nil success:^(NSURLSessionDataTask *task, id response) {
+      NSMutableArray *inputs = [NSMutableArray array];
+      NSArray *inputsResponse = response[@"inputs"];
+      for (NSDictionary *input in inputsResponse) {
+        [inputs addObject:[[ClarifaiImage alloc] initWithDictionary:input]];
+      }
+      completion(inputs, nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(nil, error);
+    }];
   }];
 }
 
@@ -467,18 +461,17 @@
     }
     NSString *inputURLSuffix = [NSString stringWithFormat:@"/inputs/%@", inputID];
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
-    [self.manager GET:apiURL
-           parameters:nil
-              success:^(AFHTTPRequestOperation *op, id response) {
-                NSDictionary *inputResponse = response[@"input"];
-                ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputResponse];
-                completion(input, nil);
-              } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                if (op.response.statusCode >= 400) {
-                  error = [self errorFromHttpResponse:op];
-                }
-                completion(nil, error);
-              }];
+    
+    [_sessionManager GET:apiURL
+              parameters:nil
+                progress:nil
+                 success:^(NSURLSessionDataTask *task, id response) {
+      NSDictionary *inputResponse = response[@"input"];
+      ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputResponse];
+      completion(input, nil);
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+      completion(nil, error);
+    }];
   }];
 }
 
@@ -489,20 +482,19 @@
       return;
     }
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/inputs/status"];
-    [self.manager GET:apiURL
-           parameters:nil
-              success:^(AFHTTPRequestOperation *op, id response) {
-                NSDictionary *counts = response[@"counts"];
-                int processed = [counts[@"processed"] intValue];
-                int toProcess = [counts[@"to_process"] intValue];
-                int errors = [counts[@"errors"] intValue];
-                SafeRunBlock(completion, processed, toProcess, errors, nil);
-              } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                if (op.response.statusCode >= 400) {
-                  error = [self errorFromHttpResponse:op];
-                }
-                SafeRunBlock(completion, 0, 0, 0, nil);
-              }];
+    
+    [_sessionManager GET:apiURL
+              parameters:nil
+                progress:nil
+                 success:^(NSURLSessionDataTask *task, id response) {
+      NSDictionary *counts = response[@"counts"];
+      int processed = [counts[@"processed"] intValue];
+      int toProcess = [counts[@"to_process"] intValue];
+      int errors = [counts[@"errors"] intValue];
+      SafeRunBlock(completion, processed, toProcess, errors, nil);
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+      SafeRunBlock(completion, 0, 0, 0, nil);
+    }];
   }];
 }
 
@@ -514,16 +506,14 @@
     }
     NSString *endpoint = [NSString stringWithFormat:@"/inputs/%@", inputID];
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:endpoint];
-    [self.manager DELETE:apiURL
-              parameters:nil
-                 success:^(AFHTTPRequestOperation *op, id response) {
-                   completion(nil);
-                 } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                   if (op.response.statusCode >= 400) {
-                     error = [self errorFromHttpResponse:op];
-                   }
-                   completion(error);
-                 }];
+    
+    [_sessionManager DELETE:apiURL
+                 parameters:nil
+                    success:^(NSURLSessionDataTask *task, id responseObject) {
+      completion(nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(error);
+    }];
   }];
 }
 
@@ -535,16 +525,14 @@
     }
     NSString *endpoint = @"/inputs/";
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:endpoint];
-    [self.manager DELETE:apiURL
-              parameters:@{@"delete_all":@YES}
-                 success:^(AFHTTPRequestOperation *op, id response) {
-                   completion(nil);
-                 } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                   if (op.response.statusCode >= 400) {
-                     error = [self errorFromHttpResponse:op];
-                   }
-                   completion(error);
-                 }];
+    
+    [_sessionManager DELETE:apiURL
+                 parameters:@{ @"delete_all": @YES }
+                    success:^(NSURLSessionDataTask *task, id response) {
+      completion(nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(error);
+    }];
   }];
 }
 
@@ -569,16 +557,14 @@
     
     NSString *inputURLSuffix = @"/inputs/";
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
-    [self.manager DELETE:apiURL
-             parameters:params
-                success:^(AFHTTPRequestOperation *op, id response) {
-                  completion(nil);
-                } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                  if (op.response.statusCode >= 400) {
-                    error = [self errorFromHttpResponse:op];
-                  }
-                  completion(error);
-                }];
+    
+    [_sessionManager DELETE:apiURL
+                 parameters:params
+                    success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable response) {
+      completion(nil);
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+      completion(error);
+    }];
   }];
 }
 
@@ -591,24 +577,24 @@
       return;
     }
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/concepts"];
-    [self.manager GET:apiURL
-           parameters:@{ @"page": @(page), @"per_page": @(pageSize) }
-              success:^(AFHTTPRequestOperation *op, id response) {
-                NSMutableArray *inputs = [NSMutableArray array];
-                NSArray *conceptsResponse = response[@"concepts"];
-                for (NSDictionary *concept in conceptsResponse) {
-                  NSDictionary *conceptDict = @{@"concept":concept};
-                  [inputs addObject:[[ClarifaiConcept alloc] initWithDictionary:conceptDict]];
-                }
-                completion(inputs, nil);
-              } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                if (op.response.statusCode >= 400) {
-                  error = [self errorFromHttpResponse:op];
-                }
-                completion(nil, error);
-              }];
+    [_sessionManager GET:@"" parameters:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+      
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      
+    }];
+    [_sessionManager GET:apiURL
+              parameters:@{ @"page": @(page), @"per_page": @(pageSize) }
+                 success:^(NSURLSessionDataTask *task, id response) {
+                   NSMutableArray *concepts = [NSMutableArray array];
+                   NSArray *conceptsResponse = response[@"concepts"];
+                   for (NSDictionary *concept in conceptsResponse) {
+                     [concepts addObject:[[ClarifaiConcept alloc] initWithDictionary:concept]];
+                   }
+                   completion(concepts, nil);
+                 } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                   completion(nil, error);
+                 }];
   }];
-  
 }
 
 - (void)getConcept:(NSString *)conceptID completion:(ClarifaiStoreConceptCompletion)completion {
@@ -619,54 +605,56 @@
     }
     NSString *inputURLSuffix = [NSString stringWithFormat:@"/concepts/%@", conceptID];
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
-    [self.manager GET:apiURL
-           parameters:nil
-              success:^(AFHTTPRequestOperation *op, id response) {
-                ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithDictionary:response[@"concept"]];
-                completion(concept, nil);
-              } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                if (op.response.statusCode >= 400) {
-                  error = [self errorFromHttpResponse:op];
-                }
-                completion(nil, error);
-              }];
+    
+    [_sessionManager GET:apiURL
+              parameters:nil
+                progress:nil
+                 success:^(NSURLSessionDataTask *task, id response) {
+      ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithDictionary:response[@"concept"]];
+      completion(concept, nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(nil, error);
+    }];
   }];
 }
 
 - (void)addConcepts:(NSArray <ClarifaiConcept *> *)concepts completion:(ClarifaiConceptsCompletion)completion {
-  
-  NSMutableArray *conceptsArray = [NSMutableArray array];
-  
-  for (ClarifaiConcept *concept in concepts) {
-    NSMutableDictionary *conceptDict = [NSMutableDictionary dictionary];
-    conceptDict[@"id"] = concept.conceptID;
-    conceptDict[@"name"] = concept.conceptID;
-    [conceptsArray addObject:conceptDict];
-  }
-  
-  NSDictionary *params = @{ @"concepts": conceptsArray };
-  
   [self ensureValidAccessToken:^(NSError *error) {
     if (error) {
       SafeRunBlock(completion, nil, error);
       return;
     }
+    NSMutableArray *conceptsArray = [NSMutableArray array];
+    
+    for (ClarifaiConcept *concept in concepts) {
+      NSMutableDictionary *conceptDict = [NSMutableDictionary dictionary];
+      conceptDict[@"id"] = concept.conceptID;
+      if (concept.conceptName) {
+        conceptDict[@"name"] = concept.conceptName;
+      } else {
+        conceptDict[@"name"] = concept.conceptID;
+      }
+      [conceptsArray addObject:conceptDict];
+    }
+    
+    NSDictionary *params = @{ @"concepts": conceptsArray };
+    
+    
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/concepts/"];
-    [self.manager POST:apiURL
-            parameters:params
-               success:^(AFHTTPRequestOperation *op, id response) {
-                 NSMutableArray *conceptsArray = [NSMutableArray array];
-                 NSArray *conceptsResponse = response[@"concepts"];
-                 for (NSDictionary *concept in conceptsResponse) {
-                   [conceptsArray addObject:[[ClarifaiConcept alloc] initWithDictionary:concept]];
-                 }
-                 completion(conceptsArray, nil);
-               } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                 if (op.response.statusCode >= 400) {
-                   error = [self errorFromHttpResponse:op];
-                 }
-                 completion(nil, error);
-               }];
+    
+    [_sessionManager POST:apiURL
+               parameters:params
+                 progress:nil
+                  success:^(NSURLSessionDataTask *task, id response) {
+                    NSMutableArray *conceptsArray = [NSMutableArray array];
+                    NSArray *conceptsResponse = response[@"concepts"];
+                    for (NSDictionary *concept in conceptsResponse) {
+                      [conceptsArray addObject:[[ClarifaiConcept alloc] initWithDictionary:concept]];
+                    }
+                    completion(conceptsArray, nil);
+                  } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                    completion(nil, error);
+                  }];
   }];
 }
 
@@ -731,6 +719,7 @@
 - (void)search:(NSArray <ClarifaiSearchTerm *> *)searchTerms
           page:(NSNumber *)page
        perPage:(NSNumber *)perPage
+      language:(NSString *)language
     completion:(ClarifaiSearchCompletion)completion {
   [self ensureValidAccessToken:^(NSError *error) {
     if (error) {
@@ -747,18 +736,22 @@
       
       NSMutableDictionary *query = [NSMutableDictionary dictionary];
       query[@"ands"] = ands;
-      
+      if (language != nil) {
+        query[@"language"] = language;
+      }
       NSDictionary *pagination = @{@"page": page, @"per_page": perPage};
         NSDictionary *params = @{@"query": query, @"pagination":pagination};
-      [self.manager POST:apiURL
-              parameters:params
-                 success:^(AFHTTPRequestOperation *operation, NSDictionary *response) {
+      
+      [_sessionManager POST:apiURL
+                 parameters:params
+                   progress:nil
+                    success:^(NSURLSessionDataTask *task, id response) {
         NSArray *hits = response[@"hits"];
         NSArray<ClarifaiSearchResult *> *searchResults = [hits map:^(NSDictionary *hit) {
           return [[ClarifaiSearchResult alloc] initWithDictionary:hit];
         }];
         completion(searchResults, nil);
-      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+      } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         completion(nil, error);
       }];
     }
@@ -785,17 +778,43 @@
       
       NSDictionary *pagination = @{@"page": page, @"per_page": perPage};
       
-      [self.manager POST:apiURL
-              parameters:@{@"query": query, @"pagination":pagination}
-                 success:^(AFHTTPRequestOperation *operation, NSDictionary *response) {
+      [_sessionManager POST:apiURL
+                 parameters:@{@"query": query, @"pagination":pagination}
+                   progress:nil
+                    success:^(NSURLSessionDataTask *task, id response) {
         NSArray *hits = response[@"hits"];
         NSArray<ClarifaiSearchResult *> *searchResults = [hits map:^(NSDictionary *hit) {
           return [[ClarifaiSearchResult alloc] initWithDictionary:hit];
         }];
         completion(searchResults, nil);
-      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+      } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         completion(nil, error);
       }];
+    }
+  }];
+}
+
+- (void)searchForConceptsByName:(NSString *)name andLanguage:(NSString *)language completion:(ClarifaiSearchConceptCompletion)completion {
+  [self ensureValidAccessToken:^(NSError *error) {
+    if (error) {
+      completion(nil, error);
+    } else {
+      NSMutableDictionary *params = [NSMutableDictionary dictionary];
+      params[@"concept_query"] = @{@"name":name, @"language": language ? language : @"zh"};
+      
+      NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/concepts/searches"];
+      [_sessionManager POST:apiURL
+                 parameters:params
+                   progress:nil
+                    success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable response) {
+                      NSMutableArray *concepts = [NSMutableArray array];
+                      for (NSDictionary *conceptDict in response[@"concepts"]) {
+                        [concepts addObject:[[ClarifaiConcept alloc] initWithDictionary:conceptDict]];
+                      }
+                      completion(concepts, nil);
+                    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                      completion(nil, error);
+                    }];
     }
   }];
 }
@@ -809,9 +828,11 @@
       return;
     }
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/models"];
-    [self.manager GET:apiURL
-           parameters:@{@"page": @(page), @"per_page": @(resultsPerPage)}
-              success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    
+    [_sessionManager GET:apiURL
+              parameters:@{@"page": @(page), @"per_page": @(resultsPerPage)}
+                progress:nil
+                 success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
       NSMutableArray *clarifaiModels = [NSMutableArray array];
       NSArray *models = responseObject[@"models"];
       for (NSDictionary *model in models) {
@@ -820,7 +841,7 @@
         [clarifaiModels addObject:clarifaiModel];
       }
       completion(clarifaiModels, nil);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
       completion(nil, error);
     }];
   }];
@@ -833,12 +854,16 @@
       return;
     }
     NSString *apiURL = [NSString stringWithFormat:@"%@/models/%@/output_info", kApiBaseUrl, modelID];
-    [self.manager GET:apiURL parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    
+    [_sessionManager GET:apiURL
+              parameters:nil
+                progress:nil
+                 success:^(NSURLSessionDataTask *task, id response) {
       ClarifaiModel *model;
-      model = [[ClarifaiModel alloc] initWithDictionary:responseObject[@"model"]];
+      model = [[ClarifaiModel alloc] initWithDictionary:response[@"model"]];
       model.app = self;
       completion(model, nil);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
       completion(nil, error);
     }];
   }];
@@ -878,7 +903,7 @@
         }
         
         // Create model array of one model with given ID.
-        NSMutableDictionary *modelDict = @{@"id":modelID,
+        NSDictionary *modelDict = @{@"id":modelID,
                                            @"output_info":@{@"data":@{@"concepts":conceptsArray}}};
         NSArray *modelArray = @[modelDict];
         
@@ -888,28 +913,25 @@
         params[@"action"] = @"merge";
         
         NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/models/"];
-        [self.manager PATCH:apiURL
-                 parameters:params
-                    success:^(AFHTTPRequestOperation *op, id response) {
-                        NSDictionary *status = response[@"status"];
-                        long code = [status[@"code"] longValue];
-                        if (code == 10000) {
-                            ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:response[@"model"]];
-                            completion(model, nil);
-                        } else if (code == 21202) {
-                            NSError *error = [[NSError alloc] initWithDomain:kErrorDomain
-                                                                        code:400
-                                                                    userInfo:@{@"description": status[@"description"],
-                                                                               @"details": status[@"details"]}];
-                            completion(nil, error);
-                        }
-                    } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                        if (op.response.statusCode >= 400) {
-                            error = [self errorFromHttpResponse:op];
-                        }
-                        completion(nil, error);
-                    }];
-        
+      
+        [_sessionManager PATCH:apiURL
+                    parameters:params
+                       success:^(NSURLSessionDataTask *task, id response) {
+                         NSDictionary *status = response[@"status"];
+                         long code = [status[@"code"] longValue];
+                         if (code == 10000) {
+                           ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:response[@"models"][0]];
+                           completion(model, nil);
+                         } else if (code == 21202) {
+                           NSError *error = [[NSError alloc] initWithDomain:kErrorDomain
+                                                                       code:400
+                                                                   userInfo:@{@"description": status[@"description"],
+                                                                              @"details": status[@"details"]}];
+                           completion(nil, error);
+                         }
+                       } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                         completion(nil, error);
+                       }];
     }];
 }
 
@@ -928,7 +950,7 @@
         }
         
         // Create model array of one model with given ID.
-        NSMutableDictionary *modelDict = @{@"id":modelID,
+        NSDictionary *modelDict = @{@"id":modelID,
                                            @"output_info":@{@"data":@{@"concepts":conceptsArray}}};
         NSArray *modelArray = @[modelDict];
         
@@ -937,29 +959,26 @@
         params[@"models"] = modelArray;
         params[@"action"] = @"overwrite";
         
-        NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/models/"];
-        [self.manager PATCH:apiURL
-                 parameters:params
-                    success:^(AFHTTPRequestOperation *op, id response) {
-                        NSDictionary *status = response[@"status"];
-                        long code = [status[@"code"] longValue];
-                        if (code == 10000) {
-                            ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:response[@"model"]];
-                            completion(model, nil);
-                        } else if (code == 21202) {
-                            NSError *error = [[NSError alloc] initWithDomain:kErrorDomain
-                                                                        code:400
-                                                                    userInfo:@{@"description": status[@"description"],
-                                                                               @"details": status[@"details"]}];
-                            completion(nil, error);
-                        }
-                    } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                        if (op.response.statusCode >= 400) {
-                            error = [self errorFromHttpResponse:op];
-                        }
-                        completion(nil, error);
-                    }];
-        
+      NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/models/"];
+      
+      [_sessionManager PATCH:apiURL
+                  parameters:params
+                     success:^(NSURLSessionDataTask *task, id response) {
+                       NSDictionary *status = response[@"status"];
+                       long code = [status[@"code"] longValue];
+                       if (code == 10000) {
+                         ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:response[@"models"][0]];
+                         completion(model, nil);
+                       } else if (code == 21202) {
+                         NSError *error = [[NSError alloc] initWithDomain:kErrorDomain
+                                                                     code:400
+                                                                 userInfo:@{@"description": status[@"description"],
+                                                                            @"details": status[@"details"]}];
+                         completion(nil, error);
+                       }
+                     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                       completion(nil, error);
+                     }];
     }];
 }
 
@@ -978,7 +997,7 @@
         }
         
         // Create model array of one model with given ID.
-        NSMutableDictionary *modelDict = @{@"id":modelID,
+        NSDictionary *modelDict = @{@"id":modelID,
                                            @"output_info":@{@"data":@{@"concepts":conceptsArray}}};
         NSArray *modelArray = @[modelDict];
         
@@ -988,28 +1007,26 @@
         params[@"action"] = @"remove";
         
         NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/models/"];
-        [self.manager PATCH:apiURL
-                 parameters:params
-                    success:^(AFHTTPRequestOperation *op, id response) {
-                        NSDictionary *status = response[@"status"];
-                        long code = [status[@"code"] longValue];
-                        if (code == 10000) {
-                            ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:response[@"model"]];
-                            completion(model, nil);
-                        } else if (code == 21202) {
-                            NSError *error = [[NSError alloc] initWithDomain:kErrorDomain
-                                                                        code:400
-                                                                    userInfo:@{@"description": status[@"description"],
-                                                                               @"details": status[@"details"]}];
-                            completion(nil, error);
-                        }
-                    } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                        if (op.response.statusCode >= 400) {
-                            error = [self errorFromHttpResponse:op];
-                        }
-                        completion(nil, error);
-                    }];
-        
+
+        [_sessionManager PATCH:apiURL
+                    parameters:params
+                       success:^(NSURLSessionDataTask *task, id response) {
+                         NSDictionary *status = response[@"status"];
+                         long code = [status[@"code"] longValue];
+                         if (code == 10000) {
+                           ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:response[@"models"][0]];
+                           completion(model, nil);
+                         } else if (code == 21202) {
+                           NSError *error = [[NSError alloc] initWithDomain:kErrorDomain
+                                                                       code:400
+                                                                   userInfo:@{@"description": status[@"description"],
+                                                                              @"details": status[@"details"]}];
+                           completion(nil, error);
+                         }
+                         
+                       } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                         completion(nil, error);
+                       }];
     }];
 }
 
@@ -1023,9 +1040,11 @@
       return;
     }
     NSString *apiURL = [NSString stringWithFormat:@"%@/models/%@/versions?page=%i&per_page=%i", kApiBaseUrl, modelID, page, resultsPerPage];
-    [self.manager GET:apiURL
-           parameters:nil
-              success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    
+    [_sessionManager GET:apiURL
+              parameters:nil
+                progress:nil
+                 success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
       NSMutableArray *versions = [NSMutableArray array];
       NSArray *versionDicts = responseObject[@"model_versions"];
       for (NSDictionary *versionDict in versionDicts) {
@@ -1033,7 +1052,7 @@
         [versions addObject:version];
       }
       completion(versions, nil);
-    } failure:^(AFHTTPRequestOperation * _Nullable operation, NSError * _Nonnull error) {
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
       completion(nil, error);
     }];
   }];
@@ -1048,14 +1067,16 @@
       return;
     }
     NSString *apiURL = [NSString stringWithFormat:@"%@/models/%@/versions/%@/", kApiBaseUrl, modelID, versionID];
-    [self.manager GET:apiURL
-           parameters:nil
-              success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                ClarifaiModelVersion *version = [[ClarifaiModelVersion alloc] initWithDictionary:responseObject[@"model_version"]];
-                completion(version, nil);
-              } failure:^(AFHTTPRequestOperation * _Nullable operation, NSError * _Nonnull error) {
-                completion(nil, error);
-              }];
+    
+    [_sessionManager GET:apiURL
+              parameters:nil
+                progress:nil
+                 success:^(NSURLSessionDataTask *task, id response) {
+      ClarifaiModelVersion *version = [[ClarifaiModelVersion alloc] initWithDictionary:response[@"model_version"]];
+      completion(version, nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(nil, error);
+    }];
   }];
 }
 
@@ -1068,13 +1089,14 @@
       return;
     }
     NSString *apiURL = [NSString stringWithFormat:@"%@/models/%@/versions/%@/", kApiBaseUrl, modelID, versionID];
-    [self.manager DELETE:apiURL
-              parameters:nil
-                 success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                   completion(nil);
-                 } failure:^(AFHTTPRequestOperation * _Nullable operation, NSError * _Nonnull error) {
-                   completion(error);
-                 }];
+    
+    [_sessionManager DELETE:apiURL
+                 parameters:nil
+                    success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+      completion(nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(error);
+    }];
   }];
 }
 
@@ -1088,19 +1110,21 @@
       return;
     }
     NSString *apiURL = [NSString stringWithFormat:@"%@/models/%@/inputs?page=%i&per_page=%i", kApiBaseUrl, modelID, page, resultsPerPage];
-    [self.manager GET:apiURL
-           parameters:nil
-              success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                NSMutableArray *inputs = [NSMutableArray array];
-                NSArray *inputDicts = responseObject[@"inputs"];
-                for (NSDictionary *inputDict in inputDicts) {
-                  ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
-                  [inputs addObject:input];
-                }
-                completion(inputs, nil);
-              } failure:^(AFHTTPRequestOperation * _Nullable operation, NSError * _Nonnull error) {
-                completion(nil, error);
-              }];
+    
+    [_sessionManager GET:apiURL
+              parameters:nil
+                progress:nil
+                 success:^(NSURLSessionDataTask *task, id responseObject) {
+      NSMutableArray *inputs = [NSMutableArray array];
+      NSArray *inputDicts = responseObject[@"inputs"];
+      for (NSDictionary *inputDict in inputDicts) {
+        ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
+        [inputs addObject:input];
+      }
+      completion(inputs, nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(nil, error);
+    }];
   }];
 }
 
@@ -1115,19 +1139,21 @@
       return;
     }
     NSString *apiURL = [NSString stringWithFormat:@"%@/models/%@/versions/%@/inputs?page=%i&per_page=%i", kApiBaseUrl, modelID, versionID, page, resultsPerPage];
-    [self.manager GET:apiURL
-           parameters:nil
-              success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                NSMutableArray *inputs = [NSMutableArray array];
-                NSArray *inputDicts = responseObject[@"inputs"];
-                for (NSDictionary *inputDict in inputDicts) {
-                  ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
-                  [inputs addObject:input];
-                }
-                completion(inputs, nil);
-              } failure:^(AFHTTPRequestOperation * _Nullable operation, NSError * _Nonnull error) {
-                completion(nil, error);
-              }];
+    
+    [_sessionManager GET:apiURL
+              parameters:nil
+                progress:nil
+                 success:^(NSURLSessionDataTask *task, id response) {
+      NSMutableArray *inputs = [NSMutableArray array];
+      NSArray *inputDicts = response[@"inputs"];
+      for (NSDictionary *inputDict in inputDicts) {
+        ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:inputDict];
+        [inputs addObject:input];
+      }
+      completion(inputs, nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(nil, error);
+    }];
   }];
 }
 
@@ -1141,7 +1167,11 @@
     }
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/models/searches"];
     NSDictionary *params = @{@"model_query": @{@"name": modelName, @"type": _modelTypes[@(modelType)]}};
-    [self.manager POST:apiURL parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    
+    [_sessionManager POST:apiURL
+               parameters:params
+                 progress:nil
+                  success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
       NSMutableArray *clarifaiModels = [NSMutableArray array];
       NSArray *models = responseObject[@"models"];
       for (NSDictionary *model in models) {
@@ -1150,7 +1180,7 @@
         [clarifaiModels addObject:clarifaiModel];
       }
       completion(clarifaiModels, nil);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
       completion(nil, error);
     }];
   }];
@@ -1205,21 +1235,25 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
       };
     
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/models"];
-    [self.manager POST:apiURL parameters:model success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSDictionary *status = responseObject[@"status"];
-        long code = [status[@"code"] longValue];
-        if (code == 10000) {
-            ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:responseObject[@"model"]];
-            model.app = self;
-            completion(model, nil);
-        } else if (code == 21202) {
-            NSError *error = [[NSError alloc] initWithDomain:kErrorDomain
-                                                        code:400
-                                                    userInfo:@{@"description": status[@"description"],
-                                                               @"details": status[@"details"]}];
-            completion(nil, error);
-        }
-    } failure:^(AFHTTPRequestOperation * operation, NSError *error) {
+    
+    [_sessionManager POST:apiURL
+               parameters:model
+                 progress:nil
+                  success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+      NSDictionary *status = responseObject[@"status"];
+      long code = [status[@"code"] longValue];
+      if (code == 10000) {
+        ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:responseObject[@"model"]];
+        model.app = self;
+        completion(model, nil);
+      } else if (code == 21202) {
+        NSError *error = [[NSError alloc] initWithDomain:kErrorDomain
+                                                    code:400
+                                                userInfo:@{@"description": status[@"description"],
+                                                           @"details": status[@"details"]}];
+        completion(nil, error);
+      }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
       completion(nil, error);
     }];
   }];
@@ -1233,16 +1267,14 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
     }
     NSString *endpoint = [NSString stringWithFormat:@"/models/%@", modelID];
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:endpoint];
-    [self.manager DELETE:apiURL
-              parameters:nil
-                 success:^(AFHTTPRequestOperation *op, id response) {
-                   completion(nil);
-                 } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                   if (op.response.statusCode >= 400) {
-                     error = [self errorFromHttpResponse:op];
-                   }
-                   completion(error);
-                 }];
+    
+    [_sessionManager DELETE:apiURL
+                 parameters:nil
+                    success:^(NSURLSessionDataTask *task, id response) {
+      completion(nil);
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+      completion(error);
+    }];
   }];
 }
 
@@ -1254,16 +1286,14 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
     }
     NSString *endpoint = @"/models/";
     NSString *apiURL = [kApiBaseUrl stringByAppendingString:endpoint];
-    [self.manager DELETE:apiURL
-              parameters:@{@"delete_all":@YES}
-                 success:^(AFHTTPRequestOperation *op, id response) {
-                   completion(nil);
-                 } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                   if (op.response.statusCode >= 400) {
-                     error = [self errorFromHttpResponse:op];
-                   }
-                   completion(error);
-                 }];
+    
+    [_sessionManager DELETE:apiURL
+                 parameters:@{@"delete_all":@YES}
+                    success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+      completion(nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      completion(error);
+    }];
   }];
 }
 
@@ -1288,16 +1318,14 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
         
         NSString *inputURLSuffix = @"/models/";
         NSString *apiURL = [kApiBaseUrl stringByAppendingString:inputURLSuffix];
-        [self.manager DELETE:apiURL
-                  parameters:params
-                     success:^(AFHTTPRequestOperation *op, id response) {
-                         completion(nil);
-                     } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                         if (op.response.statusCode >= 400) {
-                             error = [self errorFromHttpResponse:op];
-                         }
-                         completion(error);
-                     }];
+      
+        [_sessionManager DELETE:apiURL
+                     parameters:params
+                        success:^(NSURLSessionDataTask *task, id response) {
+          completion(nil);
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+          completion(error);
+        }];
     }];
 }
 
@@ -1308,25 +1336,79 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
       return;
     }
     NSString *apiURL = [NSString stringWithFormat:@"%@/models/%@/output_info", kApiBaseUrl, modelID];
-    [self.manager GET:apiURL
-           parameters:nil
-              success:^(AFHTTPRequestOperation *operation, id responseObject) {
-      ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:responseObject[@"model"]];
+    
+    [_sessionManager GET:apiURL
+              parameters:nil
+                progress:nil
+                 success:^(NSURLSessionDataTask *task, id response) {
+      ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:response[@"model"]];
       completion(model, nil);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
       completion(nil, error);
     }];
   }];
 }
+
+- (void)updateModel:(NSString *)modelID
+               name:(NSString *)modelName
+conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
+  closedEnvironment:(BOOL)closedEnvironment
+         completion:(ClarifaiModelCompletion)completion {
+    [self ensureValidAccessToken:^(NSError *error) {
+        if (error) {
+            SafeRunBlock(completion, nil, error);
+            return;
+        }
+        
+        // Create model array of one model with given ID.
+        NSDictionary *modelDict = @{@"id":modelID,
+                                    @"name":modelName,
+                                    @"output_info":@{
+                                            @"output_config":@{
+                                                    @"concepts_mutually_exclusive":conceptsMutuallyExclusive? @YES : @NO,
+                                                    @"closed_environment":closedEnvironment ? @YES : @NO
+                                                    }
+                                            }
+                                    };
+        
+        NSArray *modelArray = @[modelDict];
+        
+        // Add all to params.
+        NSMutableDictionary *params = [NSMutableDictionary dictionary];
+        params[@"models"] = modelArray;
+        
+        NSString *apiURL = [kApiBaseUrl stringByAppendingString:@"/models/"];
+        [_sessionManager PATCH:apiURL
+                 parameters:params
+                    success:^(NSURLSessionDataTask *task, id response) {
+                        NSDictionary *status = response[@"status"];
+                        long code = [status[@"code"] longValue];
+                        if (code == 10000) {
+                            ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:response[@"model"]];
+                            completion(model, nil);
+                        } else if (code == 21202) {
+                            NSError *error = [[NSError alloc] initWithDomain:kErrorDomain
+                                                                        code:400
+                                                                    userInfo:@{@"description": status[@"description"],
+                                                                               @"details": status[@"details"]}];
+                            completion(nil, error);
+                        }
+                    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                        completion(nil, error);
+                    }];
+        
+    }];
+}
+
 
 #pragma mark - Access Token Management
 
 - (void)setAccessToken:(NSString *)accessToken {
   _accessToken = accessToken;
   NSString *value = [NSString stringWithFormat:@"Bearer %@", self.accessToken];
-  [self.manager.requestSerializer setValue:value forHTTPHeaderField:@"Authorization"];
-  [self.manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-  [self.manager.requestSerializer setValue:@"objc:2.1.0" forHTTPHeaderField:@"X-Clarifai-Client"];
+  [_sessionManager.requestSerializer setValue:value forHTTPHeaderField:@"Authorization"];
+  [_sessionManager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+  [_sessionManager.requestSerializer setValue:@"objc:2.2.0" forHTTPHeaderField:@"X-Clarifai-Client"];
 }
 
 - (void)ensureValidAccessToken:(void (^)(NSError *error))handler {
@@ -1339,22 +1421,18 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
     NSString *clientSecret = [NSString stringWithFormat:@"%@:%@", self.appID, self.appSecret];
     NSData *clientSecretData = [clientSecret dataUsingEncoding:NSUTF8StringEncoding];
     NSString *clientSecretBase64 = [clientSecretData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
-    [self.manager.requestSerializer setValue:[@"Basic " stringByAppendingString:clientSecretBase64] forHTTPHeaderField:@"Authorization"];
-    [self.manager POST:[kApiBaseUrl stringByAppendingString:@"/token"]
-            parameters:nil
-               success:^(AFHTTPRequestOperation *op, id response) {
-                 ClarifaiAccessTokenResponse *res = [[ClarifaiAccessTokenResponse alloc]
-                                                     initWithDictionary:response];
-                 [self saveAccessToken:res];
-                 self.authenticating = NO;
-                 handler(nil);
-               } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-                 if (op.response.statusCode >= 400) {
-                   error = [self errorFromHttpResponse:op];
-                 }
-                 self.authenticating = NO;
-                 handler(error);
-               }];
+    [_sessionManager.requestSerializer setValue:[@"Basic " stringByAppendingString:clientSecretBase64] forHTTPHeaderField:@"Authorization"];
+    
+    [_sessionManager POST:[kApiBaseUrl stringByAppendingString:@"/token"] parameters:nil progress:nil success:^(NSURLSessionDataTask *task, id response) {
+      ClarifaiAccessTokenResponse *res = [[ClarifaiAccessTokenResponse alloc]
+                                          initWithDictionary:response];
+      [self saveAccessToken:res];
+      self.authenticating = NO;
+      handler(nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      self.authenticating = NO;
+      handler(error);
+    }];
   }
 }
 
@@ -1393,6 +1471,14 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
 
 #pragma mark -
 
+/*
+- (NSError *)errorFromHttpResponse:(NSHTTPURLResponse *)response {
+  NSString *desc;
+  if (op.responseString) {
+    desc = response.respo
+  }
+}
+
 - (NSError *)errorFromHttpResponse:(AFHTTPRequestOperation *)op {
   NSString *desc;
   if (op.responseString) {
@@ -1405,6 +1491,7 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
                                     code:op.response.statusCode
                                 userInfo:@{@"description": desc, @"url": url}];
 }
+*/
 
 
 @end

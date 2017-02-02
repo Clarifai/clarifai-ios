@@ -2,15 +2,12 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '8.0'
-use_frameworks!
 
 target 'Clarifai' do
-pod 'AFNetworking', '~> 2.0'
-pod 'AFNetworkActivityLogger'
 pod 'Clarifai', :path => '../'
 end
 
 target 'ClarifaiTests' do
-pod 'AFNetworking', '~> 2.0'
+pod 'AFNetworking’, ‘~> 3.1’
 pod 'Clarifai', :path => '../'
 end

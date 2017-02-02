@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Clarifai'
-  s.version          = '2.1.0'
+  s.version          = '2.2.0'
   s.summary          = 'Clarifai API client for Objective-C.'
  
   s.homepage         = 'https://github.com/Clarifai'
@@ -11,5 +11,5 @@ Pod::Spec.new do |s|
   s.source = {:git => 'https://github.com/Clarifai/clarifai-ios.git', :tag => s.version.to_s}
   s.source_files = 'Clarifai/Classes/*'
   
-  s.dependency 'AFNetworking', '~> 2.0'
+  s.dependency 'AFNetworking', '~> 3.1'
 end

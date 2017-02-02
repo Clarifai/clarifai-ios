@@ -21,7 +21,7 @@
  */
 @interface ClarifaiApp : NSObject
 
-@property (strong, nonatomic) AFHTTPRequestOperationManager *manager;
+@property (strong, nonatomic) AFHTTPSessionManager *sessionManager;
 @property (strong, nonatomic) NSString *accessToken;
 
 /**
@@ -237,11 +237,14 @@
  * @param searchTerms     An array of ClarifaiSearchTerms that are and-ed together to create the query.
  * @param page            The page number of results to show.
  * @param perPage         Number of results per page.
+ * @param language        When searching by concept name, a language can be specified. If nil,
+ *                        defaults to your app's default language setting on devhub.
  * @param completion      Invoked when the request completes.
  */
 - (void)search:(NSArray <ClarifaiSearchTerm *> *)searchTerms
           page:(NSNumber *)page
        perPage:(NSNumber *)perPage
+      language:(NSString *)language
     completion:(ClarifaiSearchCompletion)completion;
 
 /**
@@ -258,6 +261,23 @@
                  perPage:(NSNumber *)perPage
                  isInput:(BOOL)isInput
               completion:(ClarifaiSearchCompletion)completion;
+
+/**
+ * Search concepts by concept name and language. This is well-suited for autocomplete purposes, or
+ * general concept name searching, as it will search all concepts from clarifai's public general 
+ * model as well as your own custom models. It is extremely useful to use this function to find 
+ * existing concept names (for example, concepts contained in Clarifai's general model) which can 
+ * then be used as a search term in Search to predict images associated with the concept.
+ *
+ * @param name            A string to search concept names by. Ex: 'l*' will search and return all 
+ *                        concepts with names starting with an 'l'.
+ * @param language        A string specifying the language code of the concepts to search. For 
+ *                        example, by default the language is set to 'en' (English).
+ * @param completion      Invoked when the request completes.
+ */
+- (void)searchForConceptsByName:(NSString *)name
+                    andLanguage:(NSString *)language
+                     completion:(ClarifaiSearchConceptCompletion)completion;
 
 #pragma mark - Models
 
@@ -402,9 +422,9 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
  * pass strings this method will create a model with concepts named
  * with the given strings.
  *
- * @param modelName    Name of the model. This will automatically use the name as the ModelID as well.
+ * @param modelName    Name of the model. 
  *
- * @param modelName    ID of the model. ID's MUST be unique for each model.
+ * @param modelID    ID of the model. ID's MUST be unique for each model.
  *
  * @param conceptsMutuallyExclusive    Do you expect to see more than one of
  * the concepts in this model in the SAME image? If Yes, then
@@ -462,6 +482,12 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
  * @param completion  Invoked when the request completes.
  */
 - (void)getOutputInfoForModel:(NSString *)modelID completion:(ClarifaiModelCompletion)completion;
+
+- (void)updateModel:(NSString *)modelID
+               name:(NSString *)modelName
+conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
+  closedEnvironment:(BOOL)closedEnvironment
+         completion:(ClarifaiModelCompletion)completion;
 
 - (void)ensureValidAccessToken:(void (^)(NSError *error))handler;
 

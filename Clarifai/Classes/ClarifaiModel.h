@@ -76,6 +76,22 @@ typedef NS_ENUM(NSInteger, ClarifaiModelType) {
              completion:(ClarifaiPredictionsCompletion)completion;
 
 /**
+ * Predict on a set of images using a specified language for the returned tags.
+ *
+ * @warning This will not translate returned concepts into other languages, except when using
+ * Clarifai's general model. The general model can be obtained using getModels, getModelByID, 
+ * or getModelByName. For custom models, concepts are saved using the default language
+ * specified in your Clarifai application on devhub, and will error if attempting to 
+ * predict concepts in another language.
+ *
+ * @param images      The images to predict on.
+ * @param completion  Invoked when the request completes.
+ */
+- (void)predictOnImages:(NSArray <ClarifaiImage *> *)images
+           withLanguage:(NSString *)language
+             completion:(ClarifaiPredictionsCompletion)completion;
+
+/**
  * List versions of the model.
  *
  * @param page            Results page to load.

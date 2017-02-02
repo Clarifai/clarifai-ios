@@ -16,6 +16,10 @@
         _conceptID = dict[@"id"];
         _conceptName = dict[@"name"];
         _appID = dict[@"app_id"];
+      
+        if (dict[@"language"] != nil) {
+          _language = dict[@"language"];
+        }
 
         if (dict[@"value"] != nil && dict[@"value"] != [NSNull null]) {
             _score = [dict[@"value"] floatValue];
@@ -40,6 +44,16 @@
 - (instancetype)initWithConceptID:(NSString *)conceptID {
   self = [super init];
   if (self) {
+    _conceptID = conceptID;
+    _score = 1;
+  }
+  return self;
+}
+
+- (instancetype)initWithConceptName:(NSString *)conceptName conceptID:(NSString *)conceptID {
+  self = [super init];
+  if (self) {
+    _conceptName = conceptName;
     _conceptID = conceptID;
     _score = 1;
   }
