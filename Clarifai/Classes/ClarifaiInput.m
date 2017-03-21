@@ -36,6 +36,16 @@
       _concepts = concepts;
     }
     
+    if (data[@"geo"] != nil) {
+      NSDictionary *geoDict = data[@"geo"];
+      if (geoDict[@"geo_point"] != nil) {
+        double latitude = [(NSNumber *)geoDict[@"geo_point"][@"latitude"] doubleValue];
+        double longitude = [(NSNumber *)geoDict[@"geo_point"][@"longitude"] doubleValue];
+        _location = [[ClarifaiLocation alloc] initWithLatitude:latitude
+                                                     longitude:longitude];
+      }
+    }
+    
     _metadata = data[@"metadata"];
   }
   return self;

@@ -2,7 +2,7 @@
 A client for iOS apps using the Clarifai V2 API.
 
 * Sign up for a free developer account at: https://developer.clarifai.com/signup/
-* Read the developer guide at: https://developer.clarifai.com/guide-v2/
+* Read the developer guide at: https://developer.clarifai.com/guide/
 * Read the full Objective-C docs at: http://cocoadocs.org/docsets/Clarifai/
 
 ## Installation

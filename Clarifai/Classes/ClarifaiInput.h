@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ClarifaiConcept.h"
+#import "ClarifaiLocation.h"
 
 /**
  * ClarifaiInputs are used to represent the inputs of an application. For example, an input can contain an image and a list of concepts (or tags) associated with this image. These can then be added to an app, used as training data for models, or searched across.
@@ -19,6 +20,7 @@
 
 /** URL of the piece of media in your Clarifai app. */
 @property (strong, nonatomic) NSString *mediaURL;
+
 
 /** Data for media to be added to app.
  (only to be used when adding media to your app, nil otherwise) */
@@ -35,6 +37,8 @@
 
 /** Optionally you can set metadata for each input, which can be searched on within your app. This can be any valid json object.*/
 @property (strong, nonatomic) NSDictionary *metadata;
+
+@property (strong, nonatomic) ClarifaiLocation *location;
 
 - (instancetype)initWithURL:(NSString *)url;
 - (instancetype)initWithURL:(NSString *)URL andConcepts:(NSArray *)concepts;

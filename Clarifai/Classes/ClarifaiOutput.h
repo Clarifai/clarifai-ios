@@ -23,7 +23,7 @@
 /** Colors in the piece of media. This will only be populated when using the Clarifai Color Model. */
 @property (strong, nonatomic) NSArray <ClarifaiConcept *> *colors;
 
-/** Embedding for the piece of media. */
+/** Embedding for the piece of media. This will only be populated when using an model with embed modelType. */
 @property (strong, nonatomic) NSArray *embedding;
 
 /** Cluster ID. */
@@ -31,7 +31,6 @@
 
 /** The input that was predicted on. */
 @property (strong, nonatomic) ClarifaiInput *input;
-
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 

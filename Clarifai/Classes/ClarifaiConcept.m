@@ -45,6 +45,7 @@
   self = [super init];
   if (self) {
     _conceptID = conceptID;
+    _conceptName = conceptID;
     _score = 1;
   }
   return self;

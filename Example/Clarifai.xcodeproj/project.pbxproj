@@ -16,6 +16,7 @@
 		408D39691BACA1FA00C5608B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 408D39671BACA1FA00C5608B /* LaunchScreen.xib */; };
 		408D39751BACA1FA00C5608B /* ClarifaiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 408D39741BACA1FA00C5608B /* ClarifaiTests.m */; };
 		AE10DABE73E3DAE6CBE5C904 /* libPods-ClarifaiTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8169D08DDEFC969649991F41 /* libPods-ClarifaiTests.a */; };
+		EA9D8C96D6FCA899D401F124 /* libPods-Clarifai.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DFD46AB2E189C614DC9CE30 /* libPods-Clarifai.a */; };
 		FB714F801CFBE7A6007FD7E3 /* CAIFuture.m in Sources */ = {isa = PBXBuildFile; fileRef = FB714F7F1CFBE7A6007FD7E3 /* CAIFuture.m */; };
 		FB714F871CFBF15C007FD7E3 /* geth.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FB714F861CFBF15C007FD7E3 /* geth.jpg */; };
 		FB714F891CFBF189007FD7E3 /* geth.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FB714F861CFBF15C007FD7E3 /* geth.jpg */; };
@@ -46,8 +47,9 @@
 		408D396E1BACA1FA00C5608B /* Clarifai.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Clarifai.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		408D39731BACA1FA00C5608B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		408D39741BACA1FA00C5608B /* ClarifaiTests.m */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = ClarifaiTests.m; sourceTree = "<group>"; tabWidth = 2; };
+		5DFD46AB2E189C614DC9CE30 /* libPods-Clarifai.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Clarifai.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8169D08DDEFC969649991F41 /* libPods-ClarifaiTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClarifaiTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		83C54A18C2BB78C7FEB65157 /* libPods-Clarifai.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Clarifai.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		83C54A18C2BB78C7FEB65157 /* libPods-Clarifai.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-Clarifai.a"; path = "../Debug-iphonesimulator/libPods-Clarifai.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B331D8DA029B27C8BBE4A0D /* Pods-Clarifai.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarifai.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai.release.xcconfig"; sourceTree = "<group>"; };
 		AFFCFF9EEF2817433F721FDC /* Pods-ClarifaiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiTests/Pods-ClarifaiTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E7453607865A1F22EC77F669 /* Pods-Clarifai.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarifai.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clarifai/Pods-Clarifai.debug.xcconfig"; sourceTree = "<group>"; };
@@ -62,6 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2964E55F49037F0979A34490 /* libPods-Clarifai.a in Frameworks */,
+				EA9D8C96D6FCA899D401F124 /* libPods-Clarifai.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,6 +148,7 @@
 			children = (
 				83C54A18C2BB78C7FEB65157 /* libPods-Clarifai.a */,
 				8169D08DDEFC969649991F41 /* libPods-ClarifaiTests.a */,
+				5DFD46AB2E189C614DC9CE30 /* libPods-Clarifai.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -419,6 +423,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_USE_OPTIMIZATION_PROFILE = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -463,6 +468,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_USE_OPTIMIZATION_PROFILE = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;

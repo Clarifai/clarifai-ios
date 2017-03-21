@@ -15,9 +15,12 @@
 typedef NS_ENUM(NSInteger, ClarifaiModelType) {
     ClarifaiModelTypeConcept,
     ClarifaiModelTypeEmbed,
+    ClarifaiModelTypeFaceDetect,
     ClarifaiModelTypeDetection,
     ClarifaiModelTypeCluster,
-    ClarifaiModelTypeColor
+    ClarifaiModelTypeColor,
+    ClarifaiModelTypeBlur,
+    ClarifaiModelTypeUnsupported
 };
 
 /**

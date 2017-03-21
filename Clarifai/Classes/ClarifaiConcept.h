@@ -32,11 +32,14 @@
 /** The score of the concept. This is set to true(1) or false(0) when using the concept as a training input. And it is set as a prediction probability, between 0-1, when returned with an output. */
 @property (nonatomic) float score;
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict;
-
 /** If no ID is specified, conceptID will match conceptName. */
 - (instancetype)initWithConceptName:(NSString *)conceptName;
+
+/** If no Name is specified, conceptID will match conceptName. */
 - (instancetype)initWithConceptID:(NSString *)conceptID;
+
+/** Initializes concept with given name and ID */
 - (instancetype)initWithConceptName:(NSString *)conceptName conceptID:(NSString *)conceptID;
 
+- (instancetype)initWithDictionary:(NSDictionary *)dict;
 @end
