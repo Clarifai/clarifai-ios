@@ -130,9 +130,7 @@
       return;
     }
     if (_modelType == ClarifaiModelTypeUnsupported) {
-      NSError *err = [[NSError alloc] initWithDomain:kErrorDomain code:400 userInfo:@{@"description":@"Cannot predict, this model is not supported in your current client version. Please update."}];
-      completion(nil,err);
-      return;
+      NSLog(@"This model is not supported in your current client version. Please update for official support. Alternatively, you can use the responseDict property on each ClarifaiOutput to support the model on your own.");
     }
     
     NSString *apiURL = [NSString stringWithFormat:@"%@/models/%@/versions/%@/outputs", kApiBaseUrl, self.modelID, self.version.versionID];
@@ -206,13 +204,16 @@
     NSString *type = outputsData[i][@"model"][@"output_info"][@"type"];
     NSString *typeExt = outputsData[i][@"model"][@"output_info"][@"type_ext"];
     
-    if ([type isEqualToString:@"facedetect"]) {
+    if ([type isEqualToString:@"facedetect"] || [typeExt isEqualToString:@"facedetect"]) {
       ClarifaiOutputFace *output = [[ClarifaiOutputFace alloc] initWithDictionary:outputsData[i]];
       [outputs addObject:output];
-    } else if ([type isEqualToString:@"detection"] || [type isEqualToString:@"blur"] && [typeExt isEqualToString:@"detection"]) {
+    } else if ([type isEqualToString:@"detection"] || [typeExt isEqualToString:@"detection"]) {
       ClarifaiOutputLogo *output = [[ClarifaiOutputLogo alloc] initWithDictionary:outputsData[i]];
       [outputs addObject:output];
     } else if ([type isEqualToString:@"blur"]) {
+      ClarifaiOutputFocus *output = [[ClarifaiOutputFocus alloc] initWithDictionary:outputsData[i]];
+      [outputs addObject:output];
+    } else if ([typeExt isEqualToString:@"focus"]) {
       ClarifaiOutputFocus *output = [[ClarifaiOutputFocus alloc] initWithDictionary:outputsData[i]];
       [outputs addObject:output];
     } else {

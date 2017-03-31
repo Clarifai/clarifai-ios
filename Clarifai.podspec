@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Clarifai'
-  s.version          = '2.3.0'
+  s.version          = '2.3.1'
   s.summary          = 'Clarifai API client for Objective-C.'
  
   s.homepage         = 'https://github.com/Clarifai'

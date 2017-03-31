@@ -31,6 +31,9 @@
 
 /** The input that was predicted on. */
 @property (strong, nonatomic) ClarifaiInput *input;
+  
+/** The entire 'data' dictionary returned from the API for a model prediction. If a model type is not currently supported, this dictionary can be used for customized use cases. */
+@property (strong, nonatomic) NSDictionary *responseDict;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 

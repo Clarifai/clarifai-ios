@@ -14,12 +14,15 @@
   self = [super init];
   if (self) {
     
+    // let user have access to complete dictionary for customized use.
+    _responseDict = dict;
+    
     // add link to input, to the output. (contains media like images).
     ClarifaiInput *input = [[ClarifaiInput alloc] initWithDictionary:dict[@"input"]];
     self.input = input;
     
     // check that data dictionary exists.
-    if (![dict[@"data"] isKindOfClass: [NSNull class]]) {
+    if ([dict objectForKey:@"data"] != nil) {
       // add concepts to output, if any.
       ClarifaiModel *model = [[ClarifaiModel alloc] initWithDictionary:dict[@"model"]];
       NSArray *conceptsArray = dict[@"data"][@"concepts"];
@@ -59,5 +62,5 @@
   }
   return self;
 }
-
+  
 @end

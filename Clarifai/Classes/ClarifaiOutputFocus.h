@@ -16,5 +16,7 @@
 
 /** The bounding boxes of all focus regions detected. */
 @property (strong,nonatomic) NSArray<ClarifaiOutputRegion *> *focusRegions;
+  
+- (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 @end

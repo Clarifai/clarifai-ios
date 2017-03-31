@@ -1436,7 +1436,7 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
   NSString *value = [NSString stringWithFormat:@"Bearer %@", self.accessToken];
   [_sessionManager.requestSerializer setValue:value forHTTPHeaderField:@"Authorization"];
   [_sessionManager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-  [_sessionManager.requestSerializer setValue:@"objc:2.3.0" forHTTPHeaderField:@"X-Clarifai-Client"];
+  [_sessionManager.requestSerializer setValue:@"objc:2.3.1" forHTTPHeaderField:@"X-Clarifai-Client"];
 }
 
 - (void)ensureValidAccessToken:(void (^)(NSError *error))handler {
