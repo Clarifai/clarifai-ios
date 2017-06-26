@@ -7,82 +7,65 @@
 //
 
 #import "ClarifaiOutputRegion.h"
+#import "NSDictionary+Clarifai.h"
 
 @implementation ClarifaiOutputRegion
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
   self = [super init];
   if (self) {
-    if ([dict objectForKey:@"region_info"] != nil && [dict[@"region_info"] objectForKey:@"bounding_box"] != nil) {
-      // Add bounding box if present for current region.
-      NSDictionary *regionBox = dict[@"region_info"][@"bounding_box"];
-      _top = [[regionBox valueForKey:@"top_row"] doubleValue];
-      _left = [[regionBox valueForKey:@"left_col"] doubleValue];
-      _bottom = [[regionBox valueForKey:@"bottom_row"] doubleValue];
-      _right = [[regionBox valueForKey:@"right_col"] doubleValue];
+    // Add bounding box if present for current region.
+    _top =  [[dict findObjectForKey:@"top_row"] doubleValue];
+    _left = [[dict findObjectForKey:@"left_col"] doubleValue];
+    _bottom = [[dict findObjectForKey:@"bottom_row"] doubleValue];
+    _right = [[dict findObjectForKey:@"right_col"] doubleValue];
       
-      // Add focus value, if present for current region. TODO: This will be depracated soon.
-      if ([dict[@"region_info"] objectForKey:@"focus"] != nil) {
-        _focusDensity = [[dict[@"region_info"][@"focus"] valueForKey:@"density"] doubleValue];
-      }
+    // Add focus value, if present for current region.
+    _focusDensity =[[dict findObjectForKey:@"density"] doubleValue];
+    
+    // Add face identity if present.
+    NSMutableArray <ClarifaiConcept *> *identityConcepts = [NSMutableArray array];
+    NSDictionary *identity = [dict findObjectForKey:@"identity"];
+    NSArray *identityConceptsArray = [identity findObjectForKey:@"concepts"];
+    for (NSDictionary *conceptDict in identityConceptsArray) {
+      ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithDictionary:conceptDict];
+      [identityConcepts addObject:concept];
     }
+    _identity = identityConcepts;
+
+    // Add age demographics if present.
+    NSMutableArray <ClarifaiConcept *> *ageConcepts = [NSMutableArray array];
+    NSDictionary *ageAppearance = [dict findObjectForKey:@"age_appearance"];
+    NSArray *ageConceptsArray = [ageAppearance findObjectForKey:@"concepts"];
+    for (NSDictionary *conceptDict in ageConceptsArray) {
+      ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithDictionary:conceptDict];
+      [ageConcepts addObject:concept];
+    }
+    _ageAppearance = ageConcepts;
+    
+    // Add gender demographics if present.
+    NSMutableArray <ClarifaiConcept *> *genderConcepts = [NSMutableArray array];
+    NSDictionary *genderAppearance = [dict findObjectForKey:@"gender_appearance"];
+    NSArray *genderConceptsArray = [genderAppearance findObjectForKey:@"concepts"];
+    for (NSDictionary *conceptDict in genderConceptsArray) {
+      ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithDictionary:conceptDict];
+      [genderConcepts addObject:concept];
+    }
+    _genderAppearance = genderConcepts;
+    
+    // Add multicultural demographics if present.
+    NSMutableArray <ClarifaiConcept *> *multiculturalConcepts = [NSMutableArray array];
+    NSDictionary *multiculturalAppearance = [dict findObjectForKey:@"multicultural_appearance"];
+    NSArray *multiculturalConceptsArray = [multiculturalAppearance findObjectForKey:@"concepts"];
+    for (NSDictionary *conceptDict in multiculturalConceptsArray) {
+      ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithDictionary:conceptDict];
+      [multiculturalConcepts addObject:concept];
+    }
+    _multiculturalAppearance = multiculturalConcepts;
     
     if ([dict objectForKey:@"data"] != nil) {
       NSDictionary *regionData = dict[@"data"];
-      // Add focus value, if present for current region.
-      if ([regionData objectForKey:@"focus"] != nil) {
-        _focusDensity = [[regionData[@"focus"] valueForKey:@"density"] doubleValue];
-      } else if ([regionData objectForKey:@"density"] != nil) {
-        _focusDensity = [[regionData valueForKey:@"density"] doubleValue];
-      }
-      
-      if ([regionData objectForKey:@"face"] != nil) {
-        NSDictionary *faceData = regionData[@"face"];
-        // Add face identity if present.
-        if ([faceData objectForKey:@"identity"] != nil) {
-          NSMutableArray <ClarifaiConcept *> *concepts = [NSMutableArray array];
-          NSArray *conceptsArray = faceData[@"identity"][@"concepts"];
-          for (NSDictionary *conceptDict in conceptsArray) {
-            ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithDictionary:conceptDict];
-            [concepts addObject:concept];
-          }
-          _identity = concepts;
-        }
-        
-        // Add age demographics if present.
-        if ([faceData objectForKey:@"age_appearance"] != nil) {
-          NSMutableArray <ClarifaiConcept *> *concepts = [NSMutableArray array];
-          NSArray *conceptsArray = faceData[@"age_appearance"][@"concepts"];
-          for (NSDictionary *conceptDict in conceptsArray) {
-            ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithDictionary:conceptDict];
-            [concepts addObject:concept];
-          }
-          _ageAppearance = concepts;
-        }
-        
-        // Add gender demographics if present.
-        if ([faceData objectForKey:@"gender_appearance"] != nil) {
-          NSMutableArray <ClarifaiConcept *> *concepts = [NSMutableArray array];
-          NSArray *conceptsArray = faceData[@"gender_appearance"][@"concepts"];
-          for (NSDictionary *conceptDict in conceptsArray) {
-            ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithDictionary:conceptDict];
-            [concepts addObject:concept];
-          }
-          _genderAppearance = concepts;
-        }
-        
-        // Add multicultural demographics if present.
-        if ([faceData objectForKey:@"multicultural_appearance"] != nil) {
-          NSMutableArray <ClarifaiConcept *> *concepts = [NSMutableArray array];
-          NSArray *conceptsArray = faceData[@"multicultural_appearance"][@"concepts"];
-          for (NSDictionary *conceptDict in conceptsArray) {
-            ClarifaiConcept *concept = [[ClarifaiConcept alloc] initWithDictionary:conceptDict];
-            [concepts addObject:concept];
-          }
-          _multiculturalAppearance = concepts;
-        }
-        
-      }
+
       // Add concepts, if present for current region.
       NSMutableArray <ClarifaiConcept *> *concepts = [NSMutableArray array];
       NSArray *conceptsArray = regionData[@"concepts"];

@@ -31,12 +31,12 @@ pod 'Clarifai'
     ```
 
 4. Go to [developer.clarifai.com/applications](https://developer.clarifai.com/applications), click
-on your application, then copy the "Client ID" and "Client Secret" values (if you don't already
+on your application, then copy your app's API Key (if you don't already
 have an account or application, you'll need to sign up first).
 
 5. Create your Clarifai application in your project.
     ```
-    ClarifaiApp *app = [[ClarifaiApp alloc] initWithAppID:@"" appSecret:@""];
+    ClarifaiApp *app = [[ClarifaiApp alloc] initWithApiKey:@""];
     ```
 6. That's it! Explore the [API docs and guide](https://developer.clarifai.com).
 
@@ -64,9 +64,9 @@ There is a simple demo included in the repo to help you get started. To build th
     ```
 
 3. Go to [developer.clarifai.com/applications](https://developer.clarifai.com/applications), click
-   on your application, then copy the "Client ID" and "Client Secret" values (if you don't already
+   on your application, then copy your app's API Key (if you don't already
    have an account or application, you'll need to [sign up first](https://developer.clarifai.com/signup/)).
 
-   Add the values of your Client ID and Client Secret to the `recognizeImage` method in RecognitionViewController.m.
+   Add your API Key to the `recognizeImage` method in RecognitionViewController.m.
 
 4. Press the "Play" button in the toolbar to build, install, and run the app.

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ClarifaiSwiftDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="kS8-Gb-Jfe">
+                                <rect key="frame" x="16" y="340" width="343" height="128"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="128" id="HOI-f7-z7S"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bbe-c1-uHj">
+                                <rect key="frame" x="16" y="20" width="343" height="300"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qfE-qx-8cd">
+                                <rect key="frame" x="143" y="498" width="88" height="30"/>
+                                <state key="normal" title="Select Photo"/>
+                                <connections>
+                                    <action selector="buttonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gar-DP-kKl"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="qfE-qx-8cd" firstAttribute="top" secondItem="kS8-Gb-Jfe" secondAttribute="bottom" constant="30" id="0Ds-Q0-j8d"/>
+                            <constraint firstItem="qfE-qx-8cd" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="2HM-ky-P0p"/>
+                            <constraint firstItem="bbe-c1-uHj" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.45" id="3il-8T-4q9"/>
+                            <constraint firstItem="bbe-c1-uHj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Asu-p4-Cya"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="bbe-c1-uHj" secondAttribute="trailing" id="FpH-UU-JWl"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="kS8-Gb-Jfe" secondAttribute="trailing" id="SNo-gP-OuI"/>
+                            <constraint firstItem="kS8-Gb-Jfe" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Xag-eM-YPT"/>
+                            <constraint firstItem="kS8-Gb-Jfe" firstAttribute="top" secondItem="bbe-c1-uHj" secondAttribute="bottom" constant="20" id="bnJ-Zg-wJg"/>
+                            <constraint firstItem="bbe-c1-uHj" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="jNN-81-vLz"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="button" destination="qfE-qx-8cd" id="rdD-Nh-MPA"/>
+                        <outlet property="imageView" destination="bbe-c1-uHj" id="TVu-Z2-mzh"/>
+                        <outlet property="textView" destination="kS8-Gb-Jfe" id="Dta-u8-L3i"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="136.80000000000001" y="138.98050974512745"/>
+        </scene>
+    </scenes>
+</document>

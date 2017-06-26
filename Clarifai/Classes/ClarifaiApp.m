@@ -35,6 +35,7 @@
 @property (assign, nonatomic) BOOL authenticating;
 @property (strong, nonatomic) NSString *appID;
 @property (strong, nonatomic) NSString *appSecret;
+@property (strong, nonatomic) NSString *apiKey;
 @property (strong, nonatomic) NSDate *accessTokenExpiration;
 @property (strong, nonatomic) NSDictionary *predictionTypes;
 @property (strong, nonatomic) NSDictionary *modelTypes;
@@ -49,27 +50,40 @@
     _appID = appID;
     _appSecret = appSecret;
     
-    // Configure AFNetworking:
-    _sessionManager = [AFHTTPSessionManager manager];
-    _sessionManager.operationQueue.maxConcurrentOperationCount = 4;
-    _sessionManager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    _sessionManager.requestSerializer = [AFJSONRequestSerializer serializer];
-    _sessionManager.requestSerializer.HTTPMethodsEncodingParametersInURI = [NSSet setWithObjects:@"GET", @"HEAD", nil];
-    [_sessionManager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    _sessionManager.responseSerializer = [ResponseSerializer serializer];
-    _sessionManager.responseSerializer.acceptableContentTypes = [[NSSet alloc] initWithArray:@[@"application/json"]]; 
-    
-    _modelTypes = @{
-                    @(ClarifaiModelTypeEmbed): @"embed",
-                    @(ClarifaiModelTypeConcept): @"concept",
-                    @(ClarifaiModelTypeDetection): @"detection",
-                    @(ClarifaiModelTypeCluster): @"cluster",
-                    @(ClarifaiModelTypeColor): @"color"
-                    };
-    
+    [self commonInit];
     [self loadAccessToken];
   }
   return self;
+}
+
+- (instancetype)initWithApiKey:(NSString *)apiKey {
+  self = [super init];
+  if (self) {
+    [self commonInit];
+    [self setApiKey:apiKey];
+  }
+  return self;
+}
+
+- (void)commonInit {
+  // Configure AFNetworking:
+  _sessionManager = [AFHTTPSessionManager manager];
+  _sessionManager.operationQueue.maxConcurrentOperationCount = 4;
+  _sessionManager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+  _sessionManager.requestSerializer = [AFJSONRequestSerializer serializer];
+  _sessionManager.requestSerializer.HTTPMethodsEncodingParametersInURI = [NSSet setWithObjects:@"GET", @"HEAD", nil];
+  [_sessionManager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+  _sessionManager.responseSerializer = [ResponseSerializer serializer];
+  _sessionManager.responseSerializer.acceptableContentTypes = [[NSSet alloc] initWithArray:@[@"application/json"]];
+  
+  _modelTypes = @{
+                  @(ClarifaiModelTypeEmbed): @"embed",
+                  @(ClarifaiModelTypeConcept): @"concept",
+                  @(ClarifaiModelTypeDetection): @"detection",
+                  @(ClarifaiModelTypeCluster): @"cluster",
+                  @(ClarifaiModelTypeColor): @"color"
+                  };
+  
 }
 
 #pragma mark INPUTS
@@ -1436,34 +1450,41 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
   NSString *value = [NSString stringWithFormat:@"Bearer %@", self.accessToken];
   [_sessionManager.requestSerializer setValue:value forHTTPHeaderField:@"Authorization"];
   [_sessionManager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-  [_sessionManager.requestSerializer setValue:@"objc:2.3.1" forHTTPHeaderField:@"X-Clarifai-Client"];
+  NSString *version = [NSString stringWithFormat:@"objc:%@", ClientVersion];
+  [_sessionManager.requestSerializer setValue:version forHTTPHeaderField:@"X-Clarifai-Client"];
 }
 
 - (void)ensureValidAccessToken:(void (^)(NSError *error))handler {
-  if (self.accessToken && self.accessTokenExpiration &&
-      [self.accessTokenExpiration timeIntervalSinceNow] >= kMinTokenLifetime) {
-    handler(nil);  // We have a valid access token.
+  if (!self.apiKey) {
+    if (self.accessToken && self.accessTokenExpiration &&
+        [self.accessTokenExpiration timeIntervalSinceNow] >= kMinTokenLifetime) {
+      handler(nil);  // We have a valid access token.
+    } else {
+      self.authenticating = YES;
+      // Send a request to the auth endpoint. See: https://developer.clarifai.com/docs/auth.
+      NSString *clientSecret = [NSString stringWithFormat:@"%@:%@", self.appID, self.appSecret];
+      NSData *clientSecretData = [clientSecret dataUsingEncoding:NSUTF8StringEncoding];
+      NSString *clientSecretBase64 = [clientSecretData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+      [_sessionManager.requestSerializer setValue:[@"Basic " stringByAppendingString:clientSecretBase64] forHTTPHeaderField:@"Authorization"];
+      
+      [_sessionManager POST:[kApiBaseUrl stringByAppendingString:@"/token"] parameters:nil progress:nil success:^(NSURLSessionDataTask *task, id response) {
+        ClarifaiAccessTokenResponse *res = [[ClarifaiAccessTokenResponse alloc]
+                                            initWithDictionary:response];
+        [self saveAccessToken:res];
+        self.authenticating = NO;
+        handler(nil);
+      } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        self.authenticating = NO;
+        handler(error);
+      }];
+    }
   } else {
-    self.authenticating = YES;
-    // Send a request to the auth endpoint. See: https://developer.clarifai.com/docs/auth.
-    NSString *clientSecret = [NSString stringWithFormat:@"%@:%@", self.appID, self.appSecret];
-    NSData *clientSecretData = [clientSecret dataUsingEncoding:NSUTF8StringEncoding];
-    NSString *clientSecretBase64 = [clientSecretData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
-    [_sessionManager.requestSerializer setValue:[@"Basic " stringByAppendingString:clientSecretBase64] forHTTPHeaderField:@"Authorization"];
-    
-    [_sessionManager POST:[kApiBaseUrl stringByAppendingString:@"/token"] parameters:nil progress:nil success:^(NSURLSessionDataTask *task, id response) {
-      ClarifaiAccessTokenResponse *res = [[ClarifaiAccessTokenResponse alloc]
-                                          initWithDictionary:response];
-      [self saveAccessToken:res];
-      self.authenticating = NO;
-      handler(nil);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-      self.authenticating = NO;
-      handler(error);
-    }];
+    // If there is an API Key given, do not use token authentication. Auth errors are returned in a given API call, if key does not have proper permissions.
+    handler(nil);
   }
 }
 
+// Depracated. Authentication using access tokens.
 - (void)loadAccessToken {
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   if (![self.appID isEqualToString:[defaults valueForKey:kKeyAppID]]) {
@@ -1497,29 +1518,21 @@ conceptsMutuallyExclusive:(BOOL)conceptsMutuallyExclusive
   self.accessTokenExpiration = nil;
 }
 
-#pragma mark -
-
-/*
-- (NSError *)errorFromHttpResponse:(NSHTTPURLResponse *)response {
-  NSString *desc;
-  if (op.responseString) {
-    desc = response.respo
-  }
+// Authentication using an API Key.
+- (void)setApiKey:(NSString *)apiKey {
+  _apiKey = apiKey;
+  NSString *value = [NSString stringWithFormat:@"Key %@", _apiKey];
+  [_sessionManager.requestSerializer setValue:value forHTTPHeaderField:@"Authorization"];
+  [_sessionManager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+  NSString *version = [NSString stringWithFormat:@"objc:%@", ClientVersion];
+  [_sessionManager.requestSerializer setValue:version forHTTPHeaderField:@"X-Clarifai-Client"];
 }
 
-- (NSError *)errorFromHttpResponse:(AFHTTPRequestOperation *)op {
-  NSString *desc;
-  if (op.responseString) {
-    desc = op.responseString;
-  } else {
-    desc = [NSString stringWithFormat:@"HTTP Status %d", (int)op.response.statusCode];
-  }
-  NSString *url = [op.request.URL absoluteString];
-  return [[NSError alloc] initWithDomain:kErrorDomain
-                                    code:op.response.statusCode
-                                userInfo:@{@"description": desc, @"url": url}];
+- (void)saveApiKey:(NSString *)apiKey {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  [defaults setObject:self.apiKey forKey:kKeyApiKey];
+  [defaults synchronize];
+  self.apiKey = apiKey;
 }
-*/
-
 
 @end

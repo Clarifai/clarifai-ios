@@ -17,7 +17,6 @@
 #import "ClarifaiOutput.h"
 #import "ClarifaiOutputFace.h"
 #import "ClarifaiOutputFocus.h"
-#import "ClarifaiOutputLogo.h"
 #import "ClarifaiConstants.h"
 #import "ClarifaiLocation.h"
 
@@ -35,7 +34,14 @@
  * @param appID Your application client ID from https://developer.clarifai.com/applications
  * @param appSecret Your application secret from https://developer.clarifai.com/applications
  */
-- (instancetype)initWithAppID:(NSString *)appID appSecret:(NSString *)appSecret;
+- (instancetype)initWithAppID:(NSString *)appID appSecret:(NSString *)appSecret __attribute__((deprecated));
+
+/**
+ * Initializes a new ClarifaiApp.
+ *
+ * @param apiKey An API Key generated for your Application. https://developer.clarifai.com/applications
+ */
+- (instancetype)initWithApiKey:(NSString *)apiKey;
 
 #pragma mark INPUTS
 
