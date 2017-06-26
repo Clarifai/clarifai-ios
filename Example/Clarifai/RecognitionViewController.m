@@ -10,7 +10,8 @@
  * This view controller performs recognition using the Clarifai API.
  * See the README for instructions on running the demo.
  */
-@interface RecognitionViewController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@interface RecognitionViewController () <UINavigationControllerDelegate, 
+UIImagePickerControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UITextView *textView;
 @property (weak, nonatomic) IBOutlet UIButton *button;
@@ -19,6 +20,7 @@
 
 
 @implementation RecognitionViewController
+
 
 - (IBAction)buttonPressed:(id)sender {
     // Show a UIImagePickerController to let the user pick an image from their library.
@@ -47,9 +49,8 @@
 
 - (void)recognizeImage:(UIImage *)image {
 
-    // Initialize the Clarifai app with your app's ID and Secret.
-    ClarifaiApp *app = [[ClarifaiApp alloc] initWithAppID:@""
-                                                appSecret:@""];
+    // Initialize the Clarifai app with your app's API Key.
+    ClarifaiApp *app = [[ClarifaiApp alloc] initWithApiKey:@""];
   
     // Fetch Clarifai's general model.
     [app getModelByName:@"general-v1.3" completion:^(ClarifaiModel *model, NSError *error) {
@@ -69,6 +70,8 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.textView.text = [NSString stringWithFormat:@"Tags:\n%@", [tags componentsJoinedByString:@", "]];
                 });
+            } else {
+              NSLog(@"Error: %@", error.description);
             }
           
           dispatch_async(dispatch_get_main_queue(), ^{

@@ -1,0 +1,387 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		64C42843B1D15B579AE8FE51 /* Pods_ClarifaiSwiftDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DDFD9EEDA12C758FEC20378 /* Pods_ClarifaiSwiftDemo.framework */; };
+		EB927A1F1E8EF7A800529D64 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB927A1E1E8EF7A800529D64 /* AppDelegate.swift */; };
+		EB927A211E8EF7A800529D64 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB927A201E8EF7A800529D64 /* ViewController.swift */; };
+		EB927A241E8EF7A800529D64 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EB927A221E8EF7A800529D64 /* Main.storyboard */; };
+		EB927A261E8EF7A800529D64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB927A251E8EF7A800529D64 /* Assets.xcassets */; };
+		EB927A291E8EF7A800529D64 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EB927A271E8EF7A800529D64 /* LaunchScreen.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		9DDFD9EEDA12C758FEC20378 /* Pods_ClarifaiSwiftDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClarifaiSwiftDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C57BCA2D6C7145D33EE78B46 /* Pods-ClarifaiSwiftDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiSwiftDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiSwiftDemo/Pods-ClarifaiSwiftDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		CF8C081F7E84C3601237E5F4 /* Pods-ClarifaiSwiftDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClarifaiSwiftDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClarifaiSwiftDemo/Pods-ClarifaiSwiftDemo.release.xcconfig"; sourceTree = "<group>"; };
+		EB927A1B1E8EF7A800529D64 /* ClarifaiSwiftDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClarifaiSwiftDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB927A1E1E8EF7A800529D64 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		EB927A201E8EF7A800529D64 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		EB927A231E8EF7A800529D64 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		EB927A251E8EF7A800529D64 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EB927A281E8EF7A800529D64 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		EB927A2A1E8EF7A800529D64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EB927A181E8EF7A800529D64 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64C42843B1D15B579AE8FE51 /* Pods_ClarifaiSwiftDemo.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		76E77DD3A21AC1A63E38E258 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9DDFD9EEDA12C758FEC20378 /* Pods_ClarifaiSwiftDemo.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		90CEA50C84AFBC99C58354BE /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C57BCA2D6C7145D33EE78B46 /* Pods-ClarifaiSwiftDemo.debug.xcconfig */,
+				CF8C081F7E84C3601237E5F4 /* Pods-ClarifaiSwiftDemo.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		EB927A121E8EF7A800529D64 = {
+			isa = PBXGroup;
+			children = (
+				EB927A1D1E8EF7A800529D64 /* ClarifaiSwiftDemo */,
+				EB927A1C1E8EF7A800529D64 /* Products */,
+				90CEA50C84AFBC99C58354BE /* Pods */,
+				76E77DD3A21AC1A63E38E258 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		EB927A1C1E8EF7A800529D64 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EB927A1B1E8EF7A800529D64 /* ClarifaiSwiftDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EB927A1D1E8EF7A800529D64 /* ClarifaiSwiftDemo */ = {
+			isa = PBXGroup;
+			children = (
+				EB927A1E1E8EF7A800529D64 /* AppDelegate.swift */,
+				EB927A201E8EF7A800529D64 /* ViewController.swift */,
+				EB927A221E8EF7A800529D64 /* Main.storyboard */,
+				EB927A251E8EF7A800529D64 /* Assets.xcassets */,
+				EB927A271E8EF7A800529D64 /* LaunchScreen.storyboard */,
+				EB927A2A1E8EF7A800529D64 /* Info.plist */,
+			);
+			path = ClarifaiSwiftDemo;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		EB927A1A1E8EF7A800529D64 /* ClarifaiSwiftDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EB927A2D1E8EF7A800529D64 /* Build configuration list for PBXNativeTarget "ClarifaiSwiftDemo" */;
+			buildPhases = (
+				E08521CE48264469EE8F921F /* [CP] Check Pods Manifest.lock */,
+				EB927A171E8EF7A800529D64 /* Sources */,
+				EB927A181E8EF7A800529D64 /* Frameworks */,
+				EB927A191E8EF7A800529D64 /* Resources */,
+				E703AC567C7BC6C8849253B2 /* [CP] Embed Pods Frameworks */,
+				4F95804EDEE86A4EE589D6CB /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ClarifaiSwiftDemo;
+			productName = ClarifaiSwiftDemo;
+			productReference = EB927A1B1E8EF7A800529D64 /* ClarifaiSwiftDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EB927A131E8EF7A800529D64 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0810;
+				LastUpgradeCheck = 0810;
+				ORGANIZATIONNAME = Clarifai;
+				TargetAttributes = {
+					EB927A1A1E8EF7A800529D64 = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = 32E6VH74P3;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = EB927A161E8EF7A800529D64 /* Build configuration list for PBXProject "ClarifaiSwiftDemo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EB927A121E8EF7A800529D64;
+			productRefGroup = EB927A1C1E8EF7A800529D64 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EB927A1A1E8EF7A800529D64 /* ClarifaiSwiftDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EB927A191E8EF7A800529D64 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB927A291E8EF7A800529D64 /* LaunchScreen.storyboard in Resources */,
+				EB927A261E8EF7A800529D64 /* Assets.xcassets in Resources */,
+				EB927A241E8EF7A800529D64 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4F95804EDEE86A4EE589D6CB /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClarifaiSwiftDemo/Pods-ClarifaiSwiftDemo-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E08521CE48264469EE8F921F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		E703AC567C7BC6C8849253B2 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClarifaiSwiftDemo/Pods-ClarifaiSwiftDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EB927A171E8EF7A800529D64 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB927A211E8EF7A800529D64 /* ViewController.swift in Sources */,
+				EB927A1F1E8EF7A800529D64 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		EB927A221E8EF7A800529D64 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EB927A231E8EF7A800529D64 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		EB927A271E8EF7A800529D64 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EB927A281E8EF7A800529D64 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		EB927A2B1E8EF7A800529D64 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EB927A2C1E8EF7A800529D64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		EB927A2E1E8EF7A800529D64 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C57BCA2D6C7145D33EE78B46 /* Pods-ClarifaiSwiftDemo.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 32E6VH74P3;
+				INFOPLIST_FILE = ClarifaiSwiftDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = cai.ClarifaiSwiftDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		EB927A2F1E8EF7A800529D64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF8C081F7E84C3601237E5F4 /* Pods-ClarifaiSwiftDemo.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 32E6VH74P3;
+				INFOPLIST_FILE = ClarifaiSwiftDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = cai.ClarifaiSwiftDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EB927A161E8EF7A800529D64 /* Build configuration list for PBXProject "ClarifaiSwiftDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB927A2B1E8EF7A800529D64 /* Debug */,
+				EB927A2C1E8EF7A800529D64 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EB927A2D1E8EF7A800529D64 /* Build configuration list for PBXNativeTarget "ClarifaiSwiftDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB927A2E1E8EF7A800529D64 /* Debug */,
+				EB927A2F1E8EF7A800529D64 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = EB927A131E8EF7A800529D64 /* Project object */;
+}

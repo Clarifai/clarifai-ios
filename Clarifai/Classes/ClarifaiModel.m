@@ -8,6 +8,7 @@
 
 #import "ClarifaiModel.h"
 #import "ClarifaiApp.h"
+#import "NSDictionary+Clarifai.h"
 
 @interface ClarifaiModel() {
   __block BOOL finishedTrainingAttempt;
@@ -132,8 +133,14 @@
     if (_modelType == ClarifaiModelTypeUnsupported) {
       NSLog(@"This model is not supported in your current client version. Please update for official support. Alternatively, you can use the responseDict property on each ClarifaiOutput to support the model on your own.");
     }
-    
-    NSString *apiURL = [NSString stringWithFormat:@"%@/models/%@/versions/%@/outputs", kApiBaseUrl, self.modelID, self.version.versionID];
+
+    NSString *apiURL = @"";
+    if (self.version != nil) {
+      apiURL = [NSString stringWithFormat:@"%@/models/%@/versions/%@/outputs", kApiBaseUrl, self.modelID, self.version.versionID];
+    } else {
+      apiURL = [NSString stringWithFormat:@"%@/models/%@/outputs", kApiBaseUrl, self.modelID];
+    }
+
     NSString *escapedURL = [apiURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSMutableArray *imagesToPredictOn = [NSMutableArray array];
@@ -142,7 +149,9 @@
         [imagesToPredictOn addObject:@{@"data": @{@"image": @{@"url": image.mediaURL}}}];
       } else if (image.image) {
         NSData *imageData = UIImageJPEGRepresentation(image.image, 0.88);
-        [imagesToPredictOn addObject:@{@"data": @{@"image": @{@"base64": imageData.base64Encoding}}}];
+        [imagesToPredictOn addObject:@{@"data": @{@"image": @{@"base64": [imageData base64EncodedStringWithOptions:0]}}}];
+      } else if (image.mediaData) {
+        [imagesToPredictOn addObject:@{@"data": @{@"image": @{@"base64": [image.mediaData base64EncodedStringWithOptions:0]}}}];
       }
     }
     NSDictionary *params = @{@"inputs": imagesToPredictOn};    
@@ -182,6 +191,8 @@
       } else if (image.image) {
         NSData *imageData = UIImageJPEGRepresentation(image.image, 0.88);
         [imagesToPredictOn addObject:@{@"data": @{@"image": @{@"base64": imageData.base64Encoding}}}];
+      } else if (image.mediaData) {
+        [imagesToPredictOn addObject:@{@"data": @{@"image": @{@"base64": image.mediaData.base64Encoding}}}];
       }
     }
     NSDictionary *params = @{@"inputs": imagesToPredictOn, @"model":@{@"output_info":@{@"output_config":@{@"language":language}}}};
@@ -201,28 +212,45 @@
 - (NSArray <ClarifaiOutput *> *)formatOutputsFromResponse:(NSArray *)outputsData {
   NSMutableArray *outputs = [[NSMutableArray alloc] init];
   for (int i = 0; i < outputsData.count; i++) {
-    NSString *type = outputsData[i][@"model"][@"output_info"][@"type"];
-    NSString *typeExt = outputsData[i][@"model"][@"output_info"][@"type_ext"];
     
-    if ([type isEqualToString:@"facedetect"] || [typeExt isEqualToString:@"facedetect"]) {
-      ClarifaiOutputFace *output = [[ClarifaiOutputFace alloc] initWithDictionary:outputsData[i]];
-      [outputs addObject:output];
-    } else if ([type isEqualToString:@"detection"] || [typeExt isEqualToString:@"detection"]) {
-      ClarifaiOutputLogo *output = [[ClarifaiOutputLogo alloc] initWithDictionary:outputsData[i]];
-      [outputs addObject:output];
-    } else if ([type isEqualToString:@"blur"]) {
-      ClarifaiOutputFocus *output = [[ClarifaiOutputFocus alloc] initWithDictionary:outputsData[i]];
-      [outputs addObject:output];
-    } else if ([typeExt isEqualToString:@"focus"]) {
-      ClarifaiOutputFocus *output = [[ClarifaiOutputFocus alloc] initWithDictionary:outputsData[i]];
-      [outputs addObject:output];
+    NSString *type = [outputsData[i] findObjectForKey:@"type"];
+    NSString *typeExt = [outputsData[i] findObjectForKey:@"type_ext"];
+    
+    // Construct array of all detected regions.
+    NSArray *regionsArray = [outputsData[i] findObjectForKey:@"regions"];
+    NSMutableArray *regions = [NSMutableArray array];
+    for (NSDictionary *regionDict in regionsArray) {
+      ClarifaiOutputRegion *region = [[ClarifaiOutputRegion alloc] initWithDictionary:regionDict];
+      [regions addObject:region];
+    }
+    
+    if ([regions count] > 0) {
+      ClarifaiOutputRegion *testRegion = regions[0];
+      
+      if ([testRegion.identity count] > 0 || [testRegion.ageAppearance count] > 0 || [type isEqualToString:@"facedetect"] || [typeExt isEqualToString:@"facedetect"]) {
+        // Any Facedetect model. Need type only for face model, since it has no unique region information. Even if this changes, it will still work using a normal ClarifaiOutput.
+        ClarifaiOutputFace *output = [[ClarifaiOutputFace alloc] initWithDictionary:outputsData[i]];
+        output.faces = regions;
+        [outputs addObject:output];
+      } else if (testRegion.focusDensity) {
+        // Focus model
+        ClarifaiOutputFocus *output = [[ClarifaiOutputFocus alloc] initWithDictionary:outputsData[i]];
+        output.focusRegions = regions;
+        [outputs addObject:output];
+      } else {
+        // default to general output.
+        ClarifaiOutput *output = [[ClarifaiOutput alloc] initWithDictionary:outputsData[i]];
+        output.regions = regions;
+        [outputs addObject:output];
+      }
     } else {
+      // no regions.
       ClarifaiOutput *output = [[ClarifaiOutput alloc] initWithDictionary:outputsData[i]];
       [outputs addObject:output];
     }
   }
   return outputs;
-}
+} 
 
 - (void)listVersions:(int)page
       resultsPerPage:(int)resultsPerPage

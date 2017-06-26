@@ -25,7 +25,7 @@
 - (void)setUp {
   _app = [[ClarifaiApp alloc] initWithAppID:@""
                                   appSecret:@""];
-  
+
   // delete all inputs and models before starting each test.
   CAIFuture *future = [[CAIFuture alloc] init];
   [_app deleteAllInputs:^(NSError *error) {
@@ -640,7 +640,6 @@
       ClarifaiImage *image = [[ClarifaiImage alloc] initWithImage:dope];
       
       [model predictOnImages:@[image] completion:^(NSArray<ClarifaiOutput *> *outputs, NSError *error) {
-        ClarifaiOutput *output = outputs[0];
         XCTAssert(error == nil);
         XCTAssert([outputs count] > 0);
         [future setResult:@(YES)];
@@ -709,7 +708,7 @@
       } else {
         BOOL privateModelPresent = NO;
         for (ClarifaiModel *model in models) {
-          if (![model.appID isKindOfClass:[NSNull class]]) {
+          if (![model.appID isEqualToString:@"main"]) {
             privateModelPresent = YES;
           }
         }
@@ -872,6 +871,9 @@
                   XCTAssert(outputs != nil);
                   XCTAssert([outputs count] > 0);
                   XCTAssert([outputs[0].colors count] > 0);
+                  NSLog(@"%@",outputs[0].colors[0].conceptName);
+                  NSLog(@"%@",outputs[0].colors[0].conceptID);
+                  NSLog(@"%f ",outputs[0].colors[0].score);
                   [future setResult:@(YES)];
                 }];
   }];
@@ -965,12 +967,12 @@
 
 - (void)testPredictGeneralModel {
   CAIFuture *future = [[CAIFuture alloc] init];
-  UIImage *dope = [UIImage imageNamed:@"geth.jpg"];
-  //ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"http://i.imgur.com/rbJgWn1.jpg"];
-  ClarifaiImage *image = [[ClarifaiImage alloc] initWithImage:dope];
+//  UIImage *dope = [UIImage imageNamed:@"geth.jpg"];
+  ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"http://i.imgur.com/rbJgWn1.jpg"];
+//  ClarifaiImage *image = [[ClarifaiImage alloc] initWithImage:dope];
   [_app getModelByName:@"general-v1.3" completion:^(ClarifaiModel *model, NSError *error) {
     XCTAssert(error == nil);
-    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiSearchResult *> *outputs, NSError *error) {
+    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiOutput *> *outputs, NSError *error) {
       XCTAssert(error == nil);
       XCTAssert([outputs count] > 0);
       XCTAssert([outputs[0].concepts count] > 0);
@@ -1005,7 +1007,7 @@
   ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"http://www.whrl.org/wp-content/uploads/2014/03/three-women.jpg"];
   [_app getModelByID:@"e0be3b9d6a454f0493ac3a30784001ff" completion:^(ClarifaiModel *model, NSError *error) {
     XCTAssert(error == nil);
-    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiSearchResult *> *outputs, NSError *error) {
+    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiOutput *> *outputs, NSError *error) {
       XCTAssert(error == nil);
       XCTAssert([outputs count] > 0);
       XCTAssert([outputs[0].concepts count] > 0);
@@ -1023,7 +1025,7 @@
   ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"http://www.whrl.org/wp-content/uploads/2014/03/three-women.jpg"];
   [_app getModelByID:@"a403429f2ddf4b49b307e318f00e528b" completion:^(ClarifaiModel *model, NSError *error) {
     XCTAssert(error == nil);
-    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiSearchResult *> *outputs, NSError *error) {
+    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiOutput *> *outputs, NSError *error) {
       
       XCTAssert(error == nil);
       XCTAssert([outputs count] > 0);
@@ -1031,7 +1033,7 @@
       if ([outputs[0] isKindOfClass:[ClarifaiOutputFace class]]) {
         for (ClarifaiOutputRegion *box in ((ClarifaiOutputFace *)outputs[0]).faces) {
           XCTAssert(box.top > 0.0 || box.left > 0.0 || box.bottom > 0.0 || box.right > 0.0);
-          //NSLog(@"boundingBox: %f, %f, %f, %f", box.top, box.left, box.bottom, box.right);
+//          NSLog(@"boundingBox: %f, %f, %f, %f", box.top, box.left, box.bottom, box.right);
         }
       }
       
@@ -1046,7 +1048,7 @@
   ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"http://www.whrl.org/wp-content/uploads/2014/03/three-women.jpg"];
   [_app getModelByID:@"c2cf7cecd8a6427da375b9f35fcd2381" completion:^(ClarifaiModel *model, NSError *error) {
     XCTAssert(error == nil);
-    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiSearchResult *> *outputs, NSError *error) {
+    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiOutput *> *outputs, NSError *error) {
       
       XCTAssert(error == nil);
       XCTAssert([outputs count] > 0);
@@ -1073,12 +1075,12 @@
   ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"https://s-media-cache-ak0.pinimg.com/736x/d6/1b/b2/d61bb21ca2cbe9b24259b24852b24eba.jpg"];
   [_app getModelByID:@"c443119bf2ed4da98487520d01a0b1e3" completion:^(ClarifaiModel *model, NSError *error) {
     XCTAssert(error == nil);
-    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiSearchResult *> *outputs, NSError *error) {
+    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiOutput *> *outputs, NSError *error) {
       XCTAssert(error == nil);
       XCTAssert([outputs count] > 0);
-      XCTAssert([outputs[0] isKindOfClass:[ClarifaiOutputLogo class]]);
-      if ([outputs[0] isKindOfClass:[ClarifaiOutputLogo class]]) {
-        for (ClarifaiOutputRegion *box in ((ClarifaiOutputLogo *)outputs[0]).logos) {
+      XCTAssert([outputs[0] isKindOfClass:[ClarifaiOutput class]]);
+      if ([outputs[0] isKindOfClass:[ClarifaiOutput class]]) {
+        for (ClarifaiOutputRegion *box in outputs[0].regions) {
           XCTAssert(box.top > 0.0 || box.left > 0.0 || box.bottom > 0.0 || box.right > 0.0);
           XCTAssert([box.concepts count] > 0);
 //          NSLog(@"boundingBox: %f, %f, %f, %f", box.top, box.left, box.bottom, box.right);
@@ -1096,7 +1098,7 @@
   ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"http://www.whrl.org/wp-content/uploads/2014/03/three-women.jpg"];
   [_app getModelByID:@"c0c0ac362b03416da06ab3fa36fb58e3" completion:^(ClarifaiModel *model, NSError *error) {
     XCTAssert(error == nil);
-    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiSearchResult *> *outputs, NSError *error) {
+    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiOutput *> *outputs, NSError *error) {
     
       XCTAssert(error == nil);
       XCTAssert([outputs count] > 0);
@@ -1111,10 +1113,10 @@
           XCTAssert([box.genderAppearance count] > 0);
           XCTAssert(box.multiculturalAppearance != nil);
           XCTAssert([box.multiculturalAppearance count] > 0);
-          NSLog(@"boundingBox: %f, %f, %f, %f", box.top, box.left, box.bottom, box.right);
-          NSLog(@"age: %@",box.ageAppearance[0].conceptName);
-          NSLog(@"gender: %@",box.genderAppearance[0].conceptName);
-          NSLog(@"multicultural appearance: %@",box.multiculturalAppearance[0].conceptName);
+//          NSLog(@"boundingBox: %f, %f, %f, %f", box.top, box.left, box.bottom, box.right);
+//          NSLog(@"age: %@",box.ageAppearance[0].conceptName);
+//          NSLog(@"gender: %@",box.genderAppearance[0].conceptName);
+//          NSLog(@"multicultural appearance: %@",box.multiculturalAppearance[0].conceptName);
         }
       }
       
@@ -1124,33 +1126,32 @@
   [future getResult];
 }
   
-//- (void)testPredictCelebModel {
-//  CAIFuture *future = [[CAIFuture alloc] init];
-//  ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"http://www.whrl.org/wp-content/uploads/2014/03/three-women.jpg"];
-//  [_app getModelByID:@"e466caa0619f444ab97497640cefc4dc" completion:^(ClarifaiModel *model, NSError *error) {
-//    XCTAssert(error == nil);
-//    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiSearchResult *> *outputs, NSError *error) {
-//      
-//      XCTAssert(error == nil);
-//      XCTAssert([outputs count] > 0);
-//      XCTAssert([outputs[0] isKindOfClass:[ClarifaiOutputFace class]]);
-//      if ([outputs[0] isKindOfClass:[ClarifaiOutputFace class]]) {
-//        for (ClarifaiOutputRegion *box in ((ClarifaiOutputFace *)outputs[0]).faces) {
-//          XCTAssert(box.top > 0.0 || box.left > 0.0 || box.bottom > 0.0 || box.right > 0.0);
-//          XCTAssert(box.identity != nil);
-//          XCTAssert([box.identity count] > 0);
+- (void)testPredictCelebModel {
+  CAIFuture *future = [[CAIFuture alloc] init];
+  ClarifaiImage *image = [[ClarifaiImage alloc] initWithURL:@"http://www.whrl.org/wp-content/uploads/2014/03/three-women.jpg"];
+  [_app getModelByID:@"e466caa0619f444ab97497640cefc4dc" completion:^(ClarifaiModel *model, NSError *error) {
+    XCTAssert(error == nil);
+    [model predictOnImages:@[image] completion:^(NSArray<ClarifaiOutput *> *outputs, NSError *error) {
+      
+      XCTAssert(error == nil);
+      XCTAssert([outputs count] > 0);
+      XCTAssert([outputs[0] isKindOfClass:[ClarifaiOutputFace class]]);
+      if ([outputs[0] isKindOfClass:[ClarifaiOutputFace class]]) {
+        for (ClarifaiOutputRegion *box in ((ClarifaiOutputFace *)outputs[0]).faces) {
+          XCTAssert(box.top > 0.0 || box.left > 0.0 || box.bottom > 0.0 || box.right > 0.0);
+          XCTAssert(box.identity != nil);
+          XCTAssert([box.identity count] > 0);
 //          NSLog(@"boundingBox: %f, %f, %f, %f", box.top, box.left, box.bottom, box.right);
 //          NSLog(@"identity: %@", box.identity[0].conceptName);
-//        }
-//      }
-//      
-//      [future setResult:@(YES)];
-//    }];
-//  }];
-//  [future getResult];
-//}
+        }
+      }
+      
+      [future setResult:@(YES)];
+    }];
+  }];
+  [future getResult];
+}
 
-  
 #pragma mark SEARCH TESTS
 
 - (void)testSearchInputsByID {

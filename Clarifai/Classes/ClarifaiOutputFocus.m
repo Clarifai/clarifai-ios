@@ -13,21 +13,10 @@
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
   self = [super initWithDictionary:dict];
   if (self) {
-    // check that data dictionary exists.
-    if (![dict[@"data"] isKindOfClass: [NSNull class]]) {
-      // add focus value to output, if present.
-      if (![dict[@"data"][@"focus"] isKindOfClass: [NSNull class]]) {
-        _focusDensity = [[dict[@"data"][@"focus"] valueForKey:@"value"] doubleValue];
-      }
-      
-      // add focus regions to output, if any.
-      NSArray *facesArray = dict[@"data"][@"regions"];
-      NSMutableArray *focusRegions = [NSMutableArray array];
-      for (NSDictionary *faceData in facesArray) {
-        ClarifaiOutputRegion *region = [[ClarifaiOutputRegion alloc] initWithDictionary:faceData];
-        [focusRegions addObject:region];
-      }
-      self.focusRegions = focusRegions;
+    // add focus value to output, if present.
+    NSDictionary *focus = [dict findObjectForKey:@"focus"];
+    if (![focus isKindOfClass: [NSNull class]]) {
+      _focusDensity = [[focus findObjectForKey:@"value"] doubleValue];
     }
   }
   return self;

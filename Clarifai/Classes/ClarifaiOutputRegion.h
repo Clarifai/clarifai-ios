@@ -17,7 +17,7 @@
 @property double bottom;
 @property double right;
 
-/** Predictions for the current region of the image. This is only populated in some models, like Clarifai's Logo or Celeb model. */
+/** Predictions for the current region of the image. This is only populated in some models, like Clarifai's Logo model. */
 @property (strong, nonatomic) NSArray<ClarifaiConcept *> *concepts;
   
 /** If predicting with Clarifai's Blur model, this represents the density of the current focus region.  */

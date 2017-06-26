@@ -96,7 +96,7 @@
  * Creates a search term from an inputID. This will search the inputs of your
  * application for the input with a matching inputID.
  *
- * @param imageURL  The inputID to be searched.
+ * @param inputID   The inputID to be searched.
  */
 + (ClarifaiSearchTerm *)searchInputsWithInputID:(NSString *)inputID;
 
@@ -139,8 +139,8 @@
  * outputs of your application (like visual searching, and searching by 
  * predicted tags).
  * 
- * @param The item being searched. This can be an input or concept.
- * @param A boolean value indicating wether the search term should be accross inputs or outputs.
+ * @param searchItem The item being searched. This can be an input or concept.
+ * @param isInput A boolean value indicating wether the search term should be accross inputs or outputs.
  */
 - (instancetype)initWithSearchItem:(id)searchItem isInput:(BOOL)isInput __attribute__((deprecated));
 

@@ -22,7 +22,9 @@ static NSString * const kErrorDomain = @"com.clarifai.ClarifaiClient";
 static NSString * const kKeyAccessToken = @"com.clarifai.ClarifaiClient.AccessToken";
 static NSString * const kKeyAppID = @"com.clarifai.ClarifaiClient.AppID";
 static NSString * const kKeyAccessTokenExpiration = @"com.clarifai.ClarifaiClient.AccessTokenExpiration";
+static NSString * const kKeyApiKey = @"com.clarifai.ClarifaiClient.ApiKey";
 static NSTimeInterval const kMinTokenLifetime = 60.0;
+static NSString * const ClientVersion = @"2.3.2";
 
 /**
  * @param error Error code or nil if no error occured. */
@@ -34,7 +36,7 @@ typedef void (^ClarifaiRequestCompletion)(NSError *error);
 typedef void (^ClarifaiInputsCompletion)(NSArray <ClarifaiInput *> *inputs, NSError *error);
 
 /**
- * @param outputs  An array containing ClarifaiSearchResults returned from the api.
+ * @param results  An array containing ClarifaiSearchResults returned from the api.
  * @param error    Error code or nil if no error occured. */
 typedef void (^ClarifaiSearchCompletion)(NSArray <ClarifaiSearchResult *> *results, NSError *error);
 
