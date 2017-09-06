@@ -1,3 +1,7 @@
+# DEPRECATION NOTICE
+
+This library is being deprecated in favor of the [Clarifai Apple SDK](https://github.com/Clarifai/clarifai-apple-sdk).
+
 # Clarifai Objective-C Client
 A client for iOS apps using the Clarifai V2 API.
 
